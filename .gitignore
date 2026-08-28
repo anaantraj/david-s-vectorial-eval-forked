@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.env
+data/
+runs/
+
+# Bulk source exports — distributed via the Wasabi data archive, not git
+final_dataset_v1.csv
+
+# macOS / editor cruft
+.DS_Store
+.ndif-backup

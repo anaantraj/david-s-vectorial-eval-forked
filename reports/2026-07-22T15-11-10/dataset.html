@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dataset — Vectorial × BAIR transfer evaluation — 2026-07-22</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · cross-platform audience transfer</p>
+    <h1>Experimental notes <span class="stamp">2026-07-22</span></h1>
+    <p class="lede">Evaluating LinkedIn → Reddit transfer functions across 30 bilateral
+    cells, with four candidates drawn per source post. Generated 2026-07-22 15:11 PDT.</p>
+  </div>
+</header>
+<nav class="nav"><div class="wrap"><a href="index.html" class="">Overview</a><a href="dataset.html" class="here">Dataset</a><a href="methods.html" class="">Baselines &amp; metrics</a><a href="results.html" class="">Results</a><a href="limitations.html" class="">Limitations</a></div></nav>
+<main class="wrap">
+
+<h2>The bilateral cell</h2>
+<p>A <dfn>bilateral cell</dfn> consists of one audience room crossed with one topic
+cluster and partitioned by platform. It serves as the unit of analysis and the unit at
+which every metric is computed, because it is the smallest grouping for which the
+distribution of an audience's expression on a given platform is well defined.</p>
+
+<pre class="code">cell_id = "backend_engineer::ruby_on_rails_ecosystem"
+          ├── linkedin: 21 posts
+          └── reddit:   96 posts</pre>
+
+<figure class="exfig"><figcaption>Authentic posts from both sides of <code>backend_engineer::code_editors</code>. The topic is shared and the register is not.</figcaption><div class="example grid4"><div class="ex-col "><h3>LinkedIn side</h3><p>TIL you can change the position of the sidebar icons to be displayed at the top in vscode. Useful!</p></div><div class="ex-col "><h3>LinkedIn side</h3><p>I was looking into DeepSeek yesterday and in the process I discovered there's an Open-Source ext for @VSCode called Continue, an AI coding assistant. It has many features already but it's missing an agent mode, which is a must-have for me. Once they add it I'm definitely giving it a shot. I also discovered a project called LMStudio which allows you to download and run LLM models locally with ease. Really cool stuff! #programming #aiassistant #ai #vscode</p></div><div class="ex-col alt"><h3>Reddit side</h3><p>Please give me some advice on a VsCode extension I have created, that shows how many hours you have coded vs your friends.</p></div><div class="ex-col alt"><h3>Reddit side</h3><p>I have put together a simple guide to vi commands that actually helped me all these years when editing configs or scripts on Linux. Short, practical, and focused on real examples. Let me know if I have missed some..would love to take feedbacks and make it an exhaustive list! [Read it here](https://medium.com/stackademic/the-80-20-guide-to-vi-editor-20-of-commands-that-do-80-of-the-work-ff1ce320f461?sk=b61c38fdc6a69ae5ba7400390964934b)</p></div></div></figure>
+
+<p>The two sides of a cell discuss the same subject in materially different registers.
+The LinkedIn side reports observations and improvements in a declarative and
+promotional form. The Reddit side solicits assistance and feedback from practitioners.
+Reproducing that difference constitutes the transfer problem.</p>
+
+<svg class="fig" viewBox="0 0 760 276" width="100%" role="img" aria-labelledby="t8f13bfb6" xmlns="http://www.w3.org/2000/svg"><title id="t8f13bfb6">Data funnel</title>
+<text class="fig-title" x="0" y="20" text-anchor="start">From corpus to evaluable tasks</text>
+<text class="fig-sub" x="0" y="38" text-anchor="start">The large drop is coverage, not filtering: most posts have no counterpart cell.</text>
+<text class="lbl" x="238" y="73" text-anchor="end">Raw CSV rows</text>
+<rect class="bar" x="250" y="56" width="420.0" height="24" fill="#4a6fa5" rx="2"/>
+<text class="val" x="678.0" y="73" text-anchor="start">20,529</text>
+<text class="lbl" x="238" y="113" text-anchor="end">After normalisation</text>
+<rect class="bar" x="250" y="96" width="300.2" height="24" fill="#5b7fb0" rx="2"/>
+<text class="val" x="558.1724389887477" y="113" text-anchor="start">14,672</text>
+<text class="lbl" x="238" y="153" text-anchor="end">Inside viable bilateral cells</text>
+<rect class="bar" x="250" y="136" width="19.2" height="24" fill="#7b93b8" rx="2"/>
+<text class="val" x="277.2108724243753" y="153" text-anchor="start">939</text>
+<text class="lbl" x="238" y="193" text-anchor="end">Transfer tasks</text>
+<rect class="bar" x="250" y="176" width="8.6" height="24" fill="#a0b1c9" rx="2"/>
+<text class="val" x="266.57226362706416" y="193" text-anchor="start">419</text>
+<text class="lbl" x="238" y="233" text-anchor="end">Test-split tasks</text>
+<rect class="bar" x="250" y="216" width="2.0" height="24" fill="#c25e3a" rx="2"/>
+<text class="val" x="260" y="233" text-anchor="start">66</text>
+</svg>
+
+<h2>Room canonicalisation</h2>
+<p>The raw corpus labels the two platform halves of a single audience differently. The
+LinkedIn component of the CTO room is recorded as <code>CTOs</code> and the Reddit
+component as <code>CTO Reddit</code>. Grouping on the raw labels therefore never
+produces a bilateral cell for that audience. Only two of the 24 raw rooms already
+contain both platforms.</p>
+
+<figure class="tablewrap"><table><caption>Effect of canonicalisation on usable coverage</caption>
+<thead><tr><th scope="col">Room mode</th><th scope="col">Viable cells with at least five posts per platform</th></tr></thead>
+<tbody>
+<tr><th scope="row">strict, using raw labels</th><td>19</td></tr>
+<tr><th scope="row">canonical, the default</th><td class="best">30</td></tr>
+</tbody></table></figure>
+
+<p class="note">Canonicalisation constitutes an assumption rather than an established
+fact, because it asserts that <code>CTOs</code> and <code>CTO Reddit</code> sample the
+same underlying audience. Any finding that fails to replicate under
+<code>--room-mode strict</code> should be treated as provisional.</p>
+
+<svg class="fig" viewBox="0 0 760 322" width="100%" role="img" aria-labelledby="t7d987d0b" xmlns="http://www.w3.org/2000/svg"><title id="t7d987d0b">Cell coverage</title>
+<text class="fig-title" x="0" y="20" text-anchor="start">Bilateral cell coverage</text>
+<text class="fig-sub" x="0" y="38" text-anchor="start">Largest 22 of 30 cells. Most are small and lopsided.</text>
+<text class="key-lbl" x="357.5" y="54" text-anchor="middle">LinkedIn</text>
+<text class="key-lbl" x="572.5" y="54" text-anchor="middle">Reddit</text>
+<text class="tiny" x="238" y="69" text-anchor="end">fullstack_engineer · career d…</text>
+<rect x="250.0" y="62" width="215.0" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="62" width="13.2" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="69" text-anchor="start">147/9</text>
+<text class="tiny" x="238" y="79" text-anchor="end">backend_engineer · ruby on ra…</text>
+<rect x="434.3" y="72" width="30.7" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="72" width="140.4" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="79" text-anchor="start">21/96</text>
+<text class="tiny" x="238" y="89" text-anchor="end">edtech_engineering · ai in ed…</text>
+<rect x="457.7" y="82" width="7.3" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="82" width="95.1" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="89" text-anchor="start">5/65</text>
+<text class="tiny" x="238" y="99" text-anchor="end">edtech_engineering · online l…</text>
+<rect x="457.7" y="92" width="7.3" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="92" width="81.9" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="99" text-anchor="start">5/56</text>
+<text class="tiny" x="238" y="109" text-anchor="end">fullstack_engineer · software…</text>
+<rect x="418.2" y="102" width="46.8" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="102" width="24.9" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="109" text-anchor="start">32/17</text>
+<text class="tiny" x="238" y="119" text-anchor="end">backend_engineer · elixir pro…</text>
+<rect x="440.1" y="112" width="24.9" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="112" width="29.3" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="119" text-anchor="start">17/20</text>
+<text class="tiny" x="238" y="129" text-anchor="end">backend_engineer · ruby on ra…</text>
+<rect x="456.2" y="122" width="8.8" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="122" width="45.3" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="129" text-anchor="start">6/31</text>
+<text class="tiny" x="238" y="139" text-anchor="end">edtech_engineering · student …</text>
+<rect x="457.7" y="132" width="7.3" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="132" width="43.9" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="139" text-anchor="start">5/30</text>
+<text class="tiny" x="238" y="149" text-anchor="end">backend_engineer · open sourc…</text>
+<rect x="441.6" y="142" width="23.4" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="142" width="20.5" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="149" text-anchor="start">16/14</text>
+<text class="tiny" x="238" y="159" text-anchor="end">backend_engineer · ai softwar…</text>
+<rect x="431.4" y="152" width="33.6" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="152" width="7.3" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="159" text-anchor="start">23/5</text>
+<text class="tiny" x="238" y="169" text-anchor="end">backend_engineer · python eco…</text>
+<rect x="450.4" y="162" width="14.6" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="162" width="21.9" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="169" text-anchor="start">10/15</text>
+<text class="tiny" x="238" y="179" text-anchor="end">backend_engineer · rust progr…</text>
+<rect x="454.8" y="172" width="10.2" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="172" width="26.3" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="179" text-anchor="start">7/18</text>
+<text class="tiny" x="238" y="189" text-anchor="end">backend_engineer · sql query …</text>
+<rect x="444.5" y="182" width="20.5" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="182" width="16.1" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="189" text-anchor="start">14/11</text>
+<text class="tiny" x="238" y="199" text-anchor="end">backend_engineer · vector sea…</text>
+<rect x="440.1" y="192" width="24.9" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="192" width="8.8" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="199" text-anchor="start">17/6</text>
+<text class="tiny" x="238" y="209" text-anchor="end">backend_engineer · agentic co…</text>
+<rect x="443.1" y="202" width="21.9" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="202" width="7.3" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="209" text-anchor="start">15/5</text>
+<text class="tiny" x="238" y="219" text-anchor="end">backend_engineer · software t…</text>
+<rect x="450.4" y="212" width="14.6" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="212" width="13.2" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="219" text-anchor="start">10/9</text>
+<text class="tiny" x="238" y="229" text-anchor="end">backend_engineer · data struc…</text>
+<rect x="447.4" y="222" width="17.6" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="222" width="7.3" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="229" text-anchor="start">12/5</text>
+<text class="tiny" x="238" y="239" text-anchor="end">backend_engineer · software d…</text>
+<rect x="456.2" y="232" width="8.8" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="232" width="14.6" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="239" text-anchor="start">6/10</text>
+<text class="tiny" x="238" y="249" text-anchor="end">backend_engineer · code edito…</text>
+<rect x="451.8" y="242" width="13.2" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="242" width="7.3" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="249" text-anchor="start">9/5</text>
+<text class="tiny" x="238" y="259" text-anchor="end">backend_engineer · docker con…</text>
+<rect x="456.2" y="252" width="8.8" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="252" width="11.7" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="259" text-anchor="start">6/8</text>
+<text class="tiny" x="238" y="269" text-anchor="end">fullstack_engineer · api deve…</text>
+<rect x="453.3" y="262" width="11.7" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="262" width="8.8" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="269" text-anchor="start">8/6</text>
+<text class="tiny" x="238" y="279" text-anchor="end">instructional_designer · stud…</text>
+<rect x="454.8" y="272" width="10.2" height="7.5" fill="#4a6fa5" rx="1"/>
+<rect x="465.0" y="272" width="10.2" height="7.5" fill="#c25e3a" rx="1"/>
+<text class="tiny" x="688.0" y="279" text-anchor="start">7/7</text>
+<line class="axis" x1="465.0" y1="58" x2="465.0" y2="288"/>
+</svg>
+
+<h2>Split design</h2>
+<p>Splits are assigned at the level of the individual post and stratified within each
+combination of cell and platform. A partition at the level of the cell would leave
+single-digit cell counts in each split, and every metric in this harness requires a
+pool of posts rather than an individual post.</p>
+<p>Leakage is controlled through the role a post plays rather than through the
+partition it belongs to. The <code>exemplar_ids</code> field lists posts on which a
+transfer function may condition and always draws from the train split. The
+<code>target_reference_ids</code> field lists posts against which a task is scored and
+always draws from the split of the task itself. The two sets are disjoint by
+construction.</p>
+<p>Zero-shot generalisation is handled on a second, separate axis. Fifteen percent
+of cells are flagged as held out. Their posts appear only in the test split and they
+carry no exemplars, so a few-shot function reverts to zero-shot behaviour on those
+cells and the generalisation penalty becomes directly measurable.</p>
+<p>Assignment is computed as a digest of the post identifier and a fixed seed rather
+than by shuffling. The addition of new material therefore never reassigns existing
+posts, which is a necessary property while the corpus continues to grow.</p>
+
+<p>Evaluation uses a merged held-out split combining validation and test. Both are kept
+out of every transfer function's example pool, so merging them introduces no leakage, and
+it roughly doubles the number of real posts available to score against in each cell. That
+matters because the group-level measures need a minimum number of real posts per cell,
+and were previously limited by how the split was cut rather than by the size of the
+corpus.</p>
+
+<figure class="tablewrap"><table><caption>The dataset as constructed</caption>
+<thead><tr><th scope="col">Quantity</th><th scope="col">Value</th></tr></thead>
+<tbody>
+<tr><th scope="row">Bilateral cells</th><td>30</td></tr>
+<tr><th scope="row">Dense cells, at least ten posts per platform</th><td>6</td></tr>
+<tr><th scope="row">Held-out cells reserved for zero-shot evaluation</th><td>4</td></tr>
+<tr><th scope="row">Posts</th><td>939</td></tr>
+<tr><th scope="row">Transfer tasks</th><td>419</td></tr>
+<tr><th scope="row">Test-split tasks</th><td>66</td></tr>
+<tr><th scope="row">Held-out tasks used for evaluation</th><td>126</td></tr>
+</tbody></table></figure>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p>Generated from <code>runs/scaled/report.heldout.json</code> by
+     <code>experimental-notes/build.py</code>. Figures are drawn from the report
+     data, not transcribed.</p>
+  <p>Distribution-aware metrics follow Chan, Ni, Ross, Vijayanarasimhan, Myers &amp;
+     Canny, <em>Distribution Aware Metrics for Conditional Natural Language
+     Generation</em>, LREC-COLING 2024, pp. 5064–5095.</p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview — Study 2 — Vectorial × BAIR — 2026-08-13</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<header class="masthead study-head">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · Study 2 · audience transfer</p>
+    <h1>Adaptation versus prompting <span class="stamp">2026-08-13</span></h1>
+    <p class="lede">LinkedIn to Reddit across 30 bilateral corpus cells. The report
+    compares 13 method configurations; the primary distributional measure covers
+    5 shared test cells in google/embeddinggemma-300m, dim 512.</p>
+  </div>
+</header>
+<nav class="nav" aria-label="Report sections"><div class="wrap"><a href="index.html" class="here">Overview</a><a href="results.html" class="">Results</a><a href="methods.html" class="">Methods</a><a href="dataset.html" class="">Dataset</a><a href="limitations.html" class="">Limitations</a></div></nav>
+<main class="wrap">
+
+<div class="page-intro">
+<p class="section-label">Research question</p>
+<h1>Adaptation can match the target distribution better than direct prompting, but it preserves
+less of the source.</h1>
+<p class="lede">This study compares prompting, activation steering, soft prompts and LoRA on the
+same LinkedIn-to-Reddit transfer task. It asks whether fitting a small number of parameters on real
+target-platform posts improves the distribution of the generated pool. Its primary measure is the
+Triangle-Rank Metric (TRM).</p>
+</div>
+
+<div class="summary-grid" aria-label="Study summary">
+  <div class="summary-card primary"><span class="summary-kicker">Supported reach</span>
+    <strong>6 / 9</strong>
+    <p>trained configurations outperform at least one prompting configuration on the primary
+    measure with separated intervals.</p></div>
+  <div class="summary-card"><span class="summary-kicker">Best observed score</span>
+    <strong>0.106</strong>
+    <p>LoRA, retrieved source;
+    62% below the best prompting point estimate of 0.280.</p></div>
+  <div class="summary-card"><span class="summary-kicker">Primary comparison base</span>
+    <strong>5 cells</strong>
+    <p>The per-post metric families cover up to 17 cells. Reference rules state
+    their own cell bases.</p></div>
+</div>
+
+<aside class="finding-banner">
+  <div><span>Distribution match</span><strong>LoRA and soft prompt</strong>
+  <p>Every soft-prompt and LoRA configuration has a lower observed Triangle-Rank score than the best
+  prompting configuration.</p></div>
+  <div><span>Content retention</span><strong>Prompting remains ahead</strong>
+  <p>The weakest prompting point on source similarity is 0.861; the strongest soft
+  prompt or LoRA point is 0.848.</p></div>
+  <div><span>Unresolved objective</span><strong>No joint winner</strong>
+  <p>The evaluated methods do not occupy the desirable combination of prompting-level content
+  preservation and adaptation-level distribution match.</p></div>
+</aside>
+
+<svg class="fig" viewBox="0 0 860 404" width="100%" role="img" aria-labelledby="t2c22b151" xmlns="http://www.w3.org/2000/svg"><title id="t2c22b151">The primary result, by method family</title><desc>Each dot is one evaluated configuration. The line joins the lowest and highest observed value within the family; it is not an uncertainty interval.</desc>
+<text class="fig-title" x="0" y="24" text-anchor="start">The primary result, by method family</text>
+<text class="fig-sub" x="0" y="42" text-anchor="start">Each dot is one evaluated configuration. The line joins the lowest and highest observed value within the family; it</text>
+<text class="fig-sub" x="0" y="56" text-anchor="start">is not an uncertainty interval.</text>
+<line x1="126.0" y1="112" x2="126.0" y2="304" stroke="#e8e6df"/>
+<text class="tick" x="126.0" y="322" text-anchor="middle">0.01</text>
+<line x1="286.5" y1="112" x2="286.5" y2="304" stroke="#e8e6df"/>
+<text class="tick" x="286.5" y="322" text-anchor="middle">0.15</text>
+<line x1="447.0" y1="112" x2="447.0" y2="304" stroke="#e8e6df"/>
+<text class="tick" x="447.0" y="322" text-anchor="middle">0.30</text>
+<line x1="607.5" y1="112" x2="607.5" y2="304" stroke="#e8e6df"/>
+<text class="tick" x="607.5" y="322" text-anchor="middle">0.44</text>
+<line x1="768.0" y1="112" x2="768.0" y2="304" stroke="#e8e6df"/>
+<text class="tick" x="768.0" y="322" text-anchor="middle">0.58</text>
+<line x1="175.0" y1="106.0" x2="175.0" y2="304.0" stroke="#2e7d5b" stroke-width="2" opacity="0.9"/>
+<text class="ref-lbl" x="174.96610169491524" y="99" text-anchor="middle">Authentic oracle · n=1</text>
+<line x1="388.7" y1="106.0" x2="388.7" y2="304.0" stroke="#8b8b8b" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+<text class="ref-lbl" x="388.74621171513235" y="99" text-anchor="middle">Copy floor · n=5</text>
+<line x1="673.4" y1="106.0" x2="673.4" y2="304.0" stroke="#b0a08c" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+<text class="ref-lbl" x="673.4193915269476" y="99" text-anchor="middle">Wrong-topic control · n=5</text>
+<text class="lbl" x="112" y="140.0" text-anchor="end">prompting</text>
+<line x1="427.0" y1="136.0" x2="719.0" y2="136.0" stroke="#2a78d6" stroke-width="5" stroke-linecap="round" opacity="0.28"/>
+<circle cx="427.0" cy="136.0" r="5.2" fill="#2a78d6" stroke="#fff" stroke-width="1.8"/>
+<circle cx="719.0" cy="136.0" r="5.2" fill="#2a78d6" stroke="#fff" stroke-width="1.8"/>
+<circle cx="698.3" cy="136.0" r="5.2" fill="#2a78d6" stroke="#fff" stroke-width="1.8"/>
+<circle cx="614.8" cy="136.0" r="5.2" fill="#2a78d6" stroke="#fff" stroke-width="1.8"/>
+<text class="val" x="778" y="140.0" text-anchor="start">best 0.280</text>
+<text class="lbl" x="112" y="188.0" text-anchor="end">steering</text>
+<line x1="674.7" y1="184.0" x2="715.0" y2="184.0" stroke="#eb6834" stroke-width="5" stroke-linecap="round" opacity="0.28"/>
+<circle cx="715.0" cy="184.0" r="5.2" fill="#eb6834" stroke="#fff" stroke-width="1.8"/>
+<circle cx="674.7" cy="184.0" r="5.2" fill="#eb6834" stroke="#fff" stroke-width="1.8"/>
+<circle cx="688.9" cy="184.0" r="5.2" fill="#eb6834" stroke="#fff" stroke-width="1.8"/>
+<text class="val" x="778" y="188.0" text-anchor="start">best 0.500</text>
+<text class="lbl" x="112" y="236.0" text-anchor="end">soft prompt</text>
+<line x1="236.4" y1="232.0" x2="345.4" y2="232.0" stroke="#1baf7a" stroke-width="5" stroke-linecap="round" opacity="0.28"/>
+<circle cx="256.2" cy="232.0" r="5.2" fill="#1baf7a" stroke="#fff" stroke-width="1.8"/>
+<circle cx="236.4" cy="232.0" r="5.2" fill="#1baf7a" stroke="#fff" stroke-width="1.8"/>
+<circle cx="345.4" cy="232.0" r="5.2" fill="#1baf7a" stroke="#fff" stroke-width="1.8"/>
+<text class="val" x="778" y="236.0" text-anchor="start">best 0.110</text>
+<text class="lbl" x="112" y="284.0" text-anchor="end">LoRA</text>
+<line x1="232.5" y1="280.0" x2="282.4" y2="280.0" stroke="#4a3aa7" stroke-width="5" stroke-linecap="round" opacity="0.28"/>
+<circle cx="282.4" cy="280.0" r="5.2" fill="#4a3aa7" stroke="#fff" stroke-width="1.8"/>
+<circle cx="232.5" cy="280.0" r="5.2" fill="#4a3aa7" stroke="#fff" stroke-width="1.8"/>
+<circle cx="252.2" cy="280.0" r="5.2" fill="#4a3aa7" stroke="#fff" stroke-width="1.8"/>
+<text class="val" x="778" y="284.0" text-anchor="start">best 0.106</text>
+<text class="ax-title" x="447.0" y="342" text-anchor="middle">TRM score · lower is better; target = 0</text>
+<text class="fig-note" x="0" y="362" text-anchor="start">Reference rules state their own cell bases. Method dots use the systems-only common-cell base. Detailed bootstrap intervals</text>
+<text class="fig-note" x="0" y="376" text-anchor="start">and the generated overlap test appear on the Results page.</text>
+</svg>
+
+<div class="story-grid">
+  <section><span class="story-num">01</span><h2>What improved</h2>
+  <p>Soft prompts and LoRA move the generated pool closer to the distribution of authentic Reddit
+  posts. The full results show the interval for every configuration and test each stated
+  comparison.</p></section>
+  <section><span class="story-num">02</span><h2>What was traded away</h2>
+  <p>Prompting keeps more of the supplied LinkedIn post. Adaptation learns the target pool without
+  paired source-and-target examples, so a lower distributional score does not establish successful
+  content transfer.</p></section>
+  <section><span class="story-num">03</span><h2>What explains the change</h2>
+  <p>Output length explains part of the soft-prompt result, but not the LoRA result. The results page
+  places length, triangle geometry and source preservation beside the primary measure.</p></section>
+</div>
+
+<h2>Study design in brief</h2>
+<p>Four families are evaluated under one task definition. Prompting changes the input only.
+Steering adds a fixed platform-difference vector to the model's hidden state. A soft prompt learns a
+short sequence of input vectors. LoRA learns low-rank adapters within the model. The three adaptable
+families share the base model, prompt and quantisation.</p>
+<p>Each adaptable family is fitted under three training variants: topic only, a retrieved same-cell
+source post, or the evaluative aspects foregrounded by the target post. The corpus contains no paired
+LinkedIn and Reddit posts, so only the aspect variant directly couples its conditioning information
+to the completion. The <a href="methods.html">Methods page</a> gives the full training design.</p>
+
+<div class="next-grid">
+  <a href="results.html"><span>Read next</span><strong>Results and figures</strong>
+  <small>Primary finding, trade-off, mechanism and full tables</small></a>
+  <a href="methods.html"><span>Study design</span><strong>Methods</strong>
+  <small>Families, variants, controls and selected configurations</small></a>
+  <a href="limitations.html"><span>Boundary conditions</span><strong>Limitations</strong>
+  <small>Five-cell primary base, reference coverage and known confounds</small></a>
+</div>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p class="footer-title">Study 2 · generated 2026-08-13 09:42 PDT</p>
+  <p>Source reports: <code>runs/methods/report.test.embeddinggemma-300m-d512.json</code> and
+     <code>runs/methods_sys/report.test.embeddinggemma-300m-d512.json</code>. Built by
+     <code>experimental-notes/build_study2.py</code>. Every figure and quoted value is computed
+     from those reports.</p>
+  <p>Distribution-aware metrics follow Chan, Ni, Ross, Vijayanarasimhan, Myers &amp;
+     Canny, <em>Distribution Aware Metrics for Conditional Natural Language Generation</em>,
+     LREC-COLING 2024, pp. 5064–5095.</p>
+</div></footer>
+</body>
+</html>

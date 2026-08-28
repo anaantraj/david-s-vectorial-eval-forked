@@ -1,0 +1,54 @@
+[project]
+name = "vectorial-eval"
+version = "0.1.0"
+description = "Evaluation harness for cross-platform audience transfer functions (Vectorial x BAIR)"
+requires-python = ">=3.10"
+dependencies = [
+    "pandas>=2.0",
+    "numpy>=1.26",
+    "scikit-learn>=1.4",
+    "scipy>=1.11",
+    "pydantic>=2.0",
+    "openai>=1.40",
+]
+
+[project.optional-dependencies]
+# Neural embedding backend. Kept optional so that dataset construction, the
+# non-LLM baselines, and the full metric suite remain runnable with no
+# accelerator and no model download.
+embeddings = [
+    "sentence-transformers>=5.0",
+    "torch>=2.2",
+]
+# Remote steering on NDIF. Kept optional: the local steering arm, the whole
+# metric suite and dataset construction must stay runnable with no network and
+# no NDIF key, and nnsight pulls in accelerate and a socket.io client.
+ndif = [
+    "nnsight>=0.7",
+]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+vectorial-eval = "vectorial_eval.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/vectorial_eval"]
+
+[tool.ruff]
+line-length = 96
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

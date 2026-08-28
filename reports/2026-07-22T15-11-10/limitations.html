@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limitations — Vectorial × BAIR transfer evaluation — 2026-07-22</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · cross-platform audience transfer</p>
+    <h1>Experimental notes <span class="stamp">2026-07-22</span></h1>
+    <p class="lede">Evaluating LinkedIn → Reddit transfer functions across 30 bilateral
+    cells, with four candidates drawn per source post. Generated 2026-07-22 15:11 PDT.</p>
+  </div>
+</header>
+<nav class="nav"><div class="wrap"><a href="index.html" class="">Overview</a><a href="dataset.html" class="">Dataset</a><a href="methods.html" class="">Baselines &amp; metrics</a><a href="results.html" class="">Results</a><a href="limitations.html" class="here">Limitations</a></div></nav>
+<main class="wrap">
+
+<section class="warn">
+  <h2>Summary of constraints</h2>
+  <p>The direction of every effect reported here is reliable. The magnitudes are not,
+  and the dataset is provisional by design. No quantity in this report should be
+  circulated as a settled measurement.</p>
+</section>
+
+<h2>Coverage is the binding constraint</h2>
+<p>Of 1,525 topic clusters in the corpus, only 30 carry at least five posts on both
+platforms. The merged held-out split contains 126 source posts. The group-similarity
+measure needs at least four generated and four real posts within a cell, which leaves 10
+cells that can be scored. The classifier and content measures reach 22.</p>
+<p>Two changes raised that coverage without collecting anything new. Merging the
+validation and test splits for scoring roughly doubled the number of real posts available
+in each cell, and drawing four candidates per source post instead of one enlarged the
+generated set by the same factor. Together they took the group-similarity measure from 5
+cells to 10 and the classifier measures from 17 to 22, and they resolved three
+comparisons that the earlier run could not separate. Further gains now require more posts
+in the single-platform rooms.</p>
+<p>The comparisons this study still cannot separate are those between the zero-shot and
+few-shot configurations. Their point estimates favour few-shot on every measure, and the
+gap is smaller than the variation between cells.</p>
+
+<h2>The dataset is provisional by design</h2>
+<p>The current corpus is suitable for establishing structure and for prototyping, and
+it is not the final optimised dataset. Cluster assignments carry an estimated 3.7
+percent rate of problematic reassignment, and the stability curve has not reached a
+plateau at an adjusted Rand index of approximately 0.80 under a 90 percent subsample.
+Every cell in this harness is defined by the clustering output, so instability in the
+clustering propagates into every metric. All results are conditional on the current
+clustering.</p>
+
+<h2>Known weaknesses in individual metrics</h2>
+<dl class="metrics">
+  <dt>Topic JSD is unreliable for generated text</dt>
+  <dd>It assigns the Claude columns a value of 0.950 against 0.800 for the shuffle
+  control, despite a source similarity of 0.560 and preservation of the topic on
+  inspection. The metric is computed over k-means clusters fitted on authentic posts,
+  so it plausibly detects machine origin as well as a change of subject. It is not
+  reported as a finding and requires re-examination under a neural embedding
+  backend. The following example illustrates the discrepancy.</dd>
+
+  <dt>The classifier is imperfect</dt>
+  <dd>Held-out accuracy is 0.79 for the lexical variant and 0.85 for the stylometric
+  variant. The calibration-gap formulation is partially robust to this limitation
+  because miscalibration affects the generated and authentic pools equally, but the
+  absolute rates should not be over-interpreted.</dd>
+
+  <dt>Removing style is only partly possible</dt>
+  <dd>Only two linear directions are removed. Register is not confined to a
+  two-dimensional linear subspace, so residual style signal certainly remains. A
+  style-removed score establishes that at least the stated amount survives the removal of
+  style, and does not establish that the effect is entirely about subject matter.</dd>
+
+  <dt>The judge has not been validated against human annotation</dt>
+  <dd>The discrimination framing controls position bias and possesses meaningful floor
+  and ceiling values, and it has not been calibrated against human judgement on this
+  corpus. Whether the judge detection rate tracks human ability to distinguish these
+  posts remains unestablished.</dd>
+
+  <dt>The choice of embedding affects the conclusions</dt>
+  <dd>The results reported here use the offline TF-IDF backend. The neural backend is
+  configured and may itself encode register, which is the principal risk identified for
+  this project and which the harness mitigates only partially. No conclusion should be
+  reported without replication across both backends.</dd>
+</dl>
+
+<figure class="exfig"><figcaption>A rewrite from <code>backend_engineer::software_testing</code>, the cell in which Claude records its highest topic JSD at 1.00. That value is comparable to the shuffle control, which would indicate complete topical failure. Inspection establishes that the topic is retained, so the metric is registering something other than topical drift.</figcaption><div class="example grid2"><div class="ex-col src"><h3>Source · LinkedIn</h3><p>The importance of testing with not-so-usual setups https://lnkd.in/gKPcFa2a #dev #devops #devrel</p></div><div class="ex-col "><h3>Generated · Reddit</h3><p>Anyone else get burned by only testing on "happy path" environments? We had a service that passed every test in CI and staging, then fell over in a specific customer setup because their infra config was nothing like ours. The kind of setup you'd never think to reproduce because it's not "usual." Got me thinking that a lot of test suites implicitly assume the environment looks like the dev/staging box. Different filesystem, weird locale, non-default …</p></div></div></figure>
+
+<h2>Quantities that are not measured</h2>
+<ul class="findings">
+  <li><strong>Agreement at the level of aspect.</strong> The distinction between the
+  object under discussion and the evaluative dimension through which it is discussed is
+  not modelled. A function that reproduces register and topic while inverting the
+  distribution of evaluative aspects would incur no penalty under any current metric.
+  This constitutes the extension of highest value and requires no change to the metric
+  registry.</li>
+  <li><strong>The reverse transfer direction.</strong> All results describe transfer
+  from LinkedIn to Reddit. The reverse direction is supported by the harness and has
+  not been examined, and given the asymmetry between the platforms it should not be
+  assumed to mirror these findings.</li>
+  <li><strong>Population shift as distinct from behavioural shift.</strong> The harness
+  measures the combination of the two. Separating them would require linkage of
+  identities across platforms, which the corpus does not provide.</li>
+  <li><strong>Mechanism.</strong> Every metric compares distributions. None establishes
+  that a function has recovered the mechanism underlying platform difference, which is
+  the reason the interpretability requirement is not satisfied by these measurements
+  alone.</li>
+</ul>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p>Generated from <code>runs/scaled/report.heldout.json</code> by
+     <code>experimental-notes/build.py</code>. Figures are drawn from the report
+     data, not transcribed.</p>
+  <p>Distribution-aware metrics follow Chan, Ni, Ross, Vijayanarasimhan, Myers &amp;
+     Canny, <em>Distribution Aware Metrics for Conditional Natural Language
+     Generation</em>, LREC-COLING 2024, pp. 5064–5095.</p>
+</div></footer>
+</body>
+</html>

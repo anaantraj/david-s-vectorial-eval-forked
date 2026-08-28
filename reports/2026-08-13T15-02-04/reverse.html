@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reverse direction — Study 3 — Vectorial × BAIR — 2026-08-13</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<header class="masthead study-head">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · Study 3 · audience transfer</p>
+    <h1>Adaptation versus prompting <span class="stamp">2026-08-13</span></h1>
+    <p class="lede">Reddit to LinkedIn across 33 bilateral corpus cells. The report
+    compares 13 method configurations; the primary distributional measure covers
+    11 shared test cells in google/embeddinggemma-300m, dim 512.</p>
+  </div>
+</header>
+<nav class="nav" aria-label="Report sections"><div class="wrap"><a href="index.html" class="">Overview</a><a href="results.html" class="">Results</a><a href="reverse.html" class="here">Reverse direction</a><a href="methods.html" class="">Methods</a><a href="dataset.html" class="">Dataset</a><a href="limitations.html" class="">Limitations</a></div></nav>
+<main class="wrap">
+
+<div class="page-intro"><p class="section-label">Direction check</p>
+<h1>Reddit to LinkedIn</h1>
+<p class="lede">The full method grid is rerun with Reddit as the source and LinkedIn as the target.
+It is scored independently because the target distribution, task pools and reference anchors differ
+from the forward direction. Embedding-derived values use google/embeddinggemma-300m, dim 512.</p></div>
+
+<h2>All configurations on the reverse task</h2>
+<figure class="tablefig"><figcaption><strong>Reverse-direction scorecard</strong><br>
+<span class="sub">Superscripts give the cell base for each value. Every system column in a metric
+uses the same cells; the authentic oracle retains its own smaller base.</span></figcaption>
+<div class="tscroll"><table class="res"><thead><tr><th>family</th><th>configuration</th><th>Triangle-Rank Metric<br><small>lower</small></th><th>Similarity to source<br><small>higher</small></th><th>Writing-habit calibration gap<br><small>lower</small></th><th>Length ratio<br><small>near one</small></th></tr>
+</thead><tbody><tr><th scope='row'>prompting</th><td>GPT-5.6 zero-shot</td><td class='num'>0.422<sup>11</sup></td><td class='num'>0.931<sup>25</sup></td><td class='num'>0.435<sup>25</sup></td><td class='num'>1.145<sup>25</sup></td></tr><tr><th scope='row'>prompting</th><td>Claude zero-shot</td><td class='num'>0.565<sup>11</sup></td><td class='num'>0.844<sup>25</sup></td><td class='num'>0.324<sup>25</sup></td><td class='num'>2.842<sup>25</sup></td></tr><tr><th scope='row'>prompting</th><td>Claude few-shot</td><td class='num'>0.527<sup>11</sup></td><td class='num'>0.867<sup>25</sup></td><td class='num'>0.246<sup>25</sup></td><td class='num'>2.690<sup>25</sup></td></tr><tr><th scope='row'>prompting</th><td>Claude aspect-aware</td><td class='num'>0.604<sup>11</sup></td><td class='num'>0.849<sup>25</sup></td><td class='num'>0.451<sup>25</sup></td><td class='num'>2.916<sup>25</sup></td></tr><tr><th scope='row'>steering</th><td>topic only</td><td class='num'>0.494<sup>11</sup></td><td class='num'>0.862<sup>25</sup></td><td class='num'>0.380<sup>25</sup></td><td class='num'>3.256<sup>25</sup></td></tr><tr><th scope='row'>steering</th><td>retrieved source</td><td class='num'>0.484<sup>11</sup></td><td class='num'>0.861<sup>25</sup></td><td class='num'>0.366<sup>25</sup></td><td class='num'>3.256<sup>25</sup></td></tr><tr><th scope='row'>steering</th><td>aspects</td><td class='num'>0.408<sup>11</sup></td><td class='num'>0.865<sup>25</sup></td><td class='num'>0.313<sup>25</sup></td><td class='num'>1.224<sup>25</sup></td></tr><tr><th scope='row'>soft prompt</th><td>topic only</td><td class='num'>0.255<sup>11</sup></td><td class='num'>0.856<sup>25</sup></td><td class='num'>0.298<sup>25</sup></td><td class='num'>1.398<sup>25</sup></td></tr><tr><th scope='row'>soft prompt</th><td>retrieved source</td><td class='num'>0.250<sup>11</sup></td><td class='num'>0.730<sup>25</sup></td><td class='num'>0.357<sup>25</sup></td><td class='num'>0.824<sup>25</sup></td></tr><tr><th scope='row'>soft prompt</th><td>aspects</td><td class='num'>0.305<sup>11</sup></td><td class='num'>0.854<sup>25</sup></td><td class='num'>0.298<sup>25</sup></td><td class='num'>0.573<sup>25</sup></td></tr><tr><th scope='row'>LoRA</th><td>topic only</td><td class='num'>0.231<sup>11</sup></td><td class='num'>0.811<sup>25</sup></td><td class='num'>0.226<sup>25</sup></td><td class='num'>1.035<sup>25</sup></td></tr><tr><th scope='row'>LoRA</th><td>retrieved source</td><td class='num'>0.176<sup>11</sup></td><td class='num'>0.736<sup>25</sup></td><td class='num'>0.215<sup>25</sup></td><td class='num'>0.891<sup>25</sup></td></tr><tr><th scope='row'>LoRA</th><td>aspects</td><td class='num'>0.240<sup>11</sup></td><td class='num'>0.808<sup>25</sup></td><td class='num'>0.293<sup>25</sup></td><td class='num'>0.795<sup>25</sup></td></tr><tr class='ref'><th scope='row'>reference</th><td>Source-copy floor</td><td class='num'>0.435<sup>11</sup></td><td class='num'>1.000<sup>25</sup></td><td class='num'>0.603<sup>25</sup></td><td class='num'>0.819<sup>25</sup></td></tr><tr class='ref'><th scope='row'>reference</th><td>Wrong-topic control</td><td class='num'>0.622<sup>11</sup></td><td class='num'>0.587<sup>25</sup></td><td class='num'>0.210<sup>25</sup></td><td class='num'>1.837<sup>25</sup></td></tr><tr class='ref'><th scope='row'>reference</th><td>Authentic-post oracle</td><td class='num'>0.110<sup>6</sup></td><td class='num'>0.708<sup>20</sup></td><td class='num'>0.208<sup>20</sup></td><td class='num'>1.007<sup>20</sup></td></tr></tbody></table></div></figure>
+
+<h2>Which reverse comparisons are resolved</h2>
+<figure class="tablefig"><figcaption><strong>Triangle-Rank comparisons</strong><br>
+<span class="sub">Lower is better. A difference is supported only when the intervals do not overlap.
+The shared comparison base is 11 cells.</span></figcaption>
+<div class="tscroll"><table class="res claims"><thead><tr><th>comparison</th><th>first</th>
+<th>second</th><th>verdict</th></tr></thead><tbody><tr><td>soft prompt vs Claude zero-shot</td><td class='num'>0.250 [0.15, 0.35]</td><td class='num'>0.565 [0.43, 0.71]</td><td class='ok'>supported</td></tr><tr><td>LoRA vs Claude zero-shot</td><td class='num'>0.176 [0.10, 0.26]</td><td class='num'>0.565 [0.43, 0.71]</td><td class='ok'>supported</td></tr><tr><td>steering vs Claude zero-shot</td><td class='num'>0.484 [0.34, 0.64]</td><td class='num'>0.565 [0.43, 0.71]</td><td class='no'>not resolved</td></tr><tr><td>aspect-aware vs Claude zero-shot</td><td class='num'>0.604 [0.49, 0.72]</td><td class='num'>0.565 [0.43, 0.71]</td><td class='no'>not resolved</td></tr><tr><td>aspect soft prompt vs topic-only</td><td class='num'>0.305 [0.13, 0.50]</td><td class='num'>0.255 [0.09, 0.45]</td><td class='no'>not resolved</td></tr><tr><td>LoRA vs soft prompt</td><td class='num'>0.176 [0.10, 0.26]</td><td class='num'>0.250 [0.15, 0.35]</td><td class='no'>not resolved</td></tr></tbody></table></div></figure>
+
+<h2>How to read the direction comparison</h2>
+<p>The forward and reverse values must not be treated as columns in one ranking. Each direction has
+its own authentic target pool and reference anchors. Agreement in the winning family is evidence of
+directional stability; a different ordering is evidence that the intervention depends on which
+platform is being modelled. Neither permits subtracting the two Triangle-Rank values as an effect
+size.</p>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p class="footer-title">Study 3 · generated 2026-08-13 15:01 PDT</p>
+  <p>Source reports: <code>runs/study3_reverse/report.heldout.embeddinggemma-300m-d512.json</code> and
+     <code>runs/study3_reverse_sys/report.heldout.embeddinggemma-300m-d512.json</code>. Built by
+     <code>experimental-notes/build_study2.py</code>. Every figure and quoted value is computed
+     from those reports.</p>
+  <p>Distribution-aware metrics follow Chan, Ni, Ross, Vijayanarasimhan, Myers &amp;
+     Canny, <em>Distribution Aware Metrics for Conditional Natural Language Generation</em>,
+     LREC-COLING 2024, pp. 5064–5095.</p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reverse direction — Study 3 — Vectorial × BAIR — 2026-08-13</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<header class="masthead study-head">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · Study 3 · audience transfer</p>
+    <h1>Adaptation versus prompting <span class="stamp">2026-08-13</span></h1>
+    <p class="lede">Reddit to LinkedIn across 33 bilateral corpus cells. The report
+    compares 13 method configurations; the primary distributional measure covers
+    11 shared test cells in google/embeddinggemma-300m, dim 512.</p>
+  </div>
+</header>
+<nav class="nav" aria-label="Report sections"><div class="wrap"><a href="index.html" class="">Overview</a><a href="results.html" class="">Results</a><a href="reverse.html" class="here">Reverse direction</a><a href="methods.html" class="">Methods</a><a href="dataset.html" class="">Dataset</a><a href="limitations.html" class="">Limitations</a></div></nav>
+<main class="wrap">
+
+<div class="page-intro"><p class="section-label">Direction check</p>
+<h1>Reddit to LinkedIn</h1>
+<p class="lede">The full method grid is rerun with Reddit as the source and LinkedIn as the target.
+It is scored independently because the target distribution, task pools and reference anchors differ
+from the forward direction. Embedding-derived values use google/embeddinggemma-300m, dim 512.</p></div>
+
+<h2>All configurations on the reverse task</h2>
+<figure class="tablefig"><figcaption><strong>Reverse-direction scorecard</strong><br>
+<span class="sub">Superscripts give the cell base for each value. Every system column in a metric
+uses the same cells; the authentic oracle retains its own smaller base.</span></figcaption>
+<div class="tscroll"><table class="res"><thead><tr><th>family</th><th>configuration</th><th>Triangle-Rank Metric<br><small>lower</small></th><th>Similarity to source<br><small>higher</small></th><th>Writing-habit calibration gap<br><small>lower</small></th><th>Length ratio<br><small>near one</small></th></tr>
+</thead><tbody><tr><th scope='row'>prompting</th><td>GPT-5.6 zero-shot</td><td class='num'>0.422<sup>11</sup></td><td class='num'>0.931<sup>25</sup></td><td class='num'>0.435<sup>25</sup></td><td class='num'>1.145<sup>25</sup></td></tr><tr><th scope='row'>prompting</th><td>Claude zero-shot</td><td class='num'>0.565<sup>11</sup></td><td class='num'>0.844<sup>25</sup></td><td class='num'>0.324<sup>25</sup></td><td class='num'>2.842<sup>25</sup></td></tr><tr><th scope='row'>prompting</th><td>Claude few-shot</td><td class='num'>0.527<sup>11</sup></td><td class='num'>0.867<sup>25</sup></td><td class='num'>0.246<sup>25</sup></td><td class='num'>2.690<sup>25</sup></td></tr><tr><th scope='row'>prompting</th><td>Claude aspect-aware</td><td class='num'>0.604<sup>11</sup></td><td class='num'>0.849<sup>25</sup></td><td class='num'>0.451<sup>25</sup></td><td class='num'>2.916<sup>25</sup></td></tr><tr><th scope='row'>steering</th><td>topic only</td><td class='num'>0.494<sup>11</sup></td><td class='num'>0.862<sup>25</sup></td><td class='num'>0.380<sup>25</sup></td><td class='num'>3.256<sup>25</sup></td></tr><tr><th scope='row'>steering</th><td>retrieved source</td><td class='num'>0.484<sup>11</sup></td><td class='num'>0.861<sup>25</sup></td><td class='num'>0.366<sup>25</sup></td><td class='num'>3.256<sup>25</sup></td></tr><tr><th scope='row'>steering</th><td>aspects</td><td class='num'>0.408<sup>11</sup></td><td class='num'>0.865<sup>25</sup></td><td class='num'>0.313<sup>25</sup></td><td class='num'>1.224<sup>25</sup></td></tr><tr><th scope='row'>soft prompt</th><td>topic only</td><td class='num'>0.255<sup>11</sup></td><td class='num'>0.856<sup>25</sup></td><td class='num'>0.298<sup>25</sup></td><td class='num'>1.398<sup>25</sup></td></tr><tr><th scope='row'>soft prompt</th><td>retrieved source</td><td class='num'>0.250<sup>11</sup></td><td class='num'>0.730<sup>25</sup></td><td class='num'>0.357<sup>25</sup></td><td class='num'>0.824<sup>25</sup></td></tr><tr><th scope='row'>soft prompt</th><td>aspects</td><td class='num'>0.305<sup>11</sup></td><td class='num'>0.854<sup>25</sup></td><td class='num'>0.298<sup>25</sup></td><td class='num'>0.573<sup>25</sup></td></tr><tr><th scope='row'>LoRA</th><td>topic only</td><td class='num'>0.231<sup>11</sup></td><td class='num'>0.811<sup>25</sup></td><td class='num'>0.226<sup>25</sup></td><td class='num'>1.035<sup>25</sup></td></tr><tr><th scope='row'>LoRA</th><td>retrieved source</td><td class='num'>0.176<sup>11</sup></td><td class='num'>0.736<sup>25</sup></td><td class='num'>0.215<sup>25</sup></td><td class='num'>0.891<sup>25</sup></td></tr><tr><th scope='row'>LoRA</th><td>aspects</td><td class='num'>0.240<sup>11</sup></td><td class='num'>0.808<sup>25</sup></td><td class='num'>0.293<sup>25</sup></td><td class='num'>0.795<sup>25</sup></td></tr><tr class='ref'><th scope='row'>reference</th><td>Source-copy floor</td><td class='num'>0.435<sup>11</sup></td><td class='num'>1.000<sup>25</sup></td><td class='num'>0.603<sup>25</sup></td><td class='num'>0.819<sup>25</sup></td></tr><tr class='ref'><th scope='row'>reference</th><td>Wrong-topic control</td><td class='num'>0.622<sup>11</sup></td><td class='num'>0.587<sup>25</sup></td><td class='num'>0.210<sup>25</sup></td><td class='num'>1.837<sup>25</sup></td></tr><tr class='ref'><th scope='row'>reference</th><td>Authentic-post oracle</td><td class='num'>0.110<sup>6</sup></td><td class='num'>0.708<sup>20</sup></td><td class='num'>0.208<sup>20</sup></td><td class='num'>1.007<sup>20</sup></td></tr></tbody></table></div></figure>
+
+
+<h2>Distribution match on the reverse task</h2>
+<svg class="fig" viewBox="0 0 760 549" width="100%" role="img" aria-labelledby="t212b05cc" xmlns="http://www.w3.org/2000/svg"><title id="t212b05cc">Distance from the pool of authentic LinkedIn posts</title><desc>The reverse task uses its own target pool and reference anchors. Zero is the matched-distribution ideal.</desc>
+<text class="fig-title" x="0" y="24" text-anchor="start">Distance from the pool of authentic LinkedIn posts</text>
+<text class="fig-sub" x="0" y="42" text-anchor="start">The reverse task uses its own target pool and reference anchors. Zero is the matched-distribution</text>
+<text class="fig-sub" x="0" y="56" text-anchor="start">ideal.</text>
+<line x1="210.0" y1="118.0" x2="210.0" y2="427.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="210.0" y="442" text-anchor="middle">0.03</text>
+<line x1="329.0" y1="118.0" x2="329.0" y2="427.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="329.0" y="442" text-anchor="middle">0.22</text>
+<line x1="448.0" y1="118.0" x2="448.0" y2="427.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="448.0" y="442" text-anchor="middle">0.40</text>
+<line x1="567.0" y1="118.0" x2="567.0" y2="427.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="567.0" y="442" text-anchor="middle">0.59</text>
+<line x1="686.0" y1="118.0" x2="686.0" y2="427.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="686.0" y="442" text-anchor="middle">0.78</text>
+<line x1="261.6" y1="112.0" x2="261.6" y2="427.0" stroke="#2e7d5b" stroke-width="2" opacity="0.9"/>
+<text class="ref-lbl" x="261.5661148051332" y="106" text-anchor="middle">Authentic oracle · n=6</text>
+<line x1="468.6" y1="112.0" x2="468.6" y2="427.0" stroke="#8b8b8b" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+<text class="ref-lbl" x="468.62990630075853" y="106" text-anchor="middle">Copy floor · n=11</text>
+<line x1="587.9" y1="112.0" x2="587.9" y2="427.0" stroke="#b0a08c" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+<text class="ref-lbl" x="587.9028816213433" y="93" text-anchor="middle">Wrong-topic control · n=11</text>
+<text class="key-lbl" x="6" y="141.12" text-anchor="start">prompting</text>
+<text class="lbl" x="198" y="142.12" text-anchor="end">GPT-5.6 zero-shot</text>
+<line x1="347.0" y1="138.1" x2="347.0" y2="142.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="589.0" y1="138.1" x2="589.0" y2="142.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="347.0" y1="140.1" x2="589.0" y2="140.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="460.6" cy="140.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="142.12" text-anchor="start">0.422</text>
+<text class="lbl" x="198" y="163.12" text-anchor="end">Claude zero-shot</text>
+<line x1="464.4" y1="159.1" x2="464.4" y2="163.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="641.6" y1="159.1" x2="641.6" y2="163.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="464.4" y1="161.1" x2="641.6" y2="161.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="551.9" cy="161.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="163.12" text-anchor="start">0.565</text>
+<text class="lbl" x="198" y="184.12" text-anchor="end">Claude few-shot</text>
+<line x1="436.4" y1="180.1" x2="436.4" y2="184.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="615.5" y1="180.1" x2="615.5" y2="184.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="436.4" y1="182.1" x2="615.5" y2="182.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="527.1" cy="182.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="184.12" text-anchor="start">0.527</text>
+<text class="lbl" x="198" y="205.12" text-anchor="end">Claude aspect-aware</text>
+<line x1="505.2" y1="201.1" x2="505.2" y2="205.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="653.2" y1="201.1" x2="653.2" y2="205.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="505.2" y1="203.1" x2="653.2" y2="203.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="576.4" cy="203.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="205.12" text-anchor="start">0.604</text>
+<text class="key-lbl" x="6" y="234.12" text-anchor="start">steering</text>
+<text class="lbl" x="198" y="235.12" text-anchor="end">topic only</text>
+<line x1="423.5" y1="231.1" x2="423.5" y2="235.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="592.6" y1="231.1" x2="592.6" y2="235.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="423.5" y1="233.1" x2="592.6" y2="233.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="506.2" cy="233.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="235.12" text-anchor="start">0.494</text>
+<text class="lbl" x="198" y="256.12" text-anchor="end">retrieved source</text>
+<line x1="408.2" y1="252.1" x2="408.2" y2="256.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="596.3" y1="252.1" x2="596.3" y2="256.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="408.2" y1="254.1" x2="596.3" y2="254.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="499.8" cy="254.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="256.12" text-anchor="start">0.484</text>
+<text class="lbl" x="198" y="277.12" text-anchor="end">aspects</text>
+<line x1="367.2" y1="273.1" x2="367.2" y2="277.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="535.4" y1="273.1" x2="535.4" y2="277.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="367.2" y1="275.1" x2="535.4" y2="275.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="451.5" cy="275.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="277.12" text-anchor="start">0.408</text>
+<text class="key-lbl" x="6" y="306.12" text-anchor="start">soft prompt</text>
+<text class="lbl" x="198" y="307.12" text-anchor="end">topic only</text>
+<line x1="249.6" y1="303.1" x2="249.6" y2="307.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="478.1" y1="303.1" x2="478.1" y2="307.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="249.6" y1="305.1" x2="478.1" y2="305.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="354.1" cy="305.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="307.12" text-anchor="start">0.255</text>
+<text class="lbl" x="198" y="328.12" text-anchor="end">retrieved source</text>
+<line x1="287.9" y1="324.1" x2="287.9" y2="328.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="414.1" y1="324.1" x2="414.1" y2="328.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="287.9" y1="326.1" x2="414.1" y2="326.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="350.9" cy="326.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="328.12" text-anchor="start">0.250</text>
+<text class="lbl" x="198" y="349.12" text-anchor="end">aspects</text>
+<line x1="273.5" y1="345.1" x2="273.5" y2="349.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="512.5" y1="345.1" x2="512.5" y2="349.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="273.5" y1="347.1" x2="512.5" y2="347.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="385.6" cy="347.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="349.12" text-anchor="start">0.305</text>
+<text class="key-lbl" x="6" y="378.12" text-anchor="start">LoRA</text>
+<text class="lbl" x="198" y="379.12" text-anchor="end">topic only</text>
+<line x1="253.2" y1="375.1" x2="253.2" y2="379.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="443.5" y1="375.1" x2="443.5" y2="379.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="253.2" y1="377.1" x2="443.5" y2="377.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="338.6" cy="377.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="379.12" text-anchor="start">0.231</text>
+<text class="lbl" x="198" y="400.12" text-anchor="end">retrieved source</text>
+<line x1="255.3" y1="396.1" x2="255.3" y2="400.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="358.0" y1="396.1" x2="358.0" y2="400.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="255.3" y1="398.1" x2="358.0" y2="398.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="303.9" cy="398.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="400.12" text-anchor="start">0.176</text>
+<text class="lbl" x="198" y="421.12" text-anchor="end">aspects</text>
+<line x1="242.8" y1="417.1" x2="242.8" y2="421.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="486.5" y1="417.1" x2="486.5" y2="421.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="242.8" y1="419.1" x2="486.5" y2="419.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="344.7" cy="419.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="421.12" text-anchor="start">0.240</text>
+<text class="ax-title" x="448.0" y="459" text-anchor="middle">TRM score</text>
+<text class="fig-note" x="0" y="479" text-anchor="start">Lower is better. Aggregation: each point is the unweighted mean of the per-cell score over 11 cells. The mean is</text>
+<text class="fig-note" x="0" y="493" text-anchor="start">unweighted because the largest cell holds roughly fifteen times the posts of the median, so a size-weighted mean</text>
+<text class="fig-note" x="0" y="507" text-anchor="start">would principally report one topic. The interval is the 2.5 and 97.5 percentiles of 500 bootstrap resamples</text>
+<text class="fig-note" x="0" y="521" text-anchor="start">drawn over cells, cells being the independent unit rather than posts.</text>
+</svg>
+<figure class="tablefig compact-claims">
+<figcaption><strong>Resolved reverse Triangle-Rank comparisons</strong><br>
+<span class="sub">The verdict is generated from interval separation. Point estimates alone do not
+support a finding.</span></figcaption><div class="tscroll"><table class="res claims">
+<thead><tr><th>comparison</th><th>first</th><th>second</th><th>verdict</th></tr></thead>
+<tbody><tr><td>retrieved-source soft prompt vs Claude zero-shot</td><td class='num'>0.250 [0.15, 0.35]</td><td class='num'>0.565 [0.43, 0.71]</td><td class='ok'>first better</td></tr><tr><td>retrieved-source LoRA vs Claude zero-shot</td><td class='num'>0.176 [0.10, 0.26]</td><td class='num'>0.565 [0.43, 0.71]</td><td class='ok'>first better</td></tr><tr><td>retrieved-source steering vs Claude zero-shot</td><td class='num'>0.484 [0.34, 0.64]</td><td class='num'>0.565 [0.43, 0.71]</td><td class='no'>not resolved</td></tr><tr><td>aspect-aware prompting vs Claude zero-shot</td><td class='num'>0.604 [0.49, 0.72]</td><td class='num'>0.565 [0.43, 0.71]</td><td class='no'>not resolved</td></tr><tr><td>aspect soft prompt vs topic-only soft prompt</td><td class='num'>0.305 [0.13, 0.50]</td><td class='num'>0.255 [0.09, 0.45]</td><td class='no'>not resolved</td></tr><tr><td>aspect LoRA vs topic-only LoRA</td><td class='num'>0.240 [0.08, 0.46]</td><td class='num'>0.231 [0.10, 0.40]</td><td class='no'>not resolved</td></tr></tbody></table></div></figure>
+
+<h2>Source preservation on the reverse task</h2>
+<svg class="fig" viewBox="0 0 760 549" width="100%" role="img" aria-labelledby="t888f6e8b" xmlns="http://www.w3.org/2000/svg"><title id="t888f6e8b">Similarity to the supplied Reddit source post</title><desc>Higher values retain more of the input in the primary embedding space; the unchanged-source reference is one by construction.</desc>
+<text class="fig-title" x="0" y="24" text-anchor="start">Similarity to the supplied Reddit source post</text>
+<text class="fig-sub" x="0" y="42" text-anchor="start">Higher values retain more of the input in the primary embedding space; the unchanged-source reference</text>
+<text class="fig-sub" x="0" y="56" text-anchor="start">is one by construction.</text>
+<line x1="210.0" y1="118.0" x2="210.0" y2="427.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="210.0" y="442" text-anchor="middle">0.55</text>
+<line x1="329.0" y1="118.0" x2="329.0" y2="427.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="329.0" y="442" text-anchor="middle">0.67</text>
+<line x1="448.0" y1="118.0" x2="448.0" y2="427.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="447.99999999999994" y="442" text-anchor="middle">0.79</text>
+<line x1="567.0" y1="118.0" x2="567.0" y2="427.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="567.0" y="442" text-anchor="middle">0.91</text>
+<line x1="686.0" y1="118.0" x2="686.0" y2="427.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="686.0" y="442" text-anchor="middle">1.03</text>
+<line x1="242.8" y1="112.0" x2="242.8" y2="427.0" stroke="#b0a08c" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+<text class="ref-lbl" x="242.82758620689657" y="106" text-anchor="middle">Wrong-topic control · n=25</text>
+<line x1="363.3" y1="112.0" x2="363.3" y2="427.0" stroke="#2e7d5b" stroke-width="2" opacity="0.9"/>
+<text class="ref-lbl" x="363.2873549580099" y="93" text-anchor="middle">Authentic oracle · n=20</text>
+<line x1="653.2" y1="112.0" x2="653.2" y2="427.0" stroke="#8b8b8b" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+<text class="ref-lbl" x="653.1724137931035" y="106" text-anchor="middle">Copy floor · n=25</text>
+<text class="key-lbl" x="6" y="141.12" text-anchor="start">prompting</text>
+<text class="lbl" x="198" y="142.12" text-anchor="end">GPT-5.6 zero-shot</text>
+<line x1="577.1" y1="138.1" x2="577.1" y2="142.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="592.3" y1="138.1" x2="592.3" y2="142.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="577.1" y1="140.1" x2="592.3" y2="140.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="584.2" cy="140.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="142.12" text-anchor="start">0.931</text>
+<text class="lbl" x="198" y="163.12" text-anchor="end">Claude zero-shot</text>
+<line x1="484.0" y1="159.1" x2="484.0" y2="163.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="513.4" y1="159.1" x2="513.4" y2="163.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="484.0" y1="161.1" x2="513.4" y2="161.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="498.4" cy="161.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="163.12" text-anchor="start">0.844</text>
+<text class="lbl" x="198" y="184.12" text-anchor="end">Claude few-shot</text>
+<line x1="505.9" y1="180.1" x2="505.9" y2="184.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="536.2" y1="180.1" x2="536.2" y2="184.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="505.9" y1="182.1" x2="536.2" y2="182.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="520.7" cy="182.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="184.12" text-anchor="start">0.867</text>
+<text class="lbl" x="198" y="205.12" text-anchor="end">Claude aspect-aware</text>
+<line x1="489.6" y1="201.1" x2="489.6" y2="205.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="518.2" y1="201.1" x2="518.2" y2="205.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="489.6" y1="203.1" x2="518.2" y2="203.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="503.4" cy="203.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="205.12" text-anchor="start">0.849</text>
+<text class="key-lbl" x="6" y="234.12" text-anchor="start">steering</text>
+<text class="lbl" x="198" y="235.12" text-anchor="end">topic only</text>
+<line x1="503.0" y1="231.1" x2="503.0" y2="235.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="530.7" y1="231.1" x2="530.7" y2="235.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="503.0" y1="233.1" x2="530.7" y2="233.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="515.6" cy="233.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="235.12" text-anchor="start">0.862</text>
+<text class="lbl" x="198" y="256.12" text-anchor="end">retrieved source</text>
+<line x1="502.3" y1="252.1" x2="502.3" y2="256.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="529.7" y1="252.1" x2="529.7" y2="256.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="502.3" y1="254.1" x2="529.7" y2="254.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="515.2" cy="254.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="256.12" text-anchor="start">0.861</text>
+<text class="lbl" x="198" y="277.12" text-anchor="end">aspects</text>
+<line x1="504.1" y1="273.1" x2="504.1" y2="277.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="531.6" y1="273.1" x2="531.6" y2="277.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="504.1" y1="275.1" x2="531.6" y2="275.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="519.2" cy="275.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="277.12" text-anchor="start">0.865</text>
+<text class="key-lbl" x="6" y="306.12" text-anchor="start">soft prompt</text>
+<text class="lbl" x="198" y="307.12" text-anchor="end">topic only</text>
+<line x1="495.8" y1="303.1" x2="495.8" y2="307.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="522.7" y1="303.1" x2="522.7" y2="307.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="495.8" y1="305.1" x2="522.7" y2="305.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="510.4" cy="305.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="307.12" text-anchor="start">0.856</text>
+<text class="lbl" x="198" y="328.12" text-anchor="end">retrieved source</text>
+<line x1="362.7" y1="324.1" x2="362.7" y2="328.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="401.1" y1="324.1" x2="401.1" y2="328.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="362.7" y1="326.1" x2="401.1" y2="326.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="384.7" cy="326.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="328.12" text-anchor="start">0.730</text>
+<text class="lbl" x="198" y="349.12" text-anchor="end">aspects</text>
+<line x1="491.9" y1="345.1" x2="491.9" y2="349.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="523.6" y1="345.1" x2="523.6" y2="349.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="491.9" y1="347.1" x2="523.6" y2="347.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="507.8" cy="347.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="349.12" text-anchor="start">0.854</text>
+<text class="key-lbl" x="6" y="378.12" text-anchor="start">LoRA</text>
+<text class="lbl" x="198" y="379.12" text-anchor="end">topic only</text>
+<line x1="450.1" y1="375.1" x2="450.1" y2="379.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="480.7" y1="375.1" x2="480.7" y2="379.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="450.1" y1="377.1" x2="480.7" y2="377.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="465.4" cy="377.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="379.12" text-anchor="start">0.811</text>
+<text class="lbl" x="198" y="400.12" text-anchor="end">retrieved source</text>
+<line x1="373.3" y1="396.1" x2="373.3" y2="400.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="407.4" y1="396.1" x2="407.4" y2="400.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="373.3" y1="398.1" x2="407.4" y2="398.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="390.7" cy="398.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="400.12" text-anchor="start">0.736</text>
+<text class="lbl" x="198" y="421.12" text-anchor="end">aspects</text>
+<line x1="435.1" y1="417.1" x2="435.1" y2="421.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="483.5" y1="417.1" x2="483.5" y2="421.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="435.1" y1="419.1" x2="483.5" y2="419.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="462.0" cy="419.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="421.12" text-anchor="start">0.808</text>
+<text class="ax-title" x="448.0" y="459" text-anchor="middle">Cosine similarity to source</text>
+<text class="fig-note" x="0" y="479" text-anchor="start">Higher is better. Aggregation: each point is the unweighted mean of the per-cell score over 25 cells. The mean</text>
+<text class="fig-note" x="0" y="493" text-anchor="start">is unweighted because the largest cell holds roughly fifteen times the posts of the median, so a size-weighted</text>
+<text class="fig-note" x="0" y="507" text-anchor="start">mean would principally report one topic. The interval is the 2.5 and 97.5 percentiles of 500 bootstrap resamples</text>
+<text class="fig-note" x="0" y="521" text-anchor="start">drawn over cells, cells being the independent unit rather than posts.</text>
+</svg>
+<figure class="tablefig compact-claims">
+<figcaption><strong>Resolved reverse source-similarity comparisons</strong><br>
+<span class="sub">The verdict is generated from interval separation. Point estimates alone do not
+support a finding.</span></figcaption><div class="tscroll"><table class="res claims">
+<thead><tr><th>comparison</th><th>first</th><th>second</th><th>verdict</th></tr></thead>
+<tbody><tr><td>retrieved-source soft prompt vs Claude zero-shot</td><td class='num'>0.730 [0.71, 0.75]</td><td class='num'>0.844 [0.83, 0.86]</td><td class='warn'>second better</td></tr><tr><td>retrieved-source LoRA vs Claude zero-shot</td><td class='num'>0.736 [0.72, 0.75]</td><td class='num'>0.844 [0.83, 0.86]</td><td class='warn'>second better</td></tr><tr><td>retrieved-source steering vs Claude zero-shot</td><td class='num'>0.861 [0.85, 0.88]</td><td class='num'>0.844 [0.83, 0.86]</td><td class='no'>not resolved</td></tr><tr><td>aspect-aware prompting vs Claude zero-shot</td><td class='num'>0.849 [0.84, 0.86]</td><td class='num'>0.844 [0.83, 0.86]</td><td class='no'>not resolved</td></tr><tr><td>aspect soft prompt vs topic-only soft prompt</td><td class='num'>0.854 [0.84, 0.87]</td><td class='num'>0.856 [0.84, 0.87]</td><td class='no'>not resolved</td></tr><tr><td>aspect LoRA vs topic-only LoRA</td><td class='num'>0.808 [0.78, 0.83]</td><td class='num'>0.811 [0.80, 0.83]</td><td class='no'>not resolved</td></tr></tbody></table></div></figure>
+
+<h2>Writing-habit match on the reverse task</h2>
+<svg class="fig" viewBox="0 0 760 535" width="100%" role="img" aria-labelledby="t1963a0bb" xmlns="http://www.w3.org/2000/svg"><title id="t1963a0bb">Divergence from authentic LinkedIn writing habits</title><desc>The same twenty-one transparent surface features are evaluated with LinkedIn as the target.</desc>
+<text class="fig-title" x="0" y="24" text-anchor="start">Divergence from authentic LinkedIn writing habits</text>
+<text class="fig-sub" x="0" y="42" text-anchor="start">The same twenty-one transparent surface features are evaluated with LinkedIn as the target.</text>
+<line x1="210.0" y1="104.0" x2="210.0" y2="413.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="210.0" y="428" text-anchor="middle">0.19</text>
+<line x1="329.0" y1="104.0" x2="329.0" y2="413.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="329.0" y="428" text-anchor="middle">0.26</text>
+<line x1="448.0" y1="104.0" x2="448.0" y2="413.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="447.99999999999994" y="428" text-anchor="middle">0.32</text>
+<line x1="567.0" y1="104.0" x2="567.0" y2="413.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="567.0" y="428" text-anchor="middle">0.39</text>
+<line x1="686.0" y1="104.0" x2="686.0" y2="413.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="686.0" y="428" text-anchor="middle">0.45</text>
+<line x1="381.3" y1="98.0" x2="381.3" y2="413.0" stroke="#b0a08c" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+<text class="ref-lbl" x="381.3240064432949" y="92" text-anchor="middle">Wrong-topic control · n=17</text>
+<line x1="487.0" y1="98.0" x2="487.0" y2="413.0" stroke="#2e7d5b" stroke-width="2" opacity="0.9"/>
+<text class="ref-lbl" x="486.9684596320638" y="79" text-anchor="middle">Authentic oracle · n=12</text>
+<line x1="511.2" y1="98.0" x2="511.2" y2="413.0" stroke="#8b8b8b" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+<text class="ref-lbl" x="511.20635553877014" y="66" text-anchor="middle">Copy floor · n=17</text>
+<text class="key-lbl" x="6" y="127.12" text-anchor="start">prompting</text>
+<text class="lbl" x="198" y="128.12" text-anchor="end">GPT-5.6 zero-shot</text>
+<line x1="381.8" y1="124.1" x2="381.8" y2="128.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="549.7" y1="124.1" x2="549.7" y2="128.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="381.8" y1="126.1" x2="549.7" y2="126.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="469.4" cy="126.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="128.12" text-anchor="start">0.333</text>
+<text class="lbl" x="198" y="149.12" text-anchor="end">Claude zero-shot</text>
+<line x1="505.6" y1="145.1" x2="505.6" y2="149.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="634.7" y1="145.1" x2="634.7" y2="149.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="505.6" y1="147.1" x2="634.7" y2="147.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="567.0" cy="147.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="149.12" text-anchor="start">0.387</text>
+<text class="lbl" x="198" y="170.12" text-anchor="end">Claude few-shot</text>
+<line x1="468.3" y1="166.1" x2="468.3" y2="170.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="621.0" y1="166.1" x2="621.0" y2="170.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="468.3" y1="168.1" x2="621.0" y2="168.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="538.7" cy="168.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="170.12" text-anchor="start">0.371</text>
+<text class="lbl" x="198" y="191.12" text-anchor="end">Claude aspect-aware</text>
+<line x1="497.0" y1="187.1" x2="497.0" y2="191.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="612.0" y1="187.1" x2="612.0" y2="191.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="497.0" y1="189.1" x2="612.0" y2="189.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="556.2" cy="189.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="191.12" text-anchor="start">0.381</text>
+<text class="key-lbl" x="6" y="220.12" text-anchor="start">steering</text>
+<text class="lbl" x="198" y="221.12" text-anchor="end">topic only</text>
+<line x1="517.3" y1="217.1" x2="517.3" y2="221.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="648.1" y1="217.1" x2="648.1" y2="221.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="517.3" y1="219.1" x2="648.1" y2="219.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="581.1" cy="219.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="221.12" text-anchor="start">0.395</text>
+<text class="lbl" x="198" y="242.12" text-anchor="end">retrieved source</text>
+<line x1="523.4" y1="238.1" x2="523.4" y2="242.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="653.2" y1="238.1" x2="653.2" y2="242.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="523.4" y1="240.1" x2="653.2" y2="240.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="587.7" cy="240.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="242.12" text-anchor="start">0.398</text>
+<text class="lbl" x="198" y="263.12" text-anchor="end">aspects</text>
+<line x1="432.4" y1="259.1" x2="432.4" y2="263.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="562.8" y1="259.1" x2="562.8" y2="263.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="432.4" y1="261.1" x2="562.8" y2="261.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="507.0" cy="261.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="263.12" text-anchor="start">0.354</text>
+<text class="key-lbl" x="6" y="292.12" text-anchor="start">soft prompt</text>
+<text class="lbl" x="198" y="293.12" text-anchor="end">topic only</text>
+<line x1="277.7" y1="289.1" x2="277.7" y2="293.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="430.2" y1="289.1" x2="430.2" y2="293.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="277.7" y1="291.1" x2="430.2" y2="291.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="357.6" cy="291.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="293.12" text-anchor="start">0.272</text>
+<text class="lbl" x="198" y="314.12" text-anchor="end">retrieved source</text>
+<line x1="253.4" y1="310.1" x2="253.4" y2="314.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="443.2" y1="310.1" x2="443.2" y2="314.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="253.4" y1="312.1" x2="443.2" y2="312.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="347.8" cy="312.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="314.12" text-anchor="start">0.266</text>
+<text class="lbl" x="198" y="335.12" text-anchor="end">aspects</text>
+<line x1="276.7" y1="331.1" x2="276.7" y2="335.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="486.6" y1="331.1" x2="486.6" y2="335.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="276.7" y1="333.1" x2="486.6" y2="333.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="386.6" cy="333.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="335.12" text-anchor="start">0.287</text>
+<text class="key-lbl" x="6" y="364.12" text-anchor="start">LoRA</text>
+<text class="lbl" x="198" y="365.12" text-anchor="end">topic only</text>
+<line x1="262.1" y1="361.1" x2="262.1" y2="365.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="439.1" y1="361.1" x2="439.1" y2="365.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="262.1" y1="363.1" x2="439.1" y2="363.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="354.9" cy="363.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="365.12" text-anchor="start">0.270</text>
+<text class="lbl" x="198" y="386.12" text-anchor="end">retrieved source</text>
+<line x1="242.8" y1="382.1" x2="242.8" y2="386.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="424.6" y1="382.1" x2="424.6" y2="386.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="242.8" y1="384.1" x2="424.6" y2="384.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="339.7" cy="384.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="386.12" text-anchor="start">0.262</text>
+<text class="lbl" x="198" y="407.12" text-anchor="end">aspects</text>
+<line x1="277.8" y1="403.1" x2="277.8" y2="407.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="467.9" y1="403.1" x2="467.9" y2="407.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="277.8" y1="405.1" x2="467.9" y2="405.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="378.2" cy="405.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="407.12" text-anchor="start">0.283</text>
+<text class="ax-title" x="448.0" y="445" text-anchor="middle">Mean writing-habit Jensen–Shannon divergence</text>
+<text class="fig-note" x="0" y="465" text-anchor="start">Lower is better. Aggregation: each point is the unweighted mean of the per-cell score over 17 cells. The mean is</text>
+<text class="fig-note" x="0" y="479" text-anchor="start">unweighted because the largest cell holds roughly fifteen times the posts of the median, so a size-weighted mean</text>
+<text class="fig-note" x="0" y="493" text-anchor="start">would principally report one topic. The interval is the 2.5 and 97.5 percentiles of 500 bootstrap resamples</text>
+<text class="fig-note" x="0" y="507" text-anchor="start">drawn over cells, cells being the independent unit rather than posts.</text>
+</svg>
+<figure class="tablefig compact-claims">
+<figcaption><strong>Resolved reverse writing-habit comparisons</strong><br>
+<span class="sub">The verdict is generated from interval separation. Point estimates alone do not
+support a finding.</span></figcaption><div class="tscroll"><table class="res claims">
+<thead><tr><th>comparison</th><th>first</th><th>second</th><th>verdict</th></tr></thead>
+<tbody><tr><td>retrieved-source soft prompt vs Claude zero-shot</td><td class='num'>0.266 [0.21, 0.32]</td><td class='num'>0.387 [0.35, 0.42]</td><td class='ok'>first better</td></tr><tr><td>retrieved-source LoRA vs Claude zero-shot</td><td class='num'>0.262 [0.21, 0.31]</td><td class='num'>0.387 [0.35, 0.42]</td><td class='ok'>first better</td></tr><tr><td>retrieved-source steering vs Claude zero-shot</td><td class='num'>0.398 [0.36, 0.43]</td><td class='num'>0.387 [0.35, 0.42]</td><td class='no'>not resolved</td></tr><tr><td>aspect-aware prompting vs Claude zero-shot</td><td class='num'>0.381 [0.35, 0.41]</td><td class='num'>0.387 [0.35, 0.42]</td><td class='no'>not resolved</td></tr><tr><td>aspect soft prompt vs topic-only soft prompt</td><td class='num'>0.287 [0.23, 0.34]</td><td class='num'>0.272 [0.23, 0.31]</td><td class='no'>not resolved</td></tr><tr><td>aspect LoRA vs topic-only LoRA</td><td class='num'>0.283 [0.23, 0.33]</td><td class='num'>0.270 [0.22, 0.32]</td><td class='no'>not resolved</td></tr></tbody></table></div></figure>
+
+<h2>Topic-mixture match on the reverse task</h2>
+<svg class="fig" viewBox="0 0 760 549" width="100%" role="img" aria-labelledby="t26e81327" xmlns="http://www.w3.org/2000/svg"><title id="t26e81327">Divergence from the authentic LinkedIn topic mixture</title><desc>The wrong-topic control tests whether authentic LinkedIn form can succeed without the requested content.</desc>
+<text class="fig-title" x="0" y="24" text-anchor="start">Divergence from the authentic LinkedIn topic mixture</text>
+<text class="fig-sub" x="0" y="42" text-anchor="start">The wrong-topic control tests whether authentic LinkedIn form can succeed without the requested</text>
+<text class="fig-sub" x="0" y="56" text-anchor="start">content.</text>
+<line x1="210.0" y1="118.0" x2="210.0" y2="427.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="210.0" y="442" text-anchor="middle">0.09</text>
+<line x1="329.0" y1="118.0" x2="329.0" y2="427.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="329.0" y="442" text-anchor="middle">0.27</text>
+<line x1="448.0" y1="118.0" x2="448.0" y2="427.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="448.0" y="442" text-anchor="middle">0.46</text>
+<line x1="567.0" y1="118.0" x2="567.0" y2="427.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="567.0" y="442" text-anchor="middle">0.64</text>
+<line x1="686.0" y1="118.0" x2="686.0" y2="427.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="686.0" y="442" text-anchor="middle">0.82</text>
+<line x1="277.1" y1="112.0" x2="277.1" y2="427.0" stroke="#2e7d5b" stroke-width="2" opacity="0.9"/>
+<text class="ref-lbl" x="277.0768156033786" y="106" text-anchor="middle">Authentic oracle · n=12</text>
+<line x1="386.6" y1="112.0" x2="386.6" y2="427.0" stroke="#8b8b8b" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+<text class="ref-lbl" x="386.58162010167115" y="93" text-anchor="middle">Copy floor · n=17</text>
+<line x1="653.2" y1="112.0" x2="653.2" y2="427.0" stroke="#b0a08c" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+<text class="ref-lbl" x="653.1724137931035" y="106" text-anchor="middle">Wrong-topic control · n=17</text>
+<text class="key-lbl" x="6" y="141.12" text-anchor="start">prompting</text>
+<text class="lbl" x="198" y="142.12" text-anchor="end">GPT-5.6 zero-shot</text>
+<line x1="287.7" y1="138.1" x2="287.7" y2="142.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="423.2" y1="138.1" x2="423.2" y2="142.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="287.7" y1="140.1" x2="423.2" y2="140.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="354.3" cy="140.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="142.12" text-anchor="start">0.313</text>
+<text class="lbl" x="198" y="163.12" text-anchor="end">Claude zero-shot</text>
+<line x1="276.3" y1="159.1" x2="276.3" y2="163.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="467.3" y1="159.1" x2="467.3" y2="163.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="276.3" y1="161.1" x2="467.3" y2="161.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="367.4" cy="161.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="163.12" text-anchor="start">0.333</text>
+<text class="lbl" x="198" y="184.12" text-anchor="end">Claude few-shot</text>
+<line x1="252.1" y1="180.1" x2="252.1" y2="184.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="437.7" y1="180.1" x2="437.7" y2="184.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="252.1" y1="182.1" x2="437.7" y2="182.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="338.5" cy="182.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="184.12" text-anchor="start">0.289</text>
+<text class="lbl" x="198" y="205.12" text-anchor="end">Claude aspect-aware</text>
+<line x1="265.3" y1="201.1" x2="265.3" y2="205.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="411.7" y1="201.1" x2="411.7" y2="205.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="265.3" y1="203.1" x2="411.7" y2="203.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="339.4" cy="203.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="205.12" text-anchor="start">0.291</text>
+<text class="key-lbl" x="6" y="234.12" text-anchor="start">steering</text>
+<text class="lbl" x="198" y="235.12" text-anchor="end">topic only</text>
+<line x1="248.8" y1="231.1" x2="248.8" y2="235.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="431.7" y1="231.1" x2="431.7" y2="235.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="248.8" y1="233.1" x2="431.7" y2="233.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="334.6" cy="233.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="235.12" text-anchor="start">0.283</text>
+<text class="lbl" x="198" y="256.12" text-anchor="end">retrieved source</text>
+<line x1="242.8" y1="252.1" x2="242.8" y2="256.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="427.5" y1="252.1" x2="427.5" y2="256.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="242.8" y1="254.1" x2="427.5" y2="254.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="329.9" cy="254.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="256.12" text-anchor="start">0.276</text>
+<text class="lbl" x="198" y="277.12" text-anchor="end">aspects</text>
+<line x1="264.6" y1="273.1" x2="264.6" y2="277.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="420.2" y1="273.1" x2="420.2" y2="277.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="264.6" y1="275.1" x2="420.2" y2="275.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="336.1" cy="275.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="277.12" text-anchor="start">0.286</text>
+<text class="key-lbl" x="6" y="306.12" text-anchor="start">soft prompt</text>
+<text class="lbl" x="198" y="307.12" text-anchor="end">topic only</text>
+<line x1="283.1" y1="303.1" x2="283.1" y2="307.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="391.1" y1="303.1" x2="391.1" y2="307.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="283.1" y1="305.1" x2="391.1" y2="305.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="339.8" cy="305.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="307.12" text-anchor="start">0.291</text>
+<text class="lbl" x="198" y="328.12" text-anchor="end">retrieved source</text>
+<line x1="341.1" y1="324.1" x2="341.1" y2="328.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="450.1" y1="324.1" x2="450.1" y2="328.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="341.1" y1="326.1" x2="450.1" y2="326.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="398.3" cy="326.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="328.12" text-anchor="start">0.380</text>
+<text class="lbl" x="198" y="349.12" text-anchor="end">aspects</text>
+<line x1="308.1" y1="345.1" x2="308.1" y2="349.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="429.4" y1="345.1" x2="429.4" y2="349.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="308.1" y1="347.1" x2="429.4" y2="347.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="371.4" cy="347.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="349.12" text-anchor="start">0.339</text>
+<text class="key-lbl" x="6" y="378.12" text-anchor="start">LoRA</text>
+<text class="lbl" x="198" y="379.12" text-anchor="end">topic only</text>
+<line x1="249.9" y1="375.1" x2="249.9" y2="379.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="349.7" y1="375.1" x2="349.7" y2="379.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="249.9" y1="377.1" x2="349.7" y2="377.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="305.0" cy="377.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="379.12" text-anchor="start">0.238</text>
+<text class="lbl" x="198" y="400.12" text-anchor="end">retrieved source</text>
+<line x1="278.2" y1="396.1" x2="278.2" y2="400.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="383.8" y1="396.1" x2="383.8" y2="400.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="278.2" y1="398.1" x2="383.8" y2="398.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="331.7" cy="398.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="400.12" text-anchor="start">0.279</text>
+<text class="lbl" x="198" y="421.12" text-anchor="end">aspects</text>
+<line x1="320.1" y1="417.1" x2="320.1" y2="421.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="477.3" y1="417.1" x2="477.3" y2="421.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="320.1" y1="419.1" x2="477.3" y2="419.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="401.2" cy="419.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="421.12" text-anchor="start">0.385</text>
+<text class="ax-title" x="448.0" y="459" text-anchor="middle">Topic-cluster Jensen–Shannon divergence</text>
+<text class="fig-note" x="0" y="479" text-anchor="start">Lower is better. Aggregation: each point is the unweighted mean of the per-cell score over 17 cells. The mean is</text>
+<text class="fig-note" x="0" y="493" text-anchor="start">unweighted because the largest cell holds roughly fifteen times the posts of the median, so a size-weighted mean</text>
+<text class="fig-note" x="0" y="507" text-anchor="start">would principally report one topic. The interval is the 2.5 and 97.5 percentiles of 500 bootstrap resamples</text>
+<text class="fig-note" x="0" y="521" text-anchor="start">drawn over cells, cells being the independent unit rather than posts.</text>
+</svg>
+<figure class="tablefig compact-claims">
+<figcaption><strong>Resolved reverse topic-mixture comparisons</strong><br>
+<span class="sub">The verdict is generated from interval separation. Point estimates alone do not
+support a finding.</span></figcaption><div class="tscroll"><table class="res claims">
+<thead><tr><th>comparison</th><th>first</th><th>second</th><th>verdict</th></tr></thead>
+<tbody><tr><td>retrieved-source soft prompt vs Claude zero-shot</td><td class='num'>0.380 [0.29, 0.46]</td><td class='num'>0.333 [0.19, 0.49]</td><td class='no'>not resolved</td></tr><tr><td>retrieved-source LoRA vs Claude zero-shot</td><td class='num'>0.279 [0.20, 0.36]</td><td class='num'>0.333 [0.19, 0.49]</td><td class='no'>not resolved</td></tr><tr><td>retrieved-source steering vs Claude zero-shot</td><td class='num'>0.276 [0.14, 0.42]</td><td class='num'>0.333 [0.19, 0.49]</td><td class='no'>not resolved</td></tr><tr><td>aspect-aware prompting vs Claude zero-shot</td><td class='num'>0.291 [0.18, 0.40]</td><td class='num'>0.333 [0.19, 0.49]</td><td class='no'>not resolved</td></tr><tr><td>aspect soft prompt vs topic-only soft prompt</td><td class='num'>0.339 [0.24, 0.43]</td><td class='num'>0.291 [0.20, 0.37]</td><td class='no'>not resolved</td></tr><tr><td>aspect LoRA vs topic-only LoRA</td><td class='num'>0.385 [0.26, 0.50]</td><td class='num'>0.238 [0.15, 0.31]</td><td class='no'>not resolved</td></tr></tbody></table></div></figure>
+
+
+<h2>Which reverse comparisons are resolved</h2>
+<figure class="tablefig"><figcaption><strong>Triangle-Rank comparisons</strong><br>
+<span class="sub">Lower is better. A difference is supported only when the intervals do not overlap.
+The shared comparison base is 11 cells.</span></figcaption>
+<div class="tscroll"><table class="res claims"><thead><tr><th>comparison</th><th>first</th>
+<th>second</th><th>verdict</th></tr></thead><tbody><tr><td>soft prompt vs Claude zero-shot</td><td class='num'>0.250 [0.15, 0.35]</td><td class='num'>0.565 [0.43, 0.71]</td><td class='ok'>supported</td></tr><tr><td>LoRA vs Claude zero-shot</td><td class='num'>0.176 [0.10, 0.26]</td><td class='num'>0.565 [0.43, 0.71]</td><td class='ok'>supported</td></tr><tr><td>steering vs Claude zero-shot</td><td class='num'>0.484 [0.34, 0.64]</td><td class='num'>0.565 [0.43, 0.71]</td><td class='no'>not resolved</td></tr><tr><td>aspect-aware vs Claude zero-shot</td><td class='num'>0.604 [0.49, 0.72]</td><td class='num'>0.565 [0.43, 0.71]</td><td class='no'>not resolved</td></tr><tr><td>aspect soft prompt vs topic-only</td><td class='num'>0.305 [0.13, 0.50]</td><td class='num'>0.255 [0.09, 0.45]</td><td class='no'>not resolved</td></tr><tr><td>LoRA vs soft prompt</td><td class='num'>0.176 [0.10, 0.26]</td><td class='num'>0.250 [0.15, 0.35]</td><td class='no'>not resolved</td></tr></tbody></table></div></figure>
+
+<h2>How to read the direction comparison</h2>
+<p>The forward and reverse values must not be treated as columns in one ranking. Each direction has
+its own authentic target pool and reference anchors. Agreement in the winning family is evidence of
+directional stability; a different ordering is evidence that the intervention depends on which
+platform is being modelled. Neither permits subtracting the two Triangle-Rank values as an effect
+size.</p>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p class="footer-title">Study 3 · generated 2026-08-13 15:09 PDT</p>
+  <p>Source reports: <code>runs/study3_reverse/report.heldout.embeddinggemma-300m-d512.json</code> and
+     <code>runs/study3_reverse_sys/report.heldout.embeddinggemma-300m-d512.json</code>. Built by
+     <code>experimental-notes/build_study2.py</code>. Every figure and quoted value is computed
+     from those reports.</p>
+  <p>Distribution-aware metrics follow Chan, Ni, Ross, Vijayanarasimhan, Myers &amp;
+     Canny, <em>Distribution Aware Metrics for Conditional Natural Language Generation</em>,
+     LREC-COLING 2024, pp. 5064–5095.</p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Baselines and metrics — Vectorial × BAIR transfer evaluation — 2026-08-20</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · cross-platform audience transfer</p>
+    <h1>Experimental notes <span class="stamp">2026-08-20</span></h1>
+    <p class="lede">Evaluating LinkedIn → Reddit transfer functions across 30 bilateral
+    cells, with four candidates drawn per source post. Generated 2026-08-20 11:33 PDT.</p>
+  </div>
+</header>
+<nav class="nav"><div class="wrap"><a href="index.html" class="">Overview</a><a href="dataset.html" class="">Dataset</a><a href="methods.html" class="here">Baselines &amp; metrics</a><a href="results.html" class="">Results</a><a href="embedding-space.html" class="">Embedding space</a><a href="limitations.html" class="">Limitations</a></div></nav>
+<main class="wrap">
+
+<h2>Why the evaluation is distributional</h2>
+<p>No correspondence exists between individual posts across the two platforms, so no
+generated post has a gold reference against which it can be compared. Every metric
+therefore compares a pool of generated posts against a pool of authentic target posts
+within a single cell. This constraint excludes reference-based scores of the BLEU and
+ROUGE family and determines the remainder of the design.</p>
+
+<h2>The baselines</h2>
+<p>Three of the six columns are reference points rather than attempts at the task.
+They calibrate the metrics, and a metric that fails to separate them as designed cannot
+support any conclusion about a genuine system.</p>
+
+<div class="cards">
+  <article class="card">
+    <h3><span class="swatch" style="background:#8b8b8b"></span>identity</h3>
+    <p class="role">Floor on transfer and ceiling on preservation</p>
+    <p>Reproduces the source post without modification. It attains a preservation score
+    of 1.000 by construction and records the worst calibration gap, because an
+    untouched LinkedIn post is the least Reddit-like column in the table.</p>
+  </article>
+  <article class="card">
+    <h3><span class="swatch" style="background:#2e7d5b"></span>target sample</h3>
+    <p class="role">Oracle ceiling for distribution matching</p>
+    <p>Emits an authentic Reddit post drawn from the train split of the same cell. It
+    never emits the post against which it is scored, which would render the ceiling
+    spurious. It attains a TRM of 0.035 and the only non-significant p-value at
+    0.512.</p>
+    <p class="caveat">It retains no content from the specific source post and scores
+    0.070 on preservation. It establishes the ceiling for distribution matching alone,
+    whereas the identity baseline establishes the ceiling for preservation. Neither
+    baseline individually represents the objective.</p>
+  </article>
+  <article class="card">
+    <h3><span class="swatch" style="background:#b0a08c"></span>shuffle control</h3>
+    <p class="role">Negative control</p>
+    <p>Emits an authentic Reddit post drawn from a different cell, which supplies the
+    correct register together with an unrelated topic. Any metric that scores this
+    column comparably to the oracle is indexed on style and blind to semantics, which
+    is the principal risk identified for this project.</p>
+  </article>
+</div>
+
+<p class="note">The control demonstrates its value immediately. It attains a
+calibration gap of 0.150 against the oracle's 0.192, which establishes that the
+classifier cannot distinguish correct topic from incorrect topic. It attains a topic
+JSD of 0.800 against the oracle's 0.226. The classifier therefore cannot be reported in
+isolation.</p>
+
+<h2>The candidate systems</h2>
+<div class="cards">
+  <article class="card">
+    <h3><span class="swatch" style="background:#c25e3a"></span>Claude zero-shot</h3>
+    <p class="role">llm_rewrite</p>
+    <p>Receives the audience, domain, topic and target platform together with a brief
+    statement of platform norms, and returns a rewritten post. No target-platform text
+    is supplied. It measures the portion of the transfer recoverable from the model's
+    prior alone.</p>
+  </article>
+  <article class="card">
+    <h3><span class="swatch" style="background:#d99a4e"></span>Claude few-shot</h3>
+    <p class="role">llm_fewshot with four exemplars</p>
+    <p>Receives the same prompt together with four authentic Reddit posts from the
+    train split of the same cell. The difference against the zero-shot configuration
+    isolates the contribution of observing the authentic target distribution.</p>
+  </article>
+  <article class="card">
+    <h3><span class="swatch" style="background:#4a6fa5"></span>GPT-5.6 zero-shot</h3>
+    <p class="role">llm_rewrite on a second model family</p>
+    <p>Applies the zero-shot prompt to a different model family, so that the findings
+    are not confounded with the house style of a single vendor.</p>
+  </article>
+</div>
+<p class="note">Both rewriters are deliberately naive surface rewriters, and the prompt
+makes no attempt at trait extraction. They establish the standard that a trait-mediated
+function must exceed rather than a proposed solution.</p>
+
+<figure class="exfig"><figcaption>The authentic train-split posts supplied to the few-shot configuration for a task in <code>backend_engineer::code_editors</code>. The model receives these in addition to the zero-shot prompt, and it is scored against different posts drawn from the held-out split of the same cell.</figcaption><div class="example grid2"><div class="ex-col alt"><h3>Exemplar 1 · authentic Reddit</h3><p>I have put together a simple guide to vi commands that actually helped me all these years when editing configs or scripts on Linux. Short, practical, and focused on real examples. Let me know if I have missed some..would love to take feedbacks and make it an exhaustive list! [Read it here](https://medium.com/stackademic/the-80-20-guide-to-vi-editor-20-of-commands-that-do-80-of-the-work-ff1ce320f461?sk=b61c38fdc6a69ae5ba7400390964934b)</p></div><div class="ex-col alt"><h3>Exemplar 2 · authentic Reddit</h3><p>Please give me some advice on a VsCode extension I have created, that shows how many hours you have coded vs your friends.</p></div><div class="ex-col alt"><h3>Exemplar 3 · authentic Reddit</h3><p>Hey, I created a VsCode extension that shows how many hours you have coded vs your friends.</p></div></div></figure>
+
+<h2>How many candidates are drawn</h2>
+<p>Each language model is asked for four separate rewrites of every source post rather
+than one. The group-level measures compare a set of generated posts against a set of real
+posts, so drawing several candidates per post enlarges the generated set without needing
+any additional collected data. It is also what the work these measures come from
+prescribes, and it is the only way to observe how much a model varies when asked the same
+question twice.</p>
+<p>This choice materially affects one result. With a single draw per post the vocabulary
+measure could not distinguish the rewriters from the source posts, because the repetition
+happens <em>between</em> draws. With four draws it separates them clearly.</p>
+
+<h2>The metrics</h2>
+<dl class="metrics">
+  <dt>Classifier calibration gap <span class="dir">↓</span></dt>
+  <dd>A classifier separating LinkedIn from Reddit is trained on authentic posts from
+  the train split and then applied to generated posts. The reported score is the
+  absolute difference between the target-platform rate of the generated pool and that
+  of the authentic pool, because the objective is to match the authentic distribution
+  rather than to saturate the classifier. Held-out accuracy is 0.79 for the lexical
+  variant and 0.85 for the stylometric variant, so the classifier is not treated as an
+  oracle.</dd>
+
+  <dt>Source similarity and content-word retention <span class="dir">↑</span></dt>
+  <dd>Cosine similarity between a generated post and its source, together with the
+  proportion of the source's distinctive content words that survive into the output.
+  Embedding similarity can remain high while specific details are discarded, so both
+  quantities are reported.</dd>
+
+  <dt>Triangle-Rank Metric <span class="dir">↓</span></dt>
+  <dd><strong>Base distance: cosine distance in the harness embedding space, which is
+  TF-IDF with truncated SVD at 256 dimensions for every figure in this report.</strong>
+  The statistic is not a measure of distance in itself. It is built on top of one, and the
+  distance it is built on determines what it can detect and is recorded in the notes of every run. Substituting a neural
+  embedding or a learned distance such as BERTScore changes the values, and the
+  comparison should be repeated under any such substitution.
+  For candidates C and references R the metric enumerates every triangle with one
+  vertex in C and two in R and records the rank of the edge joining the two references.
+  Under the null hypothesis that both sets derive from one distribution each rank is
+  equally likely, so each of the three counts should come out at one third. The score is
+  how far the counts stray from that. Because the comparison uses three posts at a time
+  rather than one, it responds both to generated posts landing in the wrong place and to
+  generated posts being too much alike, which a measure based on averages cannot see. It was designed for regimes containing tens of references
+  rather than thousands, unlike MAUVE.</dd>
+
+  <dt>TRM permutation p-value <span class="dir">↑</span></dt>
+  <dd>A permutation test against the pooled null distribution. A high value is the
+  favourable outcome because it establishes that the generated pool is statistically
+  indistinguishable from authentic target posts.</dd>
+
+  <dt>Style-removed variants <span class="dir">↓</span></dt>
+  <dd>The same statistics, and for TRM the same cosine base distance, computed after the
+  linear directions that discriminate the platforms have been projected out. A function that performs well before this step and no better than the shuffle control afterwards has
+  learned only the tone.</dd>
+
+  <dt>Pool self-similarity <span class="dir">↓</span></dt>
+  <dd>The mean similarity of generated posts to one another. The appropriate reference
+  value is the oracle's 0.332, which is the authentic self-similarity of real Reddit
+  posts, rather than zero.</dd>
+
+  <dt>LLM judge detection rate <span class="dir">↓</span></dt>
+  <dd>The judge is framed as a discrimination task rather than a rubric. It receives
+  several authentic posts together with one candidate and must identify the
+  machine-written item, so chance performance is one divided by the number of
+  alternatives. The task is grounded in the authentic posts of the cell, which causes
+  it to assess agreement with a specific audience and topic rather than generic
+  platform register. The judge is drawn from a different model family than the
+  rewriters, because judges exhibit measurable self-preference bias.</dd>
+</dl>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p>Generated from <code>runs/scaled/report.heldout.json</code> and the
+     matching systems-only report by
+     <code>experimental-notes/build.py</code>. Figures are drawn from the report
+     data, not transcribed.</p>
+  <p>Distribution-aware metrics follow Chan, Ni, Ross, Vijayanarasimhan, Myers &amp;
+     Canny, <em>Distribution Aware Metrics for Conditional Natural Language
+     Generation</em>, LREC-COLING 2024, pp. 5064–5095.</p>
+</div></footer>
+</body>
+</html>

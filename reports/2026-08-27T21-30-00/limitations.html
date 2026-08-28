@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limitations — Study 4 — Vectorial × BAIR — 2026-08-27</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<header class="masthead study-head">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · Study 4 · unsupervised platform adaptation</p>
+    <h1>Priors against the frontier <span class="stamp">2026-08-27</span></h1>
+    <p class="lede">LinkedIn to Reddit and back, across 33 bilateral corpus cells. The report compares 46 method configurations against three references; the primary distributional measure covers 12 shared held-out cells in google/embeddinggemma-300m, dim 512.</p>
+  </div>
+</header>
+<nav class="nav" aria-label="Report sections"><div class="wrap"><a href="index.html" class="">Overview</a><a href="results.html" class="">Results</a><a href="reverse.html" class="">Reverse direction</a><a href="methods.html" class="">Methods</a><a href="dataset.html" class="">Dataset</a><a href="limitations.html" class="here">Limitations</a></div></nav>
+<main class="wrap">
+<aside class="warn"><h2>Preliminary build</h2><p>This is not the frozen report. Pages marked not yet available are still running, and no claim resting on them is supported. See <a href="limitations.html">Limitations</a> for verified defects in columns this build still renders.</p></aside>
+<div class="page-intro"><p class="section-label">Caveats</p><h1>What this build cannot support</h1><p class="lede">Two column families are known not to measure what their names say, and the study's scope is narrower than its plan.</p></div>
+<h2 id="defects">Known defects in this build</h2>
+<p>Two families of columns do not measure what their names say. Both are reproduced and
+understood; neither is fixed in this build, and no claim resting on them is safe to quote.</p>
+<h3>Soft-prompt columns collapse to their Stage A adapter</h3>
+<p>The three <code>soft_prompt_s4_soft_*</code> systems generate byte-identical text despite
+loading three genuinely different prompt-embedding tensors (32&nbsp;&times;&nbsp;4096, maximum
+elementwise difference 0.62). All three declare the same <code>initial_adapter</code>. In
+<code>transfer/soft_prompt.py</code> the Stage A adapter is attached with
+<code>PeftModel.from_pretrained</code> and the prompt-tuning artifact is then attached to that
+already-wrapped model, so generation runs through the inner adapter and the virtual tokens are
+never prepended. The output is the Stage A LoRA alone. The <code>soft_prompt_s4_base_soft_*</code>
+columns declare no initial adapter and are not affected by this path.</p>
+<h3>Every steering column is an unsteered baseline</h3>
+<p>Selection returned <code>alpha = 0</code> at <code>layer = 0</code> for lora_interaction, target_lm, target_lm_aspect, target_lm_paired,
+so the intervention is the identity and each steering column is its base model under the
+steering prompt template. This is a selection outcome rather than a crash: no steered grid point
+beat the null under the degeneracy-constrained objective. It is reportable as &ldquo;steering did
+not help&rdquo;, but not as a comparison between steering variants, which are all the same null
+run.</p>
+<p>The reverse direction is generating from the same code path and will need the same two
+corrections before its soft-prompt and steering columns can be read.</p>
+
+<h2 id="topics">Unseen topics, aspects and traits</h2>
+<p>The held-out-cell split contains 5 forward and 5 reverse topic cells.
+These cells remain inside the reported held-out evaluation, but this four-audience case study
+does not support a separate audience-generalisation claim. Positive aspect labels cover
+379 of 750 training posts. Aspect-conditioned columns are exploratory because the
+coverage and human-validation gates were not met. Trait steering was not run because no supplied
+trait contrast passed those gates.</p>
+<h2 id="limits">Limitations</h2>
+<ul>
+<li>No cross-platform person linkage exists.</li>
+<li>The audience mapping is a measurement assumption.</li>
+<li>Collection timestamps do not establish one common observation window across both platforms.</li>
+<li>Upstream profile summaries, keywords and dimensions are weak labels rather than human-validated traits.</li>
+<li>Whole-room trait summaries include held-out authors, so they remain audit-only rather than conditioning the fitted models.</li>
+<li>There is no gold rewrite for an individual source post.</li>
+<li>Twitter and Quora were not present in the supplied corpus and are not reported as completed replications.</li>
+<li>Aspect-conditioned results remain exploratory because the human-validation gate was not met.</li>
+</ul>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p class="footer-title">Study 4 · generated 2026-08-27 21:30 UTC</p>
+  <p>Source reports: <code>runs/study4_forward/report.heldout.embeddinggemma-300m-d512.json</code>,
+     the matching frontier and sensitivity files, and the frozen corpus manifests. Built by
+     <code>experimental-notes/build_study4.py</code>. Every figure and quoted value is computed
+     from those files.</p>
+</div></footer>
+</body>
+</html>

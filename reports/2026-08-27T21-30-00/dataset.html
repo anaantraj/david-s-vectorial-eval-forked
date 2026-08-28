@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dataset — Study 4 — Vectorial × BAIR — 2026-08-27</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<header class="masthead study-head">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · Study 4 · unsupervised platform adaptation</p>
+    <h1>Priors against the frontier <span class="stamp">2026-08-27</span></h1>
+    <p class="lede">LinkedIn to Reddit and back, across 33 bilateral corpus cells. The report compares 46 method configurations against three references; the primary distributional measure covers 12 shared held-out cells in google/embeddinggemma-300m, dim 512.</p>
+  </div>
+</header>
+<nav class="nav" aria-label="Report sections"><div class="wrap"><a href="index.html" class="">Overview</a><a href="results.html" class="">Results</a><a href="reverse.html" class="">Reverse direction</a><a href="methods.html" class="">Methods</a><a href="dataset.html" class="here">Dataset</a><a href="limitations.html" class="">Limitations</a></div></nav>
+<main class="wrap">
+<aside class="warn"><h2>Preliminary build</h2><p>This is not the frozen report. Pages marked not yet available are still running, and no claim resting on them is supported. See <a href="limitations.html">Limitations</a> for verified defects in columns this build still renders.</p></aside>
+<div class="page-intro"><p class="section-label">Corpus</p><h1>Four audiences, two platforms</h1><p class="lede">The supplied exports provide four reviewed bilateral audience mappings. Raw records were deduplicated, author-grouped, time-filtered and split before any derived audience artifact was computed.</p></div>
+<h2 id="corpora">Prior corpora</h2>
+<figure class="tablefig">
+<figcaption><strong>Prior corpora</strong><br><span class="sub">Posts and comments both enter the language prior. Author splits, clone resolution, weak-label provenance and input and output hashes are recorded in the manifests.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>corpus</th><th>total records</th><th>train</th><th>development</th><th>shortfall from requested rung</th></tr></thead>
+<tbody><tr><th scope='row'>Reddit target prior</th><td class="num">38,365</td><td class="num">34,901</td><td class="num">3,464</td><td>instructional_designer: 9,035</td></tr><tr><th scope='row'>LinkedIn target prior</th><td class="num">18,026</td><td class="num">16,103</td><td class="num">1,923</td><td>edtech_engineering: 2,756, fullstack_engineer: 3,907, instructional_designer: 1,364</td></tr></tbody>
+</table></div>
+
+</figure>
+<figure class="tablefig">
+<figcaption><strong>Prior corpus audit</strong><br><span class="sub">Profile-derived details from development authors are absent by construction.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>platform</th><th>cross-room duplicates removed</th><th>held-out profiles excluded</th><th>record types</th><th>rich prior fields</th></tr></thead>
+<tbody><tr><th scope='row'>Reddit</th><td class="num">670</td><td class="num">69</td><td>comment, post</td><td>subreddit, thread_context, context_summary, engagement, dimensions, profile_weak_labels</td></tr><tr><th scope='row'>LinkedIn</th><td class="num">1</td><td class="num">38</td><td>comment, post</td><td>profile and audience aggregates</td></tr></tbody>
+</table></div>
+
+</figure>
+<h2 id="coverage">Structured-prior coverage</h2>
+<figure class="tablefig">
+<figcaption><strong>Training-record coverage of structured priors</strong><br><span class="sub">How many primary training records carry each metadata family the structured prompt can expose.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>platform</th><th>community</th><th>thread context</th><th>engagement</th><th>post dimensions</th><th>train-author weak labels</th><th>train-derived audience prior</th></tr></thead>
+<tbody><tr><th scope='row'>Reddit</th><td class="num">34,901 / 34,901</td><td class="num">34,892 / 34,901</td><td class="num">34,901 / 34,901</td><td class="num">11,766 / 34,901</td><td class="num">34,901 / 34,901</td><td class="num">34,901 / 34,901</td></tr><tr><th scope='row'>LinkedIn</th><td class="num">9,900 / 16,103</td><td class="num">16,103 / 16,103</td><td class="num">16,103 / 16,103</td><td class="num">9,903 / 16,103</td><td class="num">16,103 / 16,103</td><td class="num">16,103 / 16,103</td></tr></tbody>
+</table></div>
+
+</figure>
+<h2 id="sanitization">Scored-context sanitization</h2>
+<figure class="tablefig">
+<figcaption><strong>Scored-context sanitization</strong><br><span class="sub">Normalized validation or test post text, including a scored post contained inside a longer metadata string, is blanked from model-visible metadata. Authentic completion text and record cardinality are unchanged.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>platform</th><th>split</th><th>records</th><th>scored strings removed</th><th>fields</th></tr></thead>
+<tbody><tr><th scope='row'>Reddit</th><td>train</td><td class="num">34,901</td><td class="num">20</td><td>thread_context: 9, title: 11</td></tr><tr><th scope='row'>Reddit</th><td>dev</td><td class="num">3,464</td><td class="num">0</td><td>none</td></tr><tr><th scope='row'>LinkedIn</th><td>train</td><td class="num">16,103</td><td class="num">0</td><td>none</td></tr><tr><th scope='row'>LinkedIn</th><td>dev</td><td class="num">1,923</td><td class="num">0</td><td>none</td></tr></tbody>
+</table></div>
+
+</figure>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p class="footer-title">Study 4 · generated 2026-08-27 21:30 UTC</p>
+  <p>Source reports: <code>runs/study4_forward/report.heldout.embeddinggemma-300m-d512.json</code>,
+     the matching frontier and sensitivity files, and the frozen corpus manifests. Built by
+     <code>experimental-notes/build_study4.py</code>. Every figure and quoted value is computed
+     from those files.</p>
+</div></footer>
+</body>
+</html>

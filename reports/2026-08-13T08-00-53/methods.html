@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methods — Study 2 — Vectorial × BAIR — 2026-08-13</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-svg.js"></script>
+</head>
+<body>
+<header class="masthead study-head">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · Study 2 · audience transfer</p>
+    <h1>Adaptation versus prompting <span class="stamp">2026-08-13</span></h1>
+    <p class="lede">LinkedIn to Reddit across 30 bilateral corpus cells. The report
+    compares 13 method configurations; the primary distributional measure covers
+    5 shared test cells in google/embeddinggemma-300m, dim 512.</p>
+  </div>
+</header>
+<nav class="nav" aria-label="Report sections"><div class="wrap"><a href="index.html" class="">Overview</a><a href="results.html" class="">Results</a><a href="methods.html" class="here">Methods</a><a href="dataset.html" class="">Dataset</a><a href="limitations.html" class="">Limitations</a></div></nav>
+<main class="wrap">
+
+<h1>Methods</h1>
+<p class="lede">Four intervention families address one transfer task. The three adaptation
+families share a rendered context and a Llama base model; they differ in what is fitted and where
+the fitted signal enters generation.</p>
+
+
+<aside class="method-notation">
+<h3>Notation used in the diagrams and objectives</h3>
+<dl class="symbol-list">
+<div><dt>\(a,d_{\mathrm{dom}},\tau,s\)</dt><dd>Audience, domain, topic and supplied source post.
+\(I(a,d_{\mathrm{dom}},\tau,s)\) is the rendered rewrite instruction.</dd></div>
+<div><dt>\(y=(y_1,\ldots,y_T),\ g\)</dt><dd>An authentic target completion and a generated
+post. \(T\) is its token count; \(q\in\{1,\ldots,T\}\) is a token position and \(y_{<q}\)
+denotes the preceding completion tokens.</dd></div>
+<div><dt>\(c,\ x=[c;y]\)</dt><dd>The rendered conditioning context and the resulting token sequence
+when it is followed by completion \(y\). \(c_{\mathrm{topic}}\) is the topic-only instance of
+that context. More generally, \(x\) denotes the sequence passed to the model; steering passes an
+authentic post directly rather than concatenating a separate context and completion.</dd></div>
+<div><dt>\(p_\theta,\ \theta\)</dt><dd>The base model's next-token distribution and its frozen
+parameters. \(p_{\theta,P}\) additionally conditions on learned soft prompt \(P\);
+\(\mathcal L(P)\) is its completion-only negative log-likelihood, with \(\log\) denoting the
+natural logarithm. The dot in \(p_\theta(\cdot\mid c)\) is the continuation sampled conditional
+on context \(c\), and \(\sim\) means “is sampled from.”</dd></div>
+<div><dt>\(E,\ d_{\mathrm{model}},\ P_i\)</dt><dd>The token-embedding map, its width, and learned
+virtual-token vector \(i\). \(P=[P_1;\ldots;P_{32}]\); semicolons denote sequence
+concatenation and \(\leftarrow\) denotes replacement by the expression on the right.</dd></div>
+<div><dt>\(h_\ell,\ \bar h_\ell,\ v_\ell,\ \bar n_\ell\)</dt><dd>For input \(x\),
+\(h_\ell(x,q)\) is the residual state at hidden-state index \(\ell\) and token position \(q\), and
+\(\bar h_\ell(x)\) is its arithmetic mean over completion positions. \(v_\ell\) is the
+target-minus-source mean direction and \(\bar n_\ell\) is the mean residual norm at that index.</dd></div>
+<div><dt>\(\alpha_{\mathrm{st}},\ \Delta_\ell\)</dt><dd>The dimensionless steering strength and the
+resulting offset added at hidden-state index \(\ell\).</dd></div>
+<div><dt>\(R_{\mathrm{train}},S_{\mathrm{train}}\)</dt><dd>The authentic Reddit and LinkedIn
+training-post sets used to fit the steering direction.</dd></div>
+<div><dt>\(W,W',A_{\mathrm L},B_{\mathrm L},r,\alpha_{\mathrm L}\)</dt><dd>A frozen projection, its
+LoRA-modified value, the two trainable low-rank factors, adapter rank, and LoRA scale. The factor
+shapes are \(A_{\mathrm L}\in\mathbb R^{r\times d_{\mathrm{in}}}\) and
+\(B_{\mathrm L}\in\mathbb R^{d_{\mathrm{out}}\times r}\), where \(\mathbb R\) is the real
+numbers and \(d_{\mathrm{in}},d_{\mathrm{out}}\) are the projection's input and output widths.</dd></div>
+<div><dt>\(\kappa,S_\kappa^{\mathrm{train}},x^*\)</dt><dd>A bilateral cell, its train-split
+LinkedIn posts, and the source post retrieved for target completion \(y\).
+\(\arg\max_{x\in A}f(x)\) returns the member of \(A\) with the largest \(f(x)\).</dd></div>
+<div><dt>\(v_{\mathrm{tfidf}},\cos\)</dt><dd>The fitted TF–IDF vector map and cosine similarity,
+\(\cos(u,v)=u^{\mathsf T}v/(\lVert u\rVert_2\lVert v\rVert_2)\), with
+\(\mathsf T\) denoting transpose.</dd></div>
+<div><dt>\(\mathcal A(y),a_j,w_j,w_{j,p},\delta_j\)</dt><dd>The positive aspect-score set for
+completion \(y\), aspect index \(j\), its per-post score, its corpus emphasis weight on platform \(p\),
+and its Reddit-minus-LinkedIn emphasis skew.</dd></div>
+<div><dt>\(|A|,\ \sum,\ \lVert z\rVert_2\)</dt><dd>Set cardinality, finite summation, and
+Euclidean norm.</dd></div>
+</dl>
+</aside>
+
+
+<figure class="concept-figure method-map"><figcaption><strong>Where each method changes the generation process</strong><br><span class="sub">The highlighted stage is the only locus changed by that family. Equations match the implemented intervention; the selected run settings appear below.</span></figcaption><div class="method-grid"><div class="method-node" style="--family:#2a78d6"><div class="method-num">01</div><h3>prompting</h3><div class="method-flow"><span class="route-stage active">input</span><b aria-hidden="true">→</b><span class="route-stage">embedding</span><b aria-hidden="true">→</b><span class="route-stage">hidden</span><b aria-hidden="true">→</b><span class="route-stage">weights</span><b aria-hidden="true">→</b><span class="route-stage">output</span></div><p class="method-locus">Intervention at rendered instruction</p><div class="method-eq">\(g\sim p_\theta(\,\cdot\mid I(a,d_{\mathrm{dom}},\tau,s)\,)\)</div><p class="method-detail">No fitting step. Zero-shot, few-shot and aspect-aware prompts change only the instruction and supplied context; the GPT or Claude model remains fixed.</p></div><div class="method-node" style="--family:#eb6834"><div class="method-num">02</div><h3>steering</h3><div class="method-flow"><span class="route-stage">input</span><b aria-hidden="true">→</b><span class="route-stage">embedding</span><b aria-hidden="true">→</b><span class="route-stage active">hidden</span><b aria-hidden="true">→</b><span class="route-stage">weights</span><b aria-hidden="true">→</b><span class="route-stage">output</span></div><p class="method-locus">Intervention at residual stream</p><div class="method-eq">\(h_\ell\leftarrow h_\ell+\Delta_\ell,\quad \Delta_\ell=\alpha_{\mathrm{st}}\frac{v_\ell}{\lVert v_\ell\rVert_2}\bar n_\ell\)</div><p class="method-detail">Mean target-minus-source activations are fitted without gradients. A forward hook adds the selected offset at every prompt and generated position.</p></div><div class="method-node" style="--family:#1baf7a"><div class="method-num">03</div><h3>soft prompt</h3><div class="method-flow"><span class="route-stage">input</span><b aria-hidden="true">→</b><span class="route-stage active">embedding</span><b aria-hidden="true">→</b><span class="route-stage">hidden</span><b aria-hidden="true">→</b><span class="route-stage">weights</span><b aria-hidden="true">→</b><span class="route-stage">output</span></div><p class="method-locus">Intervention at input embeddings</p><div class="method-eq">\(E(x)\leftarrow[P_1,\ldots,P_{32};E(x)]\)</div><p class="method-detail">The base model is frozen. One global 32-vector prompt is optimised on completion-only negative log-likelihood and selected by validation loss.</p></div><div class="method-node" style="--family:#4a3aa7"><div class="method-num">04</div><h3>LoRA</h3><div class="method-flow"><span class="route-stage">input</span><b aria-hidden="true">→</b><span class="route-stage">embedding</span><b aria-hidden="true">→</b><span class="route-stage">hidden</span><b aria-hidden="true">→</b><span class="route-stage active">weights</span><b aria-hidden="true">→</b><span class="route-stage">output</span></div><p class="method-locus">Intervention at projection weights</p><div class="method-eq">\(W' = W+\frac{\alpha_{\mathrm L}}{r}B_{\mathrm L}A_{\mathrm L}\)</div><p class="method-detail">Only the low-rank matrices are trained. The selected adapter places rank-16 updates in all attention and feed-forward projections.</p></div></div></figure>
+
+<h2>The problem the training data has to solve</h2>
+<p>No LinkedIn post in this corpus has a corresponding Reddit post. That is why the harness compares
+pools rather than pairs, and it is also why a trained method cannot simply be fitted to
+source-and-target examples. Inventing those pairs with a language model would fit the study to
+another model's opinion of the answer, which the evaluation would then measure agreement with.</p>
+
+<p>Instead, soft prompting and LoRA are trained as conditional language models over <strong>real
+Reddit posts from the train split</strong>. Steering uses the same rendered records but estimates a
+target-minus-source activation difference from authentic Reddit and LinkedIn posts rather than an
+optimisation loss. At inference the task's LinkedIn post is supplied as content to carry across. All
+fitting signals remain authentic and inside the train split. Three variants differ only in the
+context rendered around a post:</p>
+
+<figure class="concept-figure conditioning-map"><figcaption><strong>One authentic target completion, three conditioning records</strong><br><span class="sub">For the target-side records shown here, the completion is the real train-split Reddit post \(y\). The branch changes only the context rendered before it. Soft prompting and LoRA mask that context from the loss. Steering mean-pools completion-token activations and also processes authentic LinkedIn records to form the difference of means.</span></figcaption><div class="condition-source"><span>shared response</span><strong>authentic Reddit post \(y\)</strong><small>never a synthetic rewrite</small></div><div class="condition-grid"><article class="condition-card"><span class="condition-tag">T</span><h3>Topic only</h3><div class="condition-eq">\(c_{\mathrm{topic}}=(a,d_{\mathrm{dom}},\tau,\mathrm{Reddit})\)</div><p>No source text is present during fitting. At inference, the LinkedIn post is added to the shared content block.</p><div class="condition-count"><strong>337</strong> train completions</div></article><article class="condition-card"><span class="condition-tag">R</span><h3>Retrieved source</h3><div class="condition-eq">\(x^*=\arg\max_{x\in S_\kappa^{\mathrm{train}}}\cos(v_{\mathrm{tfidf}}(x),v_{\mathrm{tfidf}}(y))\)</div><p>The nearest train-split LinkedIn post from the same cell is included as context. It is a topical neighbour, not a paired reference.</p><div class="condition-count"><strong>337</strong> train completions</div></article><article class="condition-card"><span class="condition-tag">A</span><h3>Aspects</h3><div class="condition-eq">\(\mathcal A(y)=\{(a_j,w_j):w_j>0\}\)</div><p>The positive aspect coordinates of the authentic completion are included. No source post is supplied, so this variant models evaluative emphasis rather than transfer.</p><div class="condition-count"><strong>186</strong> train completions</div></article></div></figure>
+
+<div class="table-shell" role="region" aria-label="Training variant counts" tabindex="0">
+<table class="res simple">
+<thead><tr><th>variant</th><th>what the model is conditioned on</th><th>train</th><th>dev</th><th>test</th></tr></thead>
+<tbody>
+<tr><th scope="row">topic only</th><td>the audience, the domain and the topic</td>
+    <td>337</td><td>69</td><td>89</td></tr>
+<tr><th scope="row">retrieved source</th><td>the above, plus the most similar source post in the same cell</td>
+    <td>337</td><td>69</td><td>89</td></tr>
+<tr><th scope="row">aspects</th><td>the above topic fields, plus the evaluative aspects the real post foregrounds</td>
+    <td>186</td>
+    <td>39</td>
+    <td>51</td></tr>
+</tbody></table></div>
+
+<p>The retrieved-source variant deserves a caveat that the numbers cannot supply. Its pairing is
+built by retrieval within a cell, and retrieval can only find what is there: a retrieved pair
+averages 0.137 cosine similarity against 0.079 for a random pair from the same cell, and
+under one per cent of pairs reach 0.3. It removes the structural mismatch between training and
+inference, where the model would otherwise never have seen the content block it is asked to
+condition on, but it does not teach content preservation, because there is no content
+correspondence in this corpus to teach.</p>
+
+<p>The aspect variant drops content transfer as the objective altogether. Rather than asking the
+model to carry a specific post across, it supplies the evaluative dimensions the real post
+emphasises and asks for a post that foregrounds them. Its context and its completion are genuinely
+coupled, which is not true of the other two. It costs coverage: aspect vocabularies exist for
+17 of the cells present in training.</p>
+
+<h2>Baselines and controls</h2>
+<p>Three reference columns bound the attainable range, and every figure in this report draws all
+three so that no system value is read without them. They are named explicitly below because a
+reference read only by intuition is a reference that will eventually be misread.</p>
+
+<div class="ctrl floor">
+<h4><code>identity</code> — the source-copy floor</h4>
+<p>Emits the source LinkedIn post unchanged. It is simultaneously the floor on transfer, since no
+transformation has occurred, and the ceiling on content preservation, since it attains a cosine
+similarity to the source of exactly one and a copy rate of one by construction. A method that fails
+to improve on this column on the platform-match measures has performed no transfer.</p>
+</div>
+
+<div class="ctrl">
+<h4><code>shuffle_control</code> — the wrong-topic negative control</h4>
+<p>Emits an authentic Reddit post drawn from a <em>different</em> cell. It therefore has perfect
+target-platform register and no relationship to the requested subject. Its purpose is diagnostic: a
+measure that scores this column as highly as the oracle is indexed on register and blind to content,
+which is the study's principal identified risk. Its position is checked on every embedding-derived
+measure, and a measure that fails to rank it worst is not reported as evidence.</p>
+</div>
+
+<div class="ctrl oracle">
+<h4><code>target_sample</code> — the authentic-post oracle</h4>
+<p>Emits an authentic Reddit post drawn from the same cell, from the train split only, so that it
+never emits the specific post it is scored against. It is the practical ceiling: it shows what the
+measures return when the generated pool is in fact drawn from the target distribution. It is the
+reference for every diagnostic whose ideal is a middle value rather than an extreme, and it produces
+no output on the cells reserved for zero-shot generalisation, which is why its cell count is printed
+whenever it differs from the systems'.</p>
+</div>
+
+<p>The tension between the first and the third is the most diagnostic reading in the report. A method
+that improves on <code>identity</code> against the platform classifier while approaching its
+similarity-to-source score is performing substantive work; one that improves on the classifier by
+discarding the input will show a corresponding fall in similarity to source and in content-word
+retention.</p>
+
+<h2>The four families</h2>
+
+<h3 style="color:#2a78d6">Prompting</h3>
+<p>The zero-shot implementation in <code>transfer/llm_rewrite.py</code> sends the audience, domain,
+topic, source post and a target-platform writing hint to a fixed GPT or Claude model. Formally it
+draws \(g\sim p_\theta(\cdot\mid I(a,d_{\mathrm{dom}},\tau,s))\), with no parameter update. Few-shot prompting adds
+the longest available authentic train-split posts from the same cell as style exemplars; an entirely
+held-out cell therefore falls back to zero-shot rather than borrowing from the evaluation split.</p>
+<p>The aspect-aware prompt changes one additional input. For aspect \(j\), it computes an emphasis
+weight separately within each platform and uses the skew
+\(\delta_j=w_{j,\mathrm{Reddit}}-w_{j,\mathrm{LinkedIn}}\). At most four aspects with
+\(\delta_j\geq0.05\) are brought forward and at most three with \(\delta_j\leq-0.05\) are played
+down. The prompt instructs the model to reweight only information already present in the source.</p>
+
+<h3 style="color:#eb6834">Steering</h3>
+<p><code>methods/steering/fit_steering.py</code> performs one forward pass over each authentic
+train-split post. At hidden-state index \(\ell\), it mean-pools only the completion-token residual
+states and forms the global platform direction</p>
+<div class="method-formula">\[
+v_\ell=\frac{1}{|R_{\mathrm{train}}|}\sum_{x\in R_{\mathrm{train}}}\bar h_\ell(x)
+-\frac{1}{|S_{\mathrm{train}}|}\sum_{x\in S_{\mathrm{train}}}\bar h_\ell(x).
+\]</div>
+<p>No gradient is taken. <code>runtime.steering_deltas</code> normalises the raw direction and restores
+the natural layer scale with the mean activation norm \(\bar n_\ell\):
+\(\Delta_\ell=\alpha_{\mathrm{st}}(v_\ell/\lVert v_\ell\rVert_2)\bar n_\ell\). A forward hook adds
+\(\Delta_\ell\) to every sequence position on every decoding step. Layer, strength and global versus
+per-cell scope are selected on validation centroid similarity subject to a degeneracy constraint.
+The reported configurations select global scope.</p>
+
+<h3 style="color:#1baf7a">Soft prompt</h3>
+<p><code>methods/soft_prompt/train.py</code> prepends one shared matrix
+\(P\in\mathbb R^{32\times d_{\mathrm{model}}}\) to every embedded input and freezes the complete base model:
+\(E(x)=[P;E(c);E(y)]\). Its label tensor is \(-100\) over the rendered context \(c\), so the only
+optimised term is the authentic completion:</p>
+<div class="method-formula">\[
+\mathcal{L}(P)=-\sum_{q=1}^{T}\log p_{\theta,P}(y_q\mid c,y_{<q}),
+\qquad \theta\ \text{frozen}.
+\]</div>
+<p>The selected prompt is global rather than cell-specific because most cells contain too few
+training posts to fit a separate continuous prefix and held-out cells would have no prefix. The
+32 vectors are initialised from a natural-language instruction, optimised with AdamW, evaluated on
+completion-only dev loss after each epoch, and restored from the best epoch.</p>
+
+<h3 style="color:#4a3aa7">LoRA</h3>
+<p><code>methods/lora/train.py</code> uses the same completion-only causal-language-model objective,
+but modifies selected projection matrices as
+\(W'=W+(\alpha_{\mathrm{L}}/r)B_{\mathrm{L}}A_{\mathrm{L}}\), with
+\(B_{\mathrm{L}}\in\mathbb R^{d_{\mathrm{out}}\times r}\) and
+\(A_{\mathrm{L}}\in\mathbb R^{r\times d_{\mathrm{in}}}\). The base matrix \(W\) is
+frozen. The selected <code>all-r16</code> preset uses \(r=16\),
+\(\alpha_{\mathrm{L}}=32\), dropout 0.05, and updates the
+<code>q</code>, <code>k</code>, <code>v</code>, <code>o</code>, <code>gate</code>, <code>up</code>
+and <code>down</code> projections. Dev negative log-likelihood is measured before the first update
+and after every epoch; the best adapter is retained and patience-based early stopping prevents a
+later overfit epoch from replacing it.</p>
+
+<figure class="tablefig">
+<figcaption><strong>Selected configurations, as run</strong><br>
+<span class="sub">Read from the run records written beside the outputs, so these are the settings that
+produced the scored generations. Selection was on the validation split in every case.</span></figcaption>
+<div class="tscroll"><table class="res hp">
+<thead><tr><th>family</th><th>variant</th><th>fitted setting</th><th>selected</th><th>decoding</th></tr></thead>
+<tbody><tr><th scope='row' style='color:#eb6834'>steering</th><td>topic only</td><td>layer 20, α=0.1, scope=global</td><td>centroid cos 0.8356 vs 0.8170 unsteered</td><td>4 draws, T=1.0, top-p=—, max_new_tokens=320</td></tr><tr><th scope='row' style='color:#eb6834'>steering</th><td>retrieved source</td><td>layer 16, α=0.5, scope=global</td><td>centroid cos 0.8297 vs 0.8170 unsteered</td><td>4 draws, T=1.0, top-p=—, max_new_tokens=320</td></tr><tr><th scope='row' style='color:#eb6834'>steering</th><td>aspects</td><td>layer 20, α=0.25, scope=global</td><td>centroid cos 0.8300 vs 0.8170 unsteered</td><td>4 draws, T=1.0, top-p=—, max_new_tokens=320</td></tr><tr><th scope='row' style='color:#1baf7a'>soft prompt</th><td>topic only</td><td>64 virtual tokens, lr=0.003, init=sampled_vocab, weight decay=0.0</td><td>epoch 12, dev NLL 2.4377</td><td>4 draws, T=1.0, top-p=1.0, max_new_tokens=512</td></tr><tr><th scope='row' style='color:#1baf7a'>soft prompt</th><td>retrieved source</td><td>32 virtual tokens, lr=0.01, init=text, weight decay=0.0</td><td>epoch 6, dev NLL 2.4840</td><td>4 draws, T=1.0, top-p=1.0, max_new_tokens=512</td></tr><tr><th scope='row' style='color:#1baf7a'>soft prompt</th><td>aspects</td><td>32 virtual tokens, lr=0.01, init=text, weight decay=0.0</td><td>epoch 4, dev NLL 2.6331</td><td>4 draws, T=1.0, top-p=1.0, max_new_tokens=512</td></tr><tr><th scope='row' style='color:#4a3aa7'>LoRA</th><td>topic only</td><td>r=16, α=32, dropout=0.05, lr=0.0001, modules=7 projections</td><td>epoch 2, dev NLL 2.2203</td><td>4 draws, T=1.0, top-p=0.95, max_new_tokens=512</td></tr><tr><th scope='row' style='color:#4a3aa7'>LoRA</th><td>retrieved source</td><td>r=16, α=32, dropout=0.05, lr=0.0001, modules=7 projections</td><td>epoch 2, dev NLL 2.2416</td><td>4 draws, T=1.0, top-p=0.95, max_new_tokens=512</td></tr><tr><th scope='row' style='color:#4a3aa7'>LoRA</th><td>aspects</td><td>r=16, α=32, dropout=0.05, lr=0.0001, modules=7 projections</td><td>epoch 2, dev NLL 2.3953</td><td>4 draws, T=1.0, top-p=0.95, max_new_tokens=512</td></tr></tbody></table></div>
+</figure>
+
+<h2>What was held constant</h2>
+<p>Steering, soft prompting and LoRA use
+<code>meta-llama/Llama-3.1-8B-Instruct</code> in four-bit NF4 and import the rendered context from
+<code>data/build_training.py</code>. The fitting sequence limit is 768 tokens, and the completion is
+always an authentic post from the designated split. LoRA and soft prompting place the rendered
+context in the model's chat template at both fitting and inference. Steering reads and generates
+from the raw rendered text. That wrapping difference is a known confound—not a constant—and is
+therefore carried into the run record and the Limitations page.</p>
+<p>For LoRA and soft prompting, prompt tokens are masked from the loss, validation selects the
+stopping epoch, and test posts are never opened by the training scripts. Steering likewise reads
+train posts to fit the direction and validation generations to select layer and strength; the test
+split is reserved for the reported evaluation.</p>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p class="footer-title">Study 2 · generated 2026-08-13 08:00 PDT</p>
+  <p>Source reports: <code>runs/methods/report.test.embeddinggemma-300m-d512.json</code> and
+     <code>runs/methods_sys/report.test.embeddinggemma-300m-d512.json</code>. Built by
+     <code>experimental-notes/build_study2.py</code>. Every figure and quoted value is computed
+     from those reports.</p>
+  <p>Distribution-aware metrics follow Chan, Ni, Ross, Vijayanarasimhan, Myers &amp;
+     Canny, <em>Distribution Aware Metrics for Conditional Natural Language Generation</em>,
+     LREC-COLING 2024, pp. 5064–5095.</p>
+</div></footer>
+</body>
+</html>

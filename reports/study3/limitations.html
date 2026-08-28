@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limitations — Study 3 — Vectorial × BAIR — 2026-08-13</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<header class="masthead study-head">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · Study 3 · audience transfer</p>
+    <h1>Adaptation versus prompting <span class="stamp">2026-08-13</span></h1>
+    <p class="lede">LinkedIn to Reddit across 33 bilateral corpus cells. The report
+    compares 13 method configurations; the primary distributional measure covers
+    11 shared test cells in google/embeddinggemma-300m, dim 512.</p>
+  </div>
+</header>
+<nav class="nav" aria-label="Report sections"><div class="wrap"><a href="index.html" class="">Overview</a><a href="results.html" class="">Results</a><a href="reverse.html" class="">Reverse direction</a><a href="methods.html" class="">Methods</a><a href="dataset.html" class="">Dataset</a><a href="limitations.html" class="here">Limitations</a></div></nav>
+<main class="wrap">
+
+<h1>Limitations</h1>
+<p class="lede">The conditions under which the results above hold, and the claims they do not
+support.</p>
+
+<h2>Prompt structure across trained methods</h2>
+<p>LoRA, soft prompting and steering place the shared rendered context in the same base-model chat template at fitting and inference. Steering also receives the complete source post, so wrapping and source truncation are held constant across the three mechanisms.</p>
+
+<h2>The primary comparison base is 11 cells</h2>
+<p>Each metric family restricts every method column to one shared cell set, but minimum pool sizes
+make those sets different. The Triangle-Rank Metric covers 11 cells,
+distributional and structural measures cover 16, and the per-post
+semantic, classifier and degeneracy measures cover 25. Resampling is over
+cells rather than posts, since posts within one cell are not exchangeable with posts in another.
+The primary intervals are correspondingly wide. <strong>LoRA against the soft prompt is not resolved
+on the Triangle-Rank Metric</strong>, and the report does not order them.</p>
+
+<h2>The authentic-post oracle covers 6 cells on the primary measure</h2>
+<p>The systems-only report excludes the oracle from the common-cell intersection so that its limited
+coverage does not reduce the method comparison. Identity and the wrong-topic control are therefore
+drawn from the systems-only report on the same 11-cell base as the methods. The oracle is
+overlaid from the full report and covers 6 cells on the
+Triangle-Rank Metric. Its
+rule is a calibration marker rather than a like-for-like aggregate, and every figure label and table
+cell states that base.</p>
+
+<h2>The unbiased MMD estimator is reported but not used here</h2>
+<p>The report carries an unbiased squared MMD (distributional.mmd2) computed as the U-statistic of
+Gretton et al., in which the diagonal terms are removed to eliminate the O(1/n) bias. That statistic
+is unbiased for a non-negative population quantity and is consequently not itself non-negative: on
+pools whose true MMD&sup2; is near zero it takes negative values with probability approaching one
+half, which is what the oracle column (target_sample) exhibits. The V-statistic form retains the
+diagonal, equals the squared norm of the difference of empirical kernel mean embeddings, and is
+non-negative by construction, at the cost of a positive bias that is severe at these pool sizes. On
+this corpus the guard <code>MIN_MMD_POOL = 5</code> leaves the row scored on too few cells to
+support a comparison, so the tables above report centroid distance
+(distributional.centroid_distance) instead and the MMD row should not be read as a result.</p>
+
+<h2>Selection is isolated from the scored reference pool</h2><p>Early stopping and hyperparameter selection use a deterministic train slice defined by a 0.15 blake2b(post_id, seed) hash threshold. Validation and test are untouched references, so this study can score their merged heldout pool without selection leakage.</p>
+
+<h2>The selected corpus does not support a bilateral job-title comparison</h2><p>Subreddit labels are present for 559 of 559 Reddit posts, but job-title labels are present for 0 of 553 LinkedIn posts. The job-title and subreddit infusion rows lack the shared audience-room mapping needed to compare matched populations across platforms. Study 3 therefore evaluates the existing audience-by-topic cells and does not report a job-title or subreddit subpopulation result.</p>
+
+<h2>Steering is reported at a selected strength, and the selection is consequential</h2>
+<p>At the unselected default strength the offset produced degenerate output: repetitive fragments
+continuing to the generation limit, with vocabulary variety (degeneracy.distinct_2) far below every
+other column. All three steering columns would then have been read as a failure of the method rather
+than of a default. The layer and strength reported here were selected on the train-internal selection slice by
+maximising the cosine between the generated and authentic pool centroids subject to a degeneracy
+constraint, with the selected strengths between one tenth and one half of that default. Steering
+nonetheless does not reach the level the other two trained families reach on the triangle score
+(trm.trm), and that result should be read as applying to activation steering at its best available
+setting on this corpus, under this generation configuration, rather than to the method in
+general.</p>
+
+<h2>Length accounts for much of the effect, and is partly a generation setting</h2>
+<p>The largest single difference between the families is output length
+(degeneracy.length_ratio_vs_real). For the soft prompt and for LoRA this is learned from the target
+distribution. For steering it is not: the base model does not emit an end-of-sequence token under
+this prompt and continues to <code>max_new_tokens</code>, so steering's length ratio reflects the
+decoding configuration rather than the intervention. An additive offset in the residual stream alters
+the conditional distribution over tokens without altering the model's stopping behaviour, and a
+comparison that isolated the intervention would require equalising that behaviour across
+families.</p>
+
+<h2>Aspect conditioning rests on vocabularies built with the platform visible</h2>
+<p>The aspect vocabularies were extracted with platform labels visible to the extracting model, so
+the vocabulary may have been constructed to separate the platforms, which is the same signal the
+aspect-conditioned columns are then scored on. A blind rerun is pending. Every aspect-conditioned
+result is provisional until it lands. Coverage is a second constraint: vocabularies join to
+16 of the cells present in training, and the
+aspect-aware prompting column ran unconditioned on roughly half its outputs.</p>
+
+<h2>TRM is not a topic or aspect score</h2>
+<p>The Triangle-Rank Metric compares complete generated and authentic distributions in
+google/embeddinggemma-300m, dim 512 cosine space. Removing two measured platform directions leaves the primary
+ordering nearly unchanged, which shows only that those two directions do not explain the result.
+It does not establish that TRM is dominated by topic, and it cannot determine whether the intended
+evaluative aspects were transferred.</p>
+
+<h2>Scraped text is normalised before scoring</h2><p>The v2 rebuild decodes HTML entities before splitting or scoring. This removes the one-sided token artefact present in the Study 2 inputs.</p>
+
+<h2>Two directions, one base model and one primary embedding space</h2><p>Study 3 evaluates LinkedIn to Reddit and Reddit to LinkedIn on independent comparison bases. The values are not directly subtractable because each direction has a different target distribution and reference pool. All trained families still share one base model, and the primary findings in each direction use one embedding space.</p>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p class="footer-title">Study 3 · generated 2026-08-13 15:09 PDT</p>
+  <p>Source reports: <code>runs/study3/report.heldout.embeddinggemma-300m-d512.json</code> and
+     <code>runs/study3_sys/report.heldout.embeddinggemma-300m-d512.json</code>. Built by
+     <code>experimental-notes/build_study2.py</code>. Every figure and quoted value is computed
+     from those reports.</p>
+  <p>Distribution-aware metrics follow Chan, Ni, Ross, Vijayanarasimhan, Myers &amp;
+     Canny, <em>Distribution Aware Metrics for Conditional Natural Language Generation</em>,
+     LREC-COLING 2024, pp. 5064–5095.</p>
+</div></footer>
+</body>
+</html>

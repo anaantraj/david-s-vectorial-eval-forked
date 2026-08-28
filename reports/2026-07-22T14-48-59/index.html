@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview — Vectorial × BAIR transfer evaluation — 2026-07-22</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · cross-platform audience transfer</p>
+    <h1>Experimental notes <span class="stamp">2026-07-22</span></h1>
+    <p class="lede">Evaluating LinkedIn → Reddit transfer functions across 30 bilateral
+    cells, with four candidates drawn per source post. Generated 2026-07-22 14:48 PDT.</p>
+  </div>
+</header>
+<nav class="nav"><div class="wrap"><a href="index.html" class="here">Overview</a><a href="dataset.html" class="">Dataset</a><a href="methods.html" class="">Baselines &amp; metrics</a><a href="results.html" class="">Results</a><a href="limitations.html" class="">Limitations</a></div></nav>
+<main class="wrap">
+
+<section class="callout">
+  <h2>What we found</h2>
+  <p>Asking a language model to rewrite a LinkedIn post as a Reddit post works well on
+  any single post. The rewrite adopts the tone of the target community, keeps the
+  subject matter, and drops the self-promotion. Read one at a time, the outputs are
+  good.</p>
+  <p>The problem appears only when the outputs are read as a group. Every rewrite comes
+  out in roughly the same shape. Real Reddit posts about one topic vary widely in
+  length, structure and purpose, and the rewrites do not. The model has learned one
+  average Reddit voice and applies it to everything.</p>
+  <p>This matters because the variety is the signal. The project aims to capture how a
+  particular audience actually behaves on a platform, and an audience is described by
+  the range of things its members write, not by the average of them.</p>
+  <p>Both halves of this are now measured with enough data to be confident. The rewrites
+  genuinely do read more like Reddit than the source posts. They also genuinely do lose
+  the variety, use a narrower vocabulary, and end up more alike than real posts are.</p>
+  <p class="stress">A platform classifier alone reports only the first half, and reports
+  it as a success. Measuring the group rather than the individual post is what reveals
+  the rest.</p>
+</section>
+
+<h2>Results</h2>
+<figure class="tablewrap wide"><table><caption>Held-out split, 126 source posts, four candidates drawn per post for each language model. Distances are cosine in a TF-IDF and SVD embedding space of 256 dimensions. Bold marks the best value in each row.</caption><thead><tr><th scope="col">Metric</th><th class="base">identity<span class="coltag">baseline</span></th><th class="base">shuffle control<span class="coltag">baseline</span></th><th class="sys">GPT-5.6 zero-shot<span class="coltag">system</span></th><th class="sys">Claude zero-shot<span class="coltag">system</span></th><th class="sys">Claude few-shot<span class="coltag">system</span></th><th class="base">target sample (oracle)<span class="coltag">oracle</span></th></tr></thead><tbody><tr><th scope="row">Reads like Reddit (calibration gap) <span class="dir">↓</span><span class="ncell">22 cells</span></th><td class=" base">0.375</td><td class=" base">0.214</td><td class=" sys">0.210</td><td class=" sys">0.111</td><td class="best sys">0.078</td><td class=" base">0.134<span class="ncol" title="scored on 18 of 22 cells">18</span></td></tr><tr><th scope="row">Share judged Reddit by the classifier <span class="dir">·</span><span class="ncell">22 cells</span></th><td class=" base">0.561</td><td class=" base">0.943</td><td class=" sys">0.727</td><td class=" sys">0.886</td><td class=" sys">0.851</td><td class=" base">0.941<span class="ncol" title="scored on 18 of 22 cells">18</span></td></tr><tr><th scope="row">Keeps the source content (similarity) <span class="dir">↑</span><span class="ncell">22 cells</span></th><td class="best base">1.000</td><td class=" base">0.039</td><td class=" sys">0.816</td><td class=" sys">0.583</td><td class=" sys">0.648</td><td class=" base">0.099<span class="ncol" title="scored on 18 of 22 cells">18</span></td></tr><tr><th scope="row">Keeps the specific details (word retention) <span class="dir">↑</span><span class="ncell">22 cells</span></th><td class="best base">1.000</td><td class=" base">0.013</td><td class=" sys">0.514</td><td class=" sys">0.401</td><td class=" sys">0.437</td><td class=" base">0.040<span class="ncol" title="scored on 18 of 22 cells">18</span></td></tr><tr><th scope="row">Writing-habit mismatch (feature JSD) <span class="dir">↓</span><span class="ncell">15 cells</span></th><td class=" base">0.339</td><td class=" base">0.233</td><td class=" sys">0.292</td><td class=" sys">0.417</td><td class=" sys">0.395</td><td class="best base">0.209<span class="ncol" title="scored on 11 of 15 cells">11</span></td></tr><tr><th scope="row">Writing habits reproduced (coverage) <span class="dir">↑</span><span class="ncell">15 cells</span></th><td class=" base">0.210</td><td class=" base">0.429</td><td class=" sys">0.305</td><td class=" sys">0.210</td><td class=" sys">0.225</td><td class="best base">0.636<span class="ncol" title="scored on 11 of 15 cells">11</span></td></tr><tr><th scope="row">Matches the variety of real posts (TRM) <span class="dir">↓</span><span class="ncell">10 cells</span></th><td class=" base">0.264</td><td class=" base">0.347</td><td class=" sys">0.504</td><td class=" sys">0.783</td><td class=" sys">0.769</td><td class="best base">0.132<span class="ncol" title="scored on 6 of 10 cells">6</span></td></tr><tr><th scope="row">Same, with writing style removed <span class="dir">↓</span><span class="ncell">10 cells</span></th><td class=" base">0.231</td><td class=" base">0.337</td><td class=" sys">0.454</td><td class=" sys">0.783</td><td class=" sys">0.746</td><td class="best base">0.130<span class="ncol" title="scored on 6 of 10 cells">6</span></td></tr><tr><th scope="row">Chance of being mistaken for real (p-value) <span class="dir">↑</span><span class="ncell">10 cells</span></th><td class=" base">0.121</td><td class=" base">0.104</td><td class=" sys">0.006</td><td class=" sys">0.005</td><td class=" sys">0.005</td><td class="best base">0.305<span class="ncol" title="scored on 6 of 10 cells">6</span></td></tr><tr><th scope="row">Outputs bunched together (rank I₂) <span class="dir">·</span><span class="ncell">10 cells</span></th><td class=" base">0.267</td><td class=" base">0.107</td><td class=" sys">0.383</td><td class=" sys">0.386</td><td class=" sys">0.415</td><td class=" base">0.277<span class="ncol" title="scored on 6 of 10 cells">6</span></td></tr><tr><th scope="row">Distance between the two sets (MMD²) <span class="dir">↓</span><span class="ncell">7 cells</span></th><td class=" base">0.111</td><td class=" base">0.123</td><td class=" sys">0.230</td><td class=" sys">0.326</td><td class=" sys">0.341</td><td class="best base">0.088<span class="ncol" title="scored on 3 of 7 cells">3</span></td></tr><tr><th scope="row">Subject-matter mismatch (topic JSD) <span class="dir">↓</span><span class="ncell">15 cells</span></th><td class=" base">0.560</td><td class=" base">0.760</td><td class=" sys">0.610</td><td class=" sys">0.907</td><td class=" sys">0.884</td><td class="best base">0.465<span class="ncol" title="scored on 11 of 15 cells">11</span></td></tr><tr><th scope="row">Copied the source outright <span class="dir">↓</span><span class="ncell">22 cells</span></th><td class=" base">1.000</td><td class="best base">0.000</td><td class=" sys">0.051</td><td class="best sys">0.000</td><td class="best sys">0.000</td><td class="best base">0.000<span class="ncol" title="scored on 18 of 22 cells">18</span></td></tr><tr><th scope="row">Outputs resemble each other <span class="dir">↓</span><span class="ncell">18 cells</span></th><td class=" base">0.211</td><td class="best base">0.043</td><td class=" sys">0.471</td><td class=" sys">0.609</td><td class=" sys">0.613</td><td class=" base">0.390<span class="ncol" title="scored on 14 of 18 cells">14</span></td></tr><tr><th scope="row">Variety of phrasing used (distinct-2) <span class="dir">↑</span><span class="ncell">22 cells</span></th><td class="best base">0.937</td><td class=" base">0.931</td><td class=" sys">0.512</td><td class=" sys">0.693</td><td class=" sys">0.671</td><td class=" base">0.737<span class="ncol" title="scored on 18 of 22 cells">18</span></td></tr></tbody></table><p class="tablekey">Tinted columns are <strong>reference points</strong> rather than attempts at the task. A best-in-row mark on one of them shows what the measure does rather than reporting a result. The cell count on each row is the number of cells every system column covers. A small number after a value indicates that the column covers fewer cells than that base, and states how many. Amber cell counts flag coverage below 5 cells.</p></figure>
+<p class="note">The three tinted columns are not attempts at the task. The identity
+baseline copies the source post and shows what changing nothing looks like. The shuffle
+control emits a real Reddit post about an unrelated topic and shows what correct tone
+with wrong content looks like. The target sample emits a real Reddit post about the
+right topic and shows the best score any system could hope to reach. The oracle covers
+fewer cells than the systems, and its own count is printed beside each of its values.</p>
+
+<h2>The two goals a transfer function must meet</h2>
+<p>A transfer function has to do two things at once. It has to produce text that reads
+like the target platform, and it has to keep the content of the particular post it was
+given. The figure below plots those two goals against each other.</p>
+
+<svg class="fig" viewBox="0 0 760 500" width="100%" role="img" aria-labelledby="t2e15b525" xmlns="http://www.w3.org/2000/svg"><title id="t2e15b525">Transfer against preservation</title>
+<text class="fig-title" x="0" y="20" text-anchor="start">Reading like Reddit against keeping the content</text>
+<text class="fig-sub" x="0" y="38" text-anchor="start">Filled circles are systems. Rings are reference points that sit at one end of an axis by definition.</text>
+<text class="fig-sub" x="0" y="52" text-anchor="start">Bars show how much each value varies across cells.</text>
+<rect class="good-zone" x="78.0" y="74.0" width="168.6" height="107.3"/>
+<text class="zone-lbl" x="84.74285714285715" y="90.2666666666667" text-anchor="start">empty: reads like Reddit and</text>
+<text class="zone-lbl" x="84.74285714285715" y="103.2666666666667" text-anchor="start">keeps the content</text>
+<line class="axis" x1="78" y1="74" x2="78" y2="396"/>
+<line class="axis" x1="78" y1="396" x2="550" y2="396"/>
+<line class="grid" x1="78.0" y1="74" x2="78.0" y2="396"/>
+<text class="tick" x="78.0" y="416" text-anchor="middle">0.0</text>
+<line class="grid" x1="162.28571428571428" y1="74" x2="162.28571428571428" y2="396"/>
+<text class="tick" x="162.28571428571428" y="416" text-anchor="middle">0.1</text>
+<line class="grid" x1="246.57142857142856" y1="74" x2="246.57142857142856" y2="396"/>
+<text class="tick" x="246.57142857142856" y="416" text-anchor="middle">0.2</text>
+<line class="grid" x1="330.85714285714283" y1="74" x2="330.85714285714283" y2="396"/>
+<text class="tick" x="330.85714285714283" y="416" text-anchor="middle">0.3</text>
+<line class="grid" x1="415.1428571428571" y1="74" x2="415.1428571428571" y2="396"/>
+<text class="tick" x="415.1428571428571" y="416" text-anchor="middle">0.4</text>
+<line class="grid" x1="499.4285714285714" y1="74" x2="499.4285714285714" y2="396"/>
+<text class="tick" x="499.4285714285714" y="416" text-anchor="middle">0.5</text>
+<line class="grid" x1="78" y1="396.0" x2="550" y2="396.0"/>
+<text class="tick" x="68" y="400.0" text-anchor="end">0.00</text>
+<line class="grid" x1="78" y1="319.3333333333333" x2="550" y2="319.3333333333333"/>
+<text class="tick" x="68" y="323.3333333333333" text-anchor="end">0.25</text>
+<line class="grid" x1="78" y1="242.66666666666669" x2="550" y2="242.66666666666669"/>
+<text class="tick" x="68" y="246.66666666666669" text-anchor="end">0.50</text>
+<line class="grid" x1="78" y1="166.0" x2="550" y2="166.0"/>
+<text class="tick" x="68" y="170.0" text-anchor="end">0.75</text>
+<line class="grid" x1="78" y1="89.33333333333334" x2="550" y2="89.33333333333334"/>
+<text class="tick" x="68" y="93.33333333333334" text-anchor="end">1.00</text>
+<text class="ax-title" x="314.0" y="444" text-anchor="middle">reads more like Reddit toward the left</text>
+<text class="ax-title" transform="translate(20,235.0) rotate(-90)" text-anchor="middle">source similarity (preservation), better upward</text>
+<line class="err" x1="277.3" y1="89.3" x2="514.5" y2="89.3" stroke="#8b8b8b"/>
+<line class="err" x1="277.3" y1="85.3" x2="277.3" y2="93.3" stroke="#8b8b8b"/>
+<line class="err" x1="514.5" y1="85.3" x2="514.5" y2="93.3" stroke="#8b8b8b"/>
+<line class="err" x1="141.7" y1="384.1" x2="391.3" y2="384.1" stroke="#b0a08c"/>
+<line class="err" x1="141.7" y1="380.1" x2="141.7" y2="388.1" stroke="#b0a08c"/>
+<line class="err" x1="391.3" y1="380.1" x2="391.3" y2="388.1" stroke="#b0a08c"/>
+<line class="err" x1="258.7" y1="376.8" x2="258.7" y2="390.2" stroke="#b0a08c"/>
+<line class="err" x1="176.5" y1="145.6" x2="359.7" y2="145.6" stroke="#4a6fa5"/>
+<line class="err" x1="176.5" y1="141.6" x2="176.5" y2="149.6" stroke="#4a6fa5"/>
+<line class="err" x1="359.7" y1="141.6" x2="359.7" y2="149.6" stroke="#4a6fa5"/>
+<line class="err" x1="255.2" y1="137.3" x2="255.2" y2="153.8" stroke="#4a6fa5"/>
+<line class="err" x1="111.0" y1="217.1" x2="244.3" y2="217.1" stroke="#c25e3a"/>
+<line class="err" x1="111.0" y1="213.1" x2="111.0" y2="221.1" stroke="#c25e3a"/>
+<line class="err" x1="244.3" y1="213.1" x2="244.3" y2="221.1" stroke="#c25e3a"/>
+<line class="err" x1="171.6" y1="202.1" x2="171.6" y2="235.4" stroke="#c25e3a"/>
+<line class="err" x1="100.4" y1="197.2" x2="202.5" y2="197.2" stroke="#d99a4e"/>
+<line class="err" x1="100.4" y1="193.2" x2="100.4" y2="201.2" stroke="#d99a4e"/>
+<line class="err" x1="202.5" y1="193.2" x2="202.5" y2="201.2" stroke="#d99a4e"/>
+<line class="err" x1="143.7" y1="181.4" x2="143.7" y2="213.5" stroke="#d99a4e"/>
+<line class="err" x1="103.2" y1="365.6" x2="319.0" y2="365.6" stroke="#2e7d5b"/>
+<line class="err" x1="103.2" y1="361.6" x2="103.2" y2="369.6" stroke="#2e7d5b"/>
+<line class="err" x1="319.0" y1="361.6" x2="319.0" y2="369.6" stroke="#2e7d5b"/>
+<line class="err" x1="190.6" y1="357.4" x2="190.6" y2="372.7" stroke="#2e7d5b"/>
+<circle class="pt anchor" cx="394.5" cy="89.3" r="9" fill="#fff" stroke="#8b8b8b"/>
+<circle cx="394.5" cy="89.3" r="2.4" fill="#8b8b8b"/>
+<text class="pt-lbl" x="407.4586279521344" y="93.33333333333334" text-anchor="start">identity · baseline</text>
+<circle class="pt" cx="255.2" cy="145.6" r="8" fill="#4a6fa5" stroke="#fff"/>
+<text class="pt-lbl" x="268.2211406018224" y="149.61476420343712" text-anchor="start">GPT-5.6 zero-shot</text>
+<circle class="pt" cx="143.7" cy="197.2" r="8" fill="#d99a4e" stroke="#fff"/>
+<text class="pt-lbl" x="156.7306032711877" y="201.15619052457214" text-anchor="start">Claude few-shot</text>
+<circle class="pt" cx="171.6" cy="217.1" r="8" fill="#c25e3a" stroke="#fff"/>
+<text class="pt-lbl" x="184.63774347946423" y="221.12031076819434" text-anchor="start">Claude zero-shot</text>
+<circle class="pt anchor" cx="190.6" cy="365.6" r="9" fill="#fff" stroke="#2e7d5b"/>
+<circle cx="190.6" cy="365.6" r="2.4" fill="#2e7d5b"/>
+<text class="pt-lbl" x="203.6210826210826" y="369.5746146222013" text-anchor="start">target sample · oracle</text>
+<circle class="pt" cx="258.7" cy="384.1" r="8" fill="#b0a08c" stroke="#fff"/>
+<text class="pt-lbl" x="271.7034632034632" y="388.07263648017084" text-anchor="start">shuffle control · baseline</text>
+<text class="fig-note" x="0" y="472" text-anchor="start">The oracle scores near zero on preservation because it emits a different authentic post rather than a rewrite of the source.</text>
+<text class="fig-note" x="0" y="486" text-anchor="start">The horizontal bars overlap, so differences left to right are within the variation between cells. Vertical differences are not.</text>
+</svg>
+
+<p>Two of the reference points sit at the ends of the axes by definition. Copying the
+source keeps all of the content, so the identity baseline scores at the top. Emitting a
+real Reddit post gives the right tone but says something different, so the oracle scores
+at the bottom. Neither is a failure, and neither is a target: a working system has to be
+high on both axes at once, and the upper-left region is empty.</p>
+
+<p>The example below shows every column applied to the same source post, which makes
+the roles of the reference points concrete.</p>
+
+<figure class="exfig"><figcaption>Every column applied to one source post from <code>backend_engineer::code_editors</code>. The oracle and the shuffle control emit authentic Reddit posts that are unrelated to the source, which is why both score near zero on preservation.</figcaption><div class="example grid2"><div class="ex-col src"><h3>Source · LinkedIn</h3><p>Testing @VSCode + Copilot with GPT-4o because it seems like it caught up mostly with CursorAI. It feels more polished than Cursor but auto-suggestions with tab-completion are way worse, and you have to Accept changes before they are saved, which makes testing harder 👇🏻 It does look very promising. Adding files to working set context feels better. UI is much more responsive and there are no weird quirks in VSCode like in Cursor where ie it does not …</p></div><div class="ex-col alt"><h3>identity</h3><p>Testing @VSCode + Copilot with GPT-4o because it seems like it caught up mostly with CursorAI. It feels more polished than Cursor but auto-suggestions with tab-completion are way worse, and you have to Accept changes before they are saved, which makes testing harder 👇🏻 It does look very promising. Adding files to working set context feels better. UI is much more responsive and there are no weird quirks in VSCode like in Cursor where ie it does not …</p></div><div class="ex-col "><h3>shuffle control</h3><p>Deep Dive into Go SQL Internals</p></div><div class="ex-col "><h3>GPT-5.6 zero-shot</h3><p>Has anyone else compared VS Code + Copilot with GPT-4o against Cursor recently? VS Code seems to have mostly caught up and feels more polished overall. The UI is much more responsive, and adding files to the working-set context is better. It also avoids some Cursor quirks—for example, Cursor doesn’t install the extensions specified in `.devcontainer.json` after building a devcontainer. That said, Copilot’s tab-completion suggestions are noticeably worse, …</p></div><div class="ex-col "><h3>Claude zero-shot</h3><p>Anyone switched back to VSCode + Copilot (GPT-4o) from Cursor? Been testing it because it feels like Copilot has mostly caught up. Some observations: Pros: - More polished than Cursor overall - Adding files to the working set context feels better - UI is way more responsive - None of the weird Cursor quirks. e.g. Cursor doesn't install the extensions I define in .devcontainer.json after building a devcontainer, VSCode just does it Cons: - Tab-completion …</p></div><div class="ex-col "><h3>Claude few-shot</h3><p>Been testing VSCode + Copilot with GPT-4o to see if it's caught up with Cursor. Mostly it has, and honestly the overall experience feels more polished than Cursor. Couple of things that are worse though: - Tab-completion auto-suggestions are noticeably worse than Cursor's. - You have to Accept changes before they're saved, which makes iterating/testing a pain. What it does better: - Adding files to the working set context feels a lot cleaner. - UI is way …</p></div><div class="ex-col alt"><h3>target sample (oracle)</h3><p>A plugin to use Claude Code within Neovim [Request]</p></div></div></figure>
+
+<h2>The third goal, which is about the group</h2>
+<p>Reading like the platform and keeping the content are both properties of a single
+post. The third requirement is a property of a whole set of posts: the generated set
+should be as varied as the real set. A system that produces one good post repeatedly
+satisfies the first two goals and fails the third.</p>
+
+<svg class="fig" viewBox="0 0 760 350" width="100%" role="img" aria-labelledby="t962738dd" xmlns="http://www.w3.org/2000/svg"><title id="t962738dd">Three-axis scorecard</title>
+<text class="fig-title" x="0" y="20" text-anchor="start">Nothing does well on all three goals at once</text>
+<text class="fig-sub" x="0" y="38" text-anchor="start">Filled proportion of each bar is performance on that axis, normalised across the columns shown.</text>
+<text class="fig-sub" x="0" y="52" text-anchor="start">No column is strong on all three, which is why the harness reports three families of metric.</text>
+<text class="key-lbl" x="264.0" y="86" text-anchor="middle">Reads like Reddit</text>
+<text class="key-lbl" x="444.0" y="86" text-anchor="middle">Keeps the content</text>
+<text class="key-lbl" x="624.0" y="86" text-anchor="middle">Matches the variety</text>
+<text class="lbl" x="188" y="115" text-anchor="end">identity · baseline</text>
+<rect x="200.0" y="103" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="200.0" y="103" width="0.0" height="18" fill="#8b8b8b" rx="2" opacity="0.85"/>
+<text class="val" x="335.0" y="116" text-anchor="start">0.38</text>
+<rect x="380.0" y="103" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="380.0" y="103" width="128.0" height="18" fill="#8b8b8b" rx="2" opacity="0.85"/>
+<text class="val" x="515.0" y="116" text-anchor="start">1.00</text>
+<rect x="560.0" y="103" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="560.0" y="103" width="101.9" height="18" fill="#8b8b8b" rx="2" opacity="0.85"/>
+<text class="val" x="695.0" y="116" text-anchor="start">0.26</text>
+<text class="lbl" x="188" y="149" text-anchor="end">shuffle control · baseline</text>
+<rect x="200.0" y="137" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="200.0" y="137" width="69.3" height="18" fill="#b0a08c" rx="2" opacity="0.85"/>
+<text class="val" x="335.0" y="150" text-anchor="start">0.21</text>
+<rect x="380.0" y="137" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="380.0" y="137" width="0.0" height="18" fill="#b0a08c" rx="2" opacity="0.85"/>
+<text class="val" x="515.0" y="150" text-anchor="start">0.04</text>
+<rect x="560.0" y="137" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="560.0" y="137" width="85.6" height="18" fill="#b0a08c" rx="2" opacity="0.85"/>
+<text class="val" x="695.0" y="150" text-anchor="start">0.35</text>
+<text class="lbl" x="188" y="183" text-anchor="end">GPT-5.6 zero-shot</text>
+<rect x="200.0" y="171" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="200.0" y="171" width="71.1" height="18" fill="#4a6fa5" rx="2" opacity="0.85"/>
+<text class="val" x="335.0" y="184" text-anchor="start">0.21</text>
+<rect x="380.0" y="171" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="380.0" y="171" width="103.6" height="18" fill="#4a6fa5" rx="2" opacity="0.85"/>
+<text class="val" x="515.0" y="184" text-anchor="start">0.82</text>
+<rect x="560.0" y="171" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="560.0" y="171" width="54.7" height="18" fill="#4a6fa5" rx="2" opacity="0.85"/>
+<text class="val" x="695.0" y="184" text-anchor="start">0.50</text>
+<text class="lbl" x="188" y="217" text-anchor="end">Claude zero-shot</text>
+<rect x="200.0" y="205" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="200.0" y="205" width="113.8" height="18" fill="#c25e3a" rx="2" opacity="0.85"/>
+<text class="val" x="335.0" y="218" text-anchor="start">0.11</text>
+<rect x="380.0" y="205" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="380.0" y="205" width="72.5" height="18" fill="#c25e3a" rx="2" opacity="0.85"/>
+<text class="val" x="515.0" y="218" text-anchor="start">0.58</text>
+<rect x="560.0" y="205" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="560.0" y="205" width="0.0" height="18" fill="#c25e3a" rx="2" opacity="0.85"/>
+<text class="val" x="695.0" y="218" text-anchor="start">0.78</text>
+<text class="lbl" x="188" y="251" text-anchor="end">Claude few-shot</text>
+<rect x="200.0" y="239" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="200.0" y="239" width="128.0" height="18" fill="#d99a4e" rx="2" opacity="0.85"/>
+<text class="val" x="335.0" y="252" text-anchor="start">0.08</text>
+<rect x="380.0" y="239" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="380.0" y="239" width="81.2" height="18" fill="#d99a4e" rx="2" opacity="0.85"/>
+<text class="val" x="515.0" y="252" text-anchor="start">0.65</text>
+<rect x="560.0" y="239" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="560.0" y="239" width="2.6" height="18" fill="#d99a4e" rx="2" opacity="0.85"/>
+<text class="val" x="695.0" y="252" text-anchor="start">0.77</text>
+<text class="lbl" x="188" y="285" text-anchor="end">target sample · oracle</text>
+<rect x="200.0" y="273" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="200.0" y="273" width="104.1" height="18" fill="#2e7d5b" rx="2" opacity="0.85"/>
+<text class="val" x="335.0" y="286" text-anchor="start">0.13</text>
+<rect x="380.0" y="273" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="380.0" y="273" width="8.0" height="18" fill="#2e7d5b" rx="2" opacity="0.85"/>
+<text class="val" x="515.0" y="286" text-anchor="start">0.10</text>
+<rect x="560.0" y="273" width="128.0" height="18" fill="#efece4" rx="2"/>
+<rect x="560.0" y="273" width="128.0" height="18" fill="#2e7d5b" rx="2" opacity="0.85"/>
+<text class="val" x="695.0" y="286" text-anchor="start">0.13</text>
+</svg>
+
+<h2>Findings</h2>
+<ol class="findings">
+  <li><strong>Rewriting does make individual posts read more like Reddit.</strong> The
+  platform classifier separates the rewrites from the untouched source posts clearly.
+  Prompting solves the per-post half of the problem.</li>
+
+  <li><strong>Rewriting makes the set of posts less like real Reddit.</strong> Taken as a
+  group, the rewrites end up further from real Reddit than the untouched LinkedIn posts
+  were. The two results above are not in conflict: one is about a post and the other is
+  about a collection.</li>
+
+  <li><strong>The cause is that the outputs are too alike.</strong> Four separate
+  measurements agree. Generated posts resemble each other more than real posts do, and
+  more than real Reddit posts resemble each other. They draw on a narrower vocabulary.
+  They end on a question about three times as often as real posts. And the automated
+  judge, asked to pick the machine-written post out of a group, names structural
+  sameness as the reason it can.</li>
+
+  <li><strong>GPT-5.6 keeps more of the original content than Claude.</strong> Claude
+  changes the tone more and keeps less. Choosing between them is choosing where to sit on
+  that trade-off rather than choosing a better model.</li>
+
+  <li><strong>Showing the model real examples points in the right direction.</strong>
+  Supplying four genuine Reddit posts from the same audience and topic gives better
+  numbers than zero-shot on tone, on content retention and on group similarity. The
+  direction is consistent across measures, though the size of the gain is not yet
+  established.</li>
+
+  <li><strong>There is a long way to go.</strong> The best system remains far from the
+  oracle on every group-level measure. Rewriting with a prompt is a floor for a
+  trait-based method to beat, not a solution.</li>
+</ol>
+
+<p class="note">Each of these statements was checked against the spread of values across
+cells, and only differences larger than that spread are stated as findings. The
+<a href="results.html">results page</a> lists every comparison with its verdict, including
+the ones this study cannot yet separate.</p>
+
+<h2>What this implies for the next model</h2>
+<p>The measurements point to a specific target rather than a general one. A better
+transfer function does not need to produce more Reddit-like individual posts, because
+prompting already does that. It needs to produce a <em>set</em> of posts whose variety
+matches the variety of the real audience. Any method that maps every source post through
+the same fixed transformation will fail this test regardless of how good each individual
+output is.</p>
+<p>That gives a concrete acceptance criterion for the trait-mediated approach the project
+is moving toward. If latent traits carry real information about how different members of
+an audience write, then conditioning on them should spread the outputs out, and the
+triangle statistic will register it. The harness will detect that improvement whether or
+not the platform classifier does.</p>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p>Generated from <code>runs/scaled/report.heldout.json</code> by
+     <code>experimental-notes/build.py</code>. Figures are drawn from the report
+     data, not transcribed.</p>
+  <p>Distribution-aware metrics follow Chan, Ni, Ross, Vijayanarasimhan, Myers &amp;
+     Canny, <em>Distribution Aware Metrics for Conditional Natural Language
+     Generation</em>, LREC-COLING 2024, pp. 5064–5095.</p>
+</div></footer>
+</body>
+</html>

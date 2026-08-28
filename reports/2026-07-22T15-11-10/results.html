@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Results — Vectorial × BAIR transfer evaluation — 2026-07-22</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · cross-platform audience transfer</p>
+    <h1>Experimental notes <span class="stamp">2026-07-22</span></h1>
+    <p class="lede">Evaluating LinkedIn → Reddit transfer functions across 30 bilateral
+    cells, with four candidates drawn per source post. Generated 2026-07-22 15:11 PDT.</p>
+  </div>
+</header>
+<nav class="nav"><div class="wrap"><a href="index.html" class="">Overview</a><a href="dataset.html" class="">Dataset</a><a href="methods.html" class="">Baselines &amp; metrics</a><a href="results.html" class="here">Results</a><a href="limitations.html" class="">Limitations</a></div></nav>
+<main class="wrap">
+
+<h2>Full results</h2>
+<figure class="tablewrap wide"><table><caption>All six columns. Each row is averaged over the cells every system column covers, and a superscript marks any column scored on fewer.</caption><thead><tr><th scope="col">Metric</th><th class="base">identity<span class="coltag">baseline</span></th><th class="base">shuffle control<span class="coltag">baseline</span></th><th class="sys">GPT-5.6 zero-shot<span class="coltag">system</span></th><th class="sys">Claude zero-shot<span class="coltag">system</span></th><th class="sys">Claude few-shot<span class="coltag">system</span></th><th class="base">target sample (oracle)<span class="coltag">oracle</span></th></tr></thead><tbody><tr><th scope="row">Reads like Reddit (calibration gap) <span class="dir">↓</span><span class="ncell">22 cells</span></th><td class=" base">0.375</td><td class=" base">0.214</td><td class=" sys">0.210</td><td class=" sys">0.111</td><td class="best sys">0.078</td><td class=" base">0.134<span class="ncol" title="scored on 18 of 22 cells">18</span></td></tr><tr><th scope="row">Share judged Reddit (target rate) <span class="dir">·</span><span class="ncell">22 cells</span></th><td class=" base">0.561</td><td class="best base">0.943</td><td class=" sys">0.727</td><td class=" sys">0.886</td><td class=" sys">0.851</td><td class=" base">0.941<span class="ncol" title="scored on 18 of 22 cells">18</span></td></tr><tr><th scope="row">Keeps the source content (source similarity) <span class="dir">↑</span><span class="ncell">22 cells</span></th><td class="best base">1.000</td><td class=" base">0.039</td><td class=" sys">0.816</td><td class=" sys">0.583</td><td class=" sys">0.648</td><td class=" base">0.099<span class="ncol" title="scored on 18 of 22 cells">18</span></td></tr><tr><th scope="row">Keeps the specific details (content-word retention) <span class="dir">↑</span><span class="ncell">22 cells</span></th><td class="best base">1.000</td><td class=" base">0.013</td><td class=" sys">0.514</td><td class=" sys">0.401</td><td class=" sys">0.437</td><td class=" base">0.040<span class="ncol" title="scored on 18 of 22 cells">18</span></td></tr><tr><th scope="row">Writing-habit mismatch (mean feature JSD) <span class="dir">↓</span><span class="ncell">15 cells</span></th><td class=" base">0.339</td><td class=" base">0.233</td><td class=" sys">0.292</td><td class=" sys">0.417</td><td class=" sys">0.395</td><td class="best base">0.209<span class="ncol" title="scored on 11 of 15 cells">11</span></td></tr><tr><th scope="row">Writing habits reproduced (feature coverage) <span class="dir">↑</span><span class="ncell">15 cells</span></th><td class=" base">0.210</td><td class=" base">0.429</td><td class=" sys">0.305</td><td class=" sys">0.210</td><td class=" sys">0.225</td><td class="best base">0.636<span class="ncol" title="scored on 11 of 15 cells">11</span></td></tr><tr><th scope="row">Matches the variety of real posts (TRM) <span class="dir">↓</span><span class="ncell">10 cells</span></th><td class=" base">0.264</td><td class=" base">0.347</td><td class=" sys">0.504</td><td class=" sys">0.783</td><td class=" sys">0.769</td><td class="best base">0.132<span class="ncol" title="scored on 6 of 10 cells">6</span></td></tr><tr><th scope="row">Same, with writing style removed (TRM, style-residual) <span class="dir">↓</span><span class="ncell">10 cells</span></th><td class=" base">0.231</td><td class=" base">0.337</td><td class=" sys">0.454</td><td class=" sys">0.783</td><td class=" sys">0.746</td><td class="best base">0.130<span class="ncol" title="scored on 6 of 10 cells">6</span></td></tr><tr><th scope="row">Chance of being mistaken for real (TRM p-value) <span class="dir">↑</span><span class="ncell">10 cells</span></th><td class=" base">0.121</td><td class=" base">0.104</td><td class=" sys">0.006</td><td class=" sys">0.005</td><td class=" sys">0.005</td><td class="best base">0.305<span class="ncol" title="scored on 6 of 10 cells">6</span></td></tr><tr><th scope="row">Outputs bunched together (rank I₂) <span class="dir">·</span><span class="ncell">10 cells</span></th><td class=" base">0.267</td><td class=" base">0.107</td><td class="best sys">0.383</td><td class=" sys">0.386</td><td class=" sys">0.415</td><td class=" base">0.277<span class="ncol" title="scored on 6 of 10 cells">6</span></td></tr><tr><th scope="row">Distance between the two sets (MMD²) <span class="dir">↓</span><span class="ncell">7 cells</span></th><td class=" base">0.111</td><td class=" base">0.123</td><td class=" sys">0.230</td><td class=" sys">0.326</td><td class=" sys">0.341</td><td class="best base">0.088<span class="ncol" title="scored on 3 of 7 cells">3</span></td></tr><tr><th scope="row">Subject-matter mismatch (topic JSD) <span class="dir">↓</span><span class="ncell">15 cells</span></th><td class=" base">0.560</td><td class=" base">0.760</td><td class=" sys">0.610</td><td class=" sys">0.907</td><td class=" sys">0.884</td><td class="best base">0.465<span class="ncol" title="scored on 11 of 15 cells">11</span></td></tr><tr><th scope="row">Copied the source outright (copy rate) <span class="dir">↓</span><span class="ncell">22 cells</span></th><td class=" base">1.000</td><td class="best base">0.000</td><td class=" sys">0.051</td><td class="best sys">0.000</td><td class="best sys">0.000</td><td class="best base">0.000<span class="ncol" title="scored on 18 of 22 cells">18</span></td></tr><tr><th scope="row">Outputs resemble each other (pool self-similarity) <span class="dir">↓</span><span class="ncell">18 cells</span></th><td class=" base">0.211</td><td class="best base">0.043</td><td class=" sys">0.471</td><td class=" sys">0.609</td><td class=" sys">0.613</td><td class=" base">0.390<span class="ncol" title="scored on 14 of 18 cells">14</span></td></tr><tr><th scope="row">Variety of phrasing used (distinct-2) <span class="dir">↑</span><span class="ncell">22 cells</span></th><td class="best base">0.937</td><td class=" base">0.931</td><td class=" sys">0.512</td><td class=" sys">0.693</td><td class=" sys">0.671</td><td class=" base">0.737<span class="ncol" title="scored on 18 of 22 cells">18</span></td></tr></tbody></table><p class="tablekey">Tinted columns are <strong>reference points</strong> rather than attempts at the task. A best-in-row mark on one of them shows what the measure does rather than reporting a result. The cell count on each row is the number of cells every system column covers. A small number after a value indicates that the column covers fewer cells than that base, and states how many. On the two rows marked <span class="dir">·</span> neither the highest nor the lowest value is the goal, so the mark shows the value closest to the level a perfect system would reach. Amber cell counts flag coverage below 5 cells.</p></figure>
+
+<h2>System comparison</h2>
+<figure class="tablewrap wide"><table><caption>The oracle is excluded so that every column is scored on an identical set of cells. The values quoted throughout this report are taken from this table.</caption><thead><tr><th scope="col">Metric</th><th class="base">identity<span class="coltag">baseline</span></th><th class="base">shuffle control<span class="coltag">baseline</span></th><th class="sys">GPT-5.6 zero-shot<span class="coltag">system</span></th><th class="sys">Claude zero-shot<span class="coltag">system</span></th><th class="sys">Claude few-shot<span class="coltag">system</span></th></tr></thead><tbody><tr><th scope="row">Reads like Reddit (calibration gap) <span class="dir">↓</span><span class="ncell">22 cells</span></th><td class=" base">0.375</td><td class=" base">0.214</td><td class=" sys">0.210</td><td class=" sys">0.111</td><td class="best sys">0.078</td></tr><tr><th scope="row">Share judged Reddit (target rate) <span class="dir">·</span><span class="ncell">22 cells</span></th><td class=" base">0.561</td><td class=" base">0.943</td><td class=" sys">0.727</td><td class=" sys">0.886</td><td class=" sys">0.851</td></tr><tr><th scope="row">Keeps the source content (source similarity) <span class="dir">↑</span><span class="ncell">22 cells</span></th><td class="best base">1.000</td><td class=" base">0.039</td><td class=" sys">0.816</td><td class=" sys">0.583</td><td class=" sys">0.648</td></tr><tr><th scope="row">Keeps the specific details (content-word retention) <span class="dir">↑</span><span class="ncell">22 cells</span></th><td class="best base">1.000</td><td class=" base">0.013</td><td class=" sys">0.514</td><td class=" sys">0.401</td><td class=" sys">0.437</td></tr><tr><th scope="row">Writing-habit mismatch (mean feature JSD) <span class="dir">↓</span><span class="ncell">15 cells</span></th><td class=" base">0.339</td><td class="best base">0.233</td><td class=" sys">0.292</td><td class=" sys">0.417</td><td class=" sys">0.395</td></tr><tr><th scope="row">Writing habits reproduced (feature coverage) <span class="dir">↑</span><span class="ncell">15 cells</span></th><td class=" base">0.210</td><td class="best base">0.429</td><td class=" sys">0.305</td><td class=" sys">0.210</td><td class=" sys">0.225</td></tr><tr><th scope="row">Matches the variety of real posts (TRM) <span class="dir">↓</span><span class="ncell">10 cells</span></th><td class="best base">0.264</td><td class=" base">0.347</td><td class=" sys">0.504</td><td class=" sys">0.783</td><td class=" sys">0.769</td></tr><tr><th scope="row">Same, with writing style removed (TRM, style-residual) <span class="dir">↓</span><span class="ncell">10 cells</span></th><td class="best base">0.231</td><td class=" base">0.337</td><td class=" sys">0.454</td><td class=" sys">0.783</td><td class=" sys">0.746</td></tr><tr><th scope="row">Chance of being mistaken for real (TRM p-value) <span class="dir">↑</span><span class="ncell">10 cells</span></th><td class="best base">0.121</td><td class=" base">0.104</td><td class=" sys">0.006</td><td class=" sys">0.005</td><td class=" sys">0.005</td></tr><tr><th scope="row">Outputs bunched together (rank I₂) <span class="dir">·</span><span class="ncell">10 cells</span></th><td class=" base">0.267</td><td class=" base">0.107</td><td class="best sys">0.383</td><td class=" sys">0.386</td><td class=" sys">0.415</td></tr><tr><th scope="row">Distance between the two sets (MMD²) <span class="dir">↓</span><span class="ncell">7 cells</span></th><td class="best base">0.111</td><td class=" base">0.123</td><td class=" sys">0.230</td><td class=" sys">0.326</td><td class=" sys">0.341</td></tr><tr><th scope="row">Subject-matter mismatch (topic JSD) <span class="dir">↓</span><span class="ncell">15 cells</span></th><td class="best base">0.560</td><td class=" base">0.760</td><td class=" sys">0.610</td><td class=" sys">0.907</td><td class=" sys">0.884</td></tr><tr><th scope="row">Copied the source outright (copy rate) <span class="dir">↓</span><span class="ncell">22 cells</span></th><td class=" base">1.000</td><td class="best base">0.000</td><td class=" sys">0.051</td><td class="best sys">0.000</td><td class="best sys">0.000</td></tr><tr><th scope="row">Outputs resemble each other (pool self-similarity) <span class="dir">↓</span><span class="ncell">18 cells</span></th><td class=" base">0.211</td><td class="best base">0.043</td><td class=" sys">0.471</td><td class=" sys">0.609</td><td class=" sys">0.613</td></tr><tr><th scope="row">Variety of phrasing used (distinct-2) <span class="dir">↑</span><span class="ncell">22 cells</span></th><td class="best base">0.937</td><td class=" base">0.931</td><td class=" sys">0.512</td><td class=" sys">0.693</td><td class=" sys">0.671</td></tr></tbody></table><p class="tablekey">Tinted columns are <strong>reference points</strong> rather than attempts at the task. A best-in-row mark on one of them shows what the measure does rather than reporting a result. The cell count on each row is the number of cells every system column covers. On the two rows marked <span class="dir">·</span> neither the highest nor the lowest value is the goal, so the mark shows the value closest to the level a perfect system would reach. Amber cell counts flag coverage below 5 cells.</p></figure>
+
+<h2>Where the two measurements disagree</h2>
+<p>The platform classifier and the triangle statistic reach opposite conclusions about
+the same systems. That disagreement is the main result rather than a contradiction to be
+resolved.</p>
+<svg class="fig" viewBox="0 0 760 390" width="100%" role="img" aria-labelledby="td7191998" xmlns="http://www.w3.org/2000/svg"><title id="td7191998">Classifier versus TRM</title>
+<text class="fig-title" x="0" y="20" text-anchor="start">The two measurements disagree</text>
+<text class="fig-sub" x="0" y="38" text-anchor="start">Each bar is scaled to its own measure, and shorter is better on both.</text>
+<rect class="key" x="220" y="52" width="11" height="11" fill="#7b93b8"/>
+<text class="key-lbl" x="237" y="62" text-anchor="start">reads like Reddit (one post at a time)</text>
+<rect class="key" x="470" y="52" width="11" height="11" fill="#c25e3a"/>
+<text class="key-lbl" x="487" y="62" text-anchor="start">matches real Reddit (as a group)</text>
+<text class="lbl" x="210" y="94" text-anchor="end">identity · baseline</text>
+<rect class="bar" x="220" y="74" width="376.0" height="15" fill="#7b93b8" rx="2"/>
+<text class="val" x="602.0" y="86" text-anchor="start">0.375</text>
+<rect class="bar" x="220" y="97" width="126.9" height="15" fill="#c25e3a" rx="2"/>
+<text class="val" x="352.9233926164285" y="109" text-anchor="start">0.264</text>
+<text class="lbl" x="210" y="140" text-anchor="end">shuffle control · baseline</text>
+<rect class="bar" x="220" y="120" width="214.7" height="15" fill="#7b93b8" rx="2"/>
+<text class="val" x="440.70263776400816" y="132" text-anchor="start">0.214</text>
+<rect class="bar" x="220" y="143" width="166.8" height="15" fill="#c25e3a" rx="2"/>
+<text class="val" x="392.80539444975403" y="155" text-anchor="start">0.347</text>
+<text class="lbl" x="210" y="186" text-anchor="end">GPT-5.6 zero-shot</text>
+<rect class="bar" x="220" y="166" width="210.6" height="15" fill="#7b93b8" rx="2"/>
+<text class="val" x="436.56511967297047" y="178" text-anchor="start">0.210</text>
+<rect class="bar" x="220" y="189" width="242.4" height="15" fill="#c25e3a" rx="2"/>
+<text class="val" x="468.35579443120866" y="201" text-anchor="start">0.504</text>
+<text class="lbl" x="210" y="232" text-anchor="end">Claude zero-shot</text>
+<rect class="bar" x="220" y="212" width="111.3" height="15" fill="#7b93b8" rx="2"/>
+<text class="val" x="337.25559058419435" y="224" text-anchor="start">0.111</text>
+<rect class="bar" x="220" y="235" width="376.0" height="15" fill="#c25e3a" rx="2"/>
+<text class="val" x="602.0" y="247" text-anchor="start">0.783</text>
+<text class="lbl" x="210" y="278" text-anchor="end">Claude few-shot</text>
+<rect class="bar" x="220" y="258" width="78.1" height="15" fill="#7b93b8" rx="2"/>
+<text class="val" x="304.0977500594636" y="270" text-anchor="start">0.078</text>
+<rect class="bar" x="220" y="281" width="369.5" height="15" fill="#c25e3a" rx="2"/>
+<text class="val" x="595.5269591884223" y="293" text-anchor="start">0.769</text>
+<text class="lbl" x="210" y="324" text-anchor="end">target sample · oracle</text>
+<rect class="bar" x="220" y="304" width="133.8" height="15" fill="#7b93b8" rx="2"/>
+<text class="val" x="359.810625861438" y="316" text-anchor="start">0.134</text>
+<rect class="bar" x="220" y="327" width="63.3" height="15" fill="#c25e3a" rx="2"/>
+<text class="val" x="289.2600718012761" y="339" text-anchor="start">0.132</text>
+<line class="axis" x1="220" y1="68" x2="220" y2="360"/>
+</svg>
+<p>The classifier reports that the Claude rewrites read more like Reddit than the source
+posts do. The triangle statistic reports that the same rewrites, taken as a group, are
+further from real Reddit than the untouched source posts are. Both readings are correct
+and both are supported by the data. The rewrites hit the average tone of the platform and
+lose its variety.</p>
+<p>The table below states which comparisons the data is strong enough to support.</p>
+<figure class="tablewrap"><table class="resolve"><caption>Every comparison stated in this report, tested against 95 percent bootstrap intervals resampled over cells. A comparison is recorded as supported only when the two intervals do not overlap.</caption><thead><tr><th scope="col">Comparison</th><th scope="col">First value</th><th scope="col">Second value</th><th scope="col">Verdict</th></tr></thead><tbody><tr><th scope="row">Claude rewriting degrades distribution match relative to the source</th><td class="num">0.783 <span class="ci">[0.637, 0.942]</span></td><td class="num">0.264 <span class="ci">[0.132, 0.439]</span></td><td class="verdict res">supported</td></tr><tr><th scope="row">Claude rewriting raises pool self-similarity above the source</th><td class="num">0.654 <span class="ci">[0.595, 0.709]</span></td><td class="num">0.211 <span class="ci">[0.183, 0.234]</span></td><td class="verdict res">supported</td></tr><tr><th scope="row">Claude rewriting raises self-similarity above the authentic Reddit level</th><td class="num">0.654 <span class="ci">[0.595, 0.709]</span></td><td class="num">0.390 <span class="ci">[0.241, 0.538]</span></td><td class="verdict res">supported</td></tr><tr><th scope="row">Claude rewriting reduces vocabulary variety relative to the source</th><td class="num">0.693 <span class="ci">[0.665, 0.721]</span></td><td class="num">0.937 <span class="ci">[0.907, 0.957]</span></td><td class="verdict res">supported</td></tr><tr><th scope="row">GPT-5.6 preserves more source content than Claude</th><td class="num">0.816 <span class="ci">[0.790, 0.844]</span></td><td class="num">0.583 <span class="ci">[0.524, 0.632]</span></td><td class="verdict res">supported</td></tr><tr><th scope="row">GPT-5.6 matches the target distribution better than Claude</th><td class="num">0.504 <span class="ci">[0.359, 0.670]</span></td><td class="num">0.783 <span class="ci">[0.637, 0.942]</span></td><td class="verdict unres">not resolved</td></tr><tr><th scope="row">Rewriting reduces the calibration gap relative to the source</th><td class="num">0.111 <span class="ci">[0.039, 0.197]</span></td><td class="num">0.375 <span class="ci">[0.236, 0.518]</span></td><td class="verdict res">supported</td></tr><tr><th scope="row">Few-shot conditioning improves transfer over zero-shot</th><td class="num">0.078 <span class="ci">[0.027, 0.148]</span></td><td class="num">0.111 <span class="ci">[0.039, 0.197]</span></td><td class="verdict unres">not resolved</td></tr><tr><th scope="row">Few-shot conditioning improves preservation over zero-shot</th><td class="num">0.648 <span class="ci">[0.595, 0.700]</span></td><td class="num">0.583 <span class="ci">[0.524, 0.632]</span></td><td class="verdict unres">not resolved</td></tr><tr><th scope="row">Few-shot conditioning improves distribution match over zero-shot</th><td class="num">0.769 <span class="ci">[0.669, 0.926]</span></td><td class="num">0.783 <span class="ci">[0.637, 0.942]</span></td><td class="verdict unres">not resolved</td></tr></tbody></table></figure>
+
+<svg class="fig" viewBox="0 0 760 330" width="100%" role="img" aria-labelledby="tc7483ee0" xmlns="http://www.w3.org/2000/svg"><title id="tc7483ee0">Per-cell TRM</title>
+<text class="fig-title" x="0" y="20" text-anchor="start">The result holds in every cell that could be scored</text>
+<text class="fig-sub" x="0" y="38" text-anchor="start">Group-similarity score in each of the 10 cells with enough posts to measure. Lower is better. The</text>
+<text class="fig-sub" x="0" y="52" text-anchor="start">oracle can be scored in 6 of them, because it produces nothing on cells held out for generalisation.</text>
+<line class="axis" x1="78" y1="74" x2="78" y2="234"/>
+<line class="grid" x1="78" y1="234.0" x2="508" y2="234.0"/>
+<text class="tick" x="68" y="238.0" text-anchor="end">0.00</text>
+<line class="grid" x1="78" y1="206.22222222222223" x2="508" y2="206.22222222222223"/>
+<text class="tick" x="68" y="210.22222222222223" text-anchor="end">0.25</text>
+<line class="grid" x1="78" y1="178.44444444444446" x2="508" y2="178.44444444444446"/>
+<text class="tick" x="68" y="182.44444444444446" text-anchor="end">0.50</text>
+<line class="grid" x1="78" y1="150.66666666666669" x2="508" y2="150.66666666666669"/>
+<text class="tick" x="68" y="154.66666666666669" text-anchor="end">0.75</text>
+<line class="grid" x1="78" y1="122.88888888888891" x2="508" y2="122.88888888888891"/>
+<text class="tick" x="68" y="126.88888888888891" text-anchor="end">1.00</text>
+<line class="grid" x1="78" y1="95.11111111111113" x2="508" y2="95.11111111111113"/>
+<text class="tick" x="68" y="99.11111111111113" text-anchor="end">1.25</text>
+<text class="tick" transform="translate(99.5,250) rotate(28)" text-anchor="start">ai agents</text>
+<circle class="pt" cx="99.5" cy="225.6" r="5.5" fill="#8b8b8b"/>
+<circle class="pt" cx="99.5" cy="209.3" r="5.5" fill="#b0a08c"/>
+<circle class="pt" cx="99.5" cy="194.7" r="5.5" fill="#4a6fa5"/>
+<circle class="pt" cx="99.5" cy="162.1" r="5.5" fill="#c25e3a"/>
+<circle class="pt" cx="99.5" cy="162.1" r="5.5" fill="#d99a4e"/>
+<text class="tick" transform="translate(142.5,250) rotate(28)" text-anchor="start">elixir programming …</text>
+<circle class="pt" cx="142.5" cy="210.4" r="5.5" fill="#8b8b8b"/>
+<circle class="pt" cx="142.5" cy="138.1" r="5.5" fill="#b0a08c"/>
+<circle class="pt" cx="142.5" cy="205.6" r="5.5" fill="#4a6fa5"/>
+<circle class="pt" cx="142.5" cy="135.5" r="5.5" fill="#c25e3a"/>
+<circle class="pt" cx="142.5" cy="162.8" r="5.5" fill="#d99a4e"/>
+<circle class="pt" cx="142.5" cy="217.9" r="5.5" fill="#2e7d5b"/>
+<text class="tick" transform="translate(185.5,250) rotate(28)" text-anchor="start">python ecosystem</text>
+<circle class="pt" cx="185.5" cy="228.5" r="5.5" fill="#8b8b8b"/>
+<circle class="pt" cx="185.5" cy="177.5" r="5.5" fill="#b0a08c"/>
+<circle class="pt" cx="185.5" cy="197.2" r="5.5" fill="#4a6fa5"/>
+<circle class="pt" cx="185.5" cy="152.3" r="5.5" fill="#c25e3a"/>
+<circle class="pt" cx="185.5" cy="158.3" r="5.5" fill="#d99a4e"/>
+<circle class="pt" cx="185.5" cy="231.6" r="5.5" fill="#2e7d5b"/>
+<text class="tick" transform="translate(228.5,250) rotate(28)" text-anchor="start">ruby on rails ecosy…</text>
+<circle class="pt" cx="228.5" cy="223.0" r="5.5" fill="#8b8b8b"/>
+<circle class="pt" cx="228.5" cy="225.4" r="5.5" fill="#b0a08c"/>
+<circle class="pt" cx="228.5" cy="204.1" r="5.5" fill="#4a6fa5"/>
+<circle class="pt" cx="228.5" cy="150.9" r="5.5" fill="#c25e3a"/>
+<circle class="pt" cx="228.5" cy="153.2" r="5.5" fill="#d99a4e"/>
+<circle class="pt" cx="228.5" cy="232.3" r="5.5" fill="#2e7d5b"/>
+<text class="tick" transform="translate(271.5,250) rotate(28)" text-anchor="start">rust programming la…</text>
+<circle class="pt" cx="271.5" cy="197.7" r="5.5" fill="#8b8b8b"/>
+<circle class="pt" cx="271.5" cy="227.8" r="5.5" fill="#b0a08c"/>
+<circle class="pt" cx="271.5" cy="171.7" r="5.5" fill="#4a6fa5"/>
+<circle class="pt" cx="271.5" cy="128.7" r="5.5" fill="#c25e3a"/>
+<circle class="pt" cx="271.5" cy="135.0" r="5.5" fill="#d99a4e"/>
+<circle class="pt" cx="271.5" cy="208.2" r="5.5" fill="#2e7d5b"/>
+<text class="tick" transform="translate(314.5,250) rotate(28)" text-anchor="start">software testing</text>
+<circle class="pt" cx="314.5" cy="225.3" r="5.5" fill="#8b8b8b"/>
+<circle class="pt" cx="314.5" cy="211.9" r="5.5" fill="#b0a08c"/>
+<circle class="pt" cx="314.5" cy="203.7" r="5.5" fill="#4a6fa5"/>
+<circle class="pt" cx="314.5" cy="163.4" r="5.5" fill="#c25e3a"/>
+<circle class="pt" cx="314.5" cy="163.4" r="5.5" fill="#d99a4e"/>
+<text class="tick" transform="translate(357.5,250) rotate(28)" text-anchor="start">sql query optimizat…</text>
+<circle class="pt" cx="357.5" cy="140.1" r="5.5" fill="#8b8b8b"/>
+<circle class="pt" cx="357.5" cy="158.8" r="5.5" fill="#b0a08c"/>
+<circle class="pt" cx="357.5" cy="117.5" r="5.5" fill="#4a6fa5"/>
+<circle class="pt" cx="357.5" cy="85.9" r="5.5" fill="#c25e3a"/>
+<circle class="pt" cx="357.5" cy="86.3" r="5.5" fill="#d99a4e"/>
+<circle class="pt" cx="357.5" cy="210.0" r="5.5" fill="#2e7d5b"/>
+<text class="tick" transform="translate(400.5,250) rotate(28)" text-anchor="start">engineering managem…</text>
+<circle class="pt" cx="400.5" cy="208.8" r="5.5" fill="#8b8b8b"/>
+<circle class="pt" cx="400.5" cy="200.3" r="5.5" fill="#b0a08c"/>
+<circle class="pt" cx="400.5" cy="159.5" r="5.5" fill="#4a6fa5"/>
+<circle class="pt" cx="400.5" cy="157.9" r="5.5" fill="#c25e3a"/>
+<circle class="pt" cx="400.5" cy="157.9" r="5.5" fill="#d99a4e"/>
+<text class="tick" transform="translate(443.5,250) rotate(28)" text-anchor="start">open source software</text>
+<circle class="pt" cx="443.5" cy="210.6" r="5.5" fill="#8b8b8b"/>
+<circle class="pt" cx="443.5" cy="210.8" r="5.5" fill="#b0a08c"/>
+<circle class="pt" cx="443.5" cy="165.8" r="5.5" fill="#4a6fa5"/>
+<circle class="pt" cx="443.5" cy="146.4" r="5.5" fill="#c25e3a"/>
+<circle class="pt" cx="443.5" cy="146.4" r="5.5" fill="#d99a4e"/>
+<text class="tick" transform="translate(486.5,250) rotate(28)" text-anchor="start">software developmen…</text>
+<circle class="pt" cx="486.5" cy="176.5" r="5.5" fill="#8b8b8b"/>
+<circle class="pt" cx="486.5" cy="194.3" r="5.5" fill="#b0a08c"/>
+<circle class="pt" cx="486.5" cy="159.7" r="5.5" fill="#4a6fa5"/>
+<circle class="pt" cx="486.5" cy="187.6" r="5.5" fill="#c25e3a"/>
+<circle class="pt" cx="486.5" cy="160.1" r="5.5" fill="#d99a4e"/>
+<circle class="pt" cx="486.5" cy="216.3" r="5.5" fill="#2e7d5b"/>
+<circle cx="530" cy="74" r="5.5" fill="#8b8b8b"/>
+<text class="key-lbl" x="542" y="78" text-anchor="start">identity · baseline</text>
+<circle cx="530" cy="93" r="5.5" fill="#b0a08c"/>
+<text class="key-lbl" x="542" y="97" text-anchor="start">shuffle control · baseline</text>
+<circle cx="530" cy="112" r="5.5" fill="#4a6fa5"/>
+<text class="key-lbl" x="542" y="116" text-anchor="start">GPT-5.6 zero-shot</text>
+<circle cx="530" cy="131" r="5.5" fill="#c25e3a"/>
+<text class="key-lbl" x="542" y="135" text-anchor="start">Claude zero-shot</text>
+<circle cx="530" cy="150" r="5.5" fill="#d99a4e"/>
+<text class="key-lbl" x="542" y="154" text-anchor="start">Claude few-shot</text>
+<circle cx="530" cy="169" r="5.5" fill="#2e7d5b"/>
+<text class="key-lbl" x="542" y="173" text-anchor="start">target sample · oracle  (6/10)</text>
+</svg>
+<p class="note">This score is computed over cosine distance in the TF-IDF and SVD
+embedding space at 256 dimensions. Because the statistic is built on top of that distance, values computed over a different
+distance are not comparable with these. Claude zero-shot scores worse than the identity baseline in nine of the ten scored
+cells, which establishes that the result is not caused by one unusual topic. The one
+exception is the software development tools cell, where the two are close.</p>
+
+<h2>Where the variety is lost</h2>
+<svg class="fig" viewBox="0 0 760 342" width="100%" role="img" aria-labelledby="td9681e9c" xmlns="http://www.w3.org/2000/svg"><title id="td9681e9c">TRM rank profile</title>
+<text class="fig-title" x="0" y="20" text-anchor="start">How the generated posts sit among the real ones</text>
+<text class="fig-sub" x="0" y="38" text-anchor="start">Each generated post is compared against two real posts. If the two sets matched, every band would be</text>
+<text class="fig-sub" x="0" y="52" text-anchor="start">one third. A large third band means the generated posts are bunched in the middle of the real ones.</text>
+<rect class="key" x="40" y="62" width="11" height="11" fill="#cfd8e3"/>
+<text class="key-lbl" x="57" y="72" text-anchor="start">generated post sits outside</text>
+<rect class="key" x="272" y="62" width="11" height="11" fill="#93a7c0"/>
+<text class="key-lbl" x="289" y="72" text-anchor="start">in between</text>
+<rect class="key" x="504" y="62" width="11" height="11" fill="#c25e3a"/>
+<text class="key-lbl" x="521" y="72" text-anchor="start">generated post sits inside</text>
+<line class="ref" x1="376.7" y1="86" x2="376.7" y2="308"/>
+<line class="ref" x1="533.3" y1="86" x2="533.3" y2="308"/>
+<text class="ref-lbl" x="376.66666666666663" y="322" text-anchor="middle">⅓</text>
+<text class="ref-lbl" x="533.3333333333333" y="322" text-anchor="middle">⅔</text>
+<text class="lbl" x="210" y="107" text-anchor="end">identity · baseline</text>
+<rect class="bar" x="220.0" y="94" width="221.3" height="20" fill="#cfd8e3"/>
+<text class="inbar" x="330.66687525437527" y="108" text-anchor="middle">0.47</text>
+<rect class="bar" x="441.3" y="94" width="123.0" height="20" fill="#93a7c0"/>
+<text class="inbar" x="502.82001322751324" y="108" text-anchor="middle">0.26</text>
+<rect class="bar" x="564.3" y="94" width="125.7" height="20" fill="#c25e3a"/>
+<text class="inbar" x="627.153137973138" y="108" text-anchor="middle">0.27</text>
+<text class="lbl" x="210" y="141" text-anchor="end">shuffle control · baseline</text>
+<rect class="bar" x="220.0" y="128" width="351.3" height="20" fill="#cfd8e3"/>
+<text class="inbar" x="395.6416732804233" y="142" text-anchor="middle">0.75</text>
+<rect class="bar" x="571.3" y="128" width="68.2" height="20" fill="#93a7c0"/>
+<text class="inbar" x="605.3934004884005" y="142" text-anchor="middle">0.15</text>
+<rect class="bar" x="639.5" y="128" width="50.5" height="20" fill="#c25e3a"/>
+<text class="inbar" x="664.7517272079772" y="142" text-anchor="middle">0.11</text>
+<text class="lbl" x="210" y="175" text-anchor="end">GPT-5.6 zero-shot</text>
+<rect class="bar" x="220.0" y="162" width="179.9" height="20" fill="#cfd8e3"/>
+<text class="inbar" x="309.9655703093203" y="176" text-anchor="middle">0.38</text>
+<rect class="bar" x="399.9" y="162" width="109.9" height="20" fill="#93a7c0"/>
+<text class="inbar" x="454.88341460622706" y="176" text-anchor="middle">0.23</text>
+<rect class="bar" x="509.8" y="162" width="180.2" height="20" fill="#c25e3a"/>
+<text class="inbar" x="599.9178442969068" y="176" text-anchor="middle">0.38</text>
+<text class="lbl" x="210" y="209" text-anchor="end">Claude zero-shot</text>
+<rect class="bar" x="220.0" y="196" width="197.3" height="20" fill="#cfd8e3"/>
+<text class="inbar" x="318.65009717134717" y="210" text-anchor="middle">0.42</text>
+<rect class="bar" x="417.3" y="196" width="91.5" height="20" fill="#93a7c0"/>
+<text class="inbar" x="463.05407623626377" y="210" text-anchor="middle">0.19</text>
+<rect class="bar" x="508.8" y="196" width="181.2" height="20" fill="#c25e3a"/>
+<text class="inbar" x="599.4039790649166" y="210" text-anchor="middle">0.39</text>
+<text class="lbl" x="210" y="243" text-anchor="end">Claude few-shot</text>
+<rect class="bar" x="220.0" y="230" width="173.9" height="20" fill="#cfd8e3"/>
+<text class="inbar" x="306.97205815018316" y="244" text-anchor="middle">0.37</text>
+<rect class="bar" x="393.9" y="230" width="100.9" height="20" fill="#93a7c0"/>
+<text class="inbar" x="444.37268811050063" y="244" text-anchor="middle">0.21</text>
+<rect class="bar" x="494.8" y="230" width="195.2" height="20" fill="#c25e3a"/>
+<text class="inbar" x="592.4006299603175" y="244" text-anchor="middle">0.42</text>
+<text class="lbl" x="210" y="277" text-anchor="end">target sample · oracle</text>
+<rect class="bar" x="220.0" y="264" width="186.1" height="20" fill="#cfd8e3"/>
+<text class="inbar" x="313.06961233211234" y="278" text-anchor="middle">0.40</text>
+<rect class="bar" x="406.1" y="264" width="153.5" height="20" fill="#93a7c0"/>
+<text class="inbar" x="482.90326109076113" y="278" text-anchor="middle">0.33</text>
+<rect class="bar" x="559.7" y="264" width="130.3" height="20" fill="#c25e3a"/>
+<text class="inbar" x="624.8336487586488" y="278" text-anchor="middle">0.28</text>
+</svg>
+<p>The three bands record how often each of three arrangements occurs when one generated
+post is compared against two real posts. If the generated set matched the real set, each
+band would take exactly one third. Extra weight in the third band means the two real
+posts are usually further apart than either is from the generated post, which is what
+happens when the generated posts are bunched together in the middle of the real ones.
+The oracle sits near one third on all three bands, as it must.</p>
+
+<svg class="fig" viewBox="0 0 760 310" width="100%" role="img" aria-labelledby="t9a8443b3" xmlns="http://www.w3.org/2000/svg"><title id="t9a8443b3">Generated posts are too similar to each other</title><desc>How alike the posts within each set are. The oracle shows the level real Reddit posts reach.</desc>
+<text class="fig-title" x="0" y="20" text-anchor="start">Generated posts are too similar to each other</text>
+<text class="fig-sub" x="0" y="38" text-anchor="start">How alike the posts within each set are. The oracle shows the level real Reddit posts reach.</text>
+<line class="ref" x1="427.3" y1="60" x2="427.3" y2="280"/>
+<text class="ref-lbl" x="432.2588141911205" y="55" text-anchor="start">authentic level</text>
+<text class="lbl" x="214" y="87" text-anchor="end">identity · baseline</text>
+<rect class="bar" x="224" y="75" width="129.3" height="20" fill="#8b8b8b" rx="2"/>
+<text class="val" x="360.2619693829751" y="90" text-anchor="start">0.211</text>
+<text class="lbl" x="214" y="121" text-anchor="end">shuffle control · baseline</text>
+<rect class="bar" x="224" y="109" width="26.1" height="20" fill="#b0a08c" rx="2"/>
+<text class="val" x="257.1320500624757" y="124" text-anchor="start">0.043</text>
+<text class="lbl" x="214" y="155" text-anchor="end">GPT-5.6 zero-shot</text>
+<rect class="bar" x="224" y="143" width="342.7" height="20" fill="#4a6fa5" rx="2"/>
+<text class="val" x="573.7088506721822" y="158" text-anchor="start">0.560</text>
+<text class="lbl" x="214" y="189" text-anchor="end">Claude zero-shot</text>
+<rect class="bar" x="224" y="177" width="400.2" height="20" fill="#c25e3a" rx="2"/>
+<text class="val" x="631.2347232938289" y="192" text-anchor="start">0.654</text>
+<text class="lbl" x="214" y="223" text-anchor="end">Claude few-shot</text>
+<rect class="bar" x="224" y="211" width="403.4" height="20" fill="#d99a4e" rx="2"/>
+<text class="val" x="634.3898305084747" y="226" text-anchor="start">0.659</text>
+<text class="lbl" x="214" y="257" text-anchor="end">target sample · oracle</text>
+<rect class="bar" x="224" y="245" width="238.9" height="20" fill="#2e7d5b" rx="2"/>
+<text class="val" x="469.9410906710048" y="260" text-anchor="start">0.390</text>
+<line class="axis" x1="224" y1="60" x2="224" y2="280"/>
+</svg>
+
+<h2>The repeated shape, in plain sight</h2>
+<p>The group-level statistics correspond to one concrete habit. The rewriters settle on a
+common structure that ends by inviting a reply from the community, and that structure
+recurs whatever the source post was about.</p>
+
+<figure class="exfig"><figcaption>Closing sentences of Claude rewrites drawn from six different cells. The subject matter differs while the closing move recurs. Four of the six shown solicit a response from the community, and the table below gives the rate across the full held-out split.</figcaption><ul class="tails"><li><span class="excell">elixir programming language</span>… t_by`/`where` keyword syntax annoying? Curious if there's a reason it was left as-is other than avoiding the ambiguity between `= NULL` and `IS NULL`.</li><li><span class="excell">software development tools</span>… Talk link if anyone wants it: https://lnkd.in/ddwSzCcJ</li><li><span class="excell">vector search</span>… Not looking for marketing pitches, just want real numbers from people running this in prod.</li><li><span class="excell">software testing</span>… hat mimic the messy edge configs, or do you just deal with it reactively when something breaks in prod? Curious what's worked and what's just theater.</li><li><span class="excell">ruby on rails ecosystem</span>…  SF if anyone wants the intro. Happy to answer questions about how it compares to the old community SDK or how people are wiring this into Rails apps.</li><li><span class="excell">agentic coding</span>… away/experiment databases that never come back? Curious whether the "highest conversion in 4 years" holds once you filter for retention past week one.</li></ul></figure>
+
+<figure class="tablewrap"><table><caption>Proportion of posts whose final character is a question mark. The rewriters close on a question at roughly three times the authentic Reddit rate.</caption><thead><tr><th scope="col">Pool</th><th scope="col">Ends with a question</th><th scope="col">n</th></tr></thead><tbody><tr><th scope="row">authentic Reddit</th><td>0.13</td><td class="na">158</td></tr><tr><th scope="row">authentic LinkedIn</th><td>0.03</td><td class="na">151</td></tr><tr><th scope="row">GPT-5.6 zero-shot</th><td>0.40</td><td class="na">504</td></tr><tr><th scope="row">Claude zero-shot</th><td>0.42</td><td class="na">504</td></tr><tr><th scope="row">Claude few-shot</th><td>0.46</td><td class="na">504</td></tr></tbody></table></figure>
+
+<p>The rewriters end on a question roughly three times as often as real Reddit posts do.
+This measurement uses no embedding and no classifier, so it provides independent support
+for the same conclusion, and it accounts for much of the excess similarity within the
+generated sets.</p>
+
+<h2>Which writing habits are not reproduced</h2>
+<svg class="fig" viewBox="0 0 760 326" width="100%" role="img" aria-labelledby="t41c849b1" xmlns="http://www.w3.org/2000/svg"><title id="t41c849b1">Least reproduced writing habits</title>
+<text class="fig-title" x="0" y="20" text-anchor="start">Which writing habits each column fails to reproduce</text>
+<text class="fig-sub" x="0" y="38" text-anchor="start">How far each column moved a habit, compared with how far real Reddit posts sit from real LinkedIn</text>
+<text class="fig-sub" x="0" y="52" text-anchor="start">posts. Read each column against the oracle, which shows how much this measure moves from sampling</text>
+<text class="fig-sub" x="0" y="66" text-anchor="start">alone. Lower is better.</text>
+<line class="axis" x1="210" y1="70" x2="210" y2="294"/>
+<line class="grid" x1="210.0" y1="70" x2="210.0" y2="294"/>
+<text class="tick" x="210.0" y="308" text-anchor="middle">0.0</text>
+<line class="grid" x1="292.5" y1="70" x2="292.5" y2="294"/>
+<text class="tick" x="292.5" y="308" text-anchor="middle">0.8</text>
+<line class="grid" x1="375.0" y1="70" x2="375.0" y2="294"/>
+<text class="tick" x="375.0" y="308" text-anchor="middle">1.5</text>
+<line class="grid" x1="457.5" y1="70" x2="457.5" y2="294"/>
+<text class="tick" x="457.5" y="308" text-anchor="middle">2.3</text>
+<line class="grid" x1="540.0" y1="70" x2="540.0" y2="294"/>
+<text class="tick" x="540.0" y="308" text-anchor="middle">3.0</text>
+<text class="lbl" x="200" y="82" text-anchor="end">uppercase ratio</text>
+<circle class="pt" cx="362.4" cy="78.0" r="5" fill="#8b8b8b" stroke="#fff"/>
+<circle class="pt" cx="359.0" cy="78.0" r="5" fill="#b0a08c" stroke="#fff"/>
+<circle class="pt" cx="375.7" cy="78.0" r="5" fill="#4a6fa5" stroke="#fff"/>
+<circle class="pt" cx="454.2" cy="78.0" r="5" fill="#c25e3a" stroke="#fff"/>
+<circle class="pt" cx="449.0" cy="78.0" r="5" fill="#d99a4e" stroke="#fff"/>
+<circle class="pt" cx="515.6" cy="78.0" r="5" fill="#2e7d5b" stroke="#fff"/>
+<text class="lbl" x="200" y="108" text-anchor="end">type token ratio</text>
+<circle class="pt" cx="352.6" cy="104.0" r="5" fill="#8b8b8b" stroke="#fff"/>
+<circle class="pt" cx="329.7" cy="104.0" r="5" fill="#b0a08c" stroke="#fff"/>
+<circle class="pt" cx="326.6" cy="104.0" r="5" fill="#4a6fa5" stroke="#fff"/>
+<circle class="pt" cx="434.7" cy="104.0" r="5" fill="#c25e3a" stroke="#fff"/>
+<circle class="pt" cx="413.2" cy="104.0" r="5" fill="#d99a4e" stroke="#fff"/>
+<circle class="pt" cx="279.2" cy="104.0" r="5" fill="#2e7d5b" stroke="#fff"/>
+<text class="lbl" x="200" y="134" text-anchor="end">n words</text>
+<circle class="pt" cx="320.1" cy="130.0" r="5" fill="#8b8b8b" stroke="#fff"/>
+<circle class="pt" cx="294.9" cy="130.0" r="5" fill="#b0a08c" stroke="#fff"/>
+<circle class="pt" cx="314.3" cy="130.0" r="5" fill="#4a6fa5" stroke="#fff"/>
+<circle class="pt" cx="428.1" cy="130.0" r="5" fill="#c25e3a" stroke="#fff"/>
+<circle class="pt" cx="394.5" cy="130.0" r="5" fill="#d99a4e" stroke="#fff"/>
+<circle class="pt" cx="254.9" cy="130.0" r="5" fill="#2e7d5b" stroke="#fff"/>
+<text class="lbl" x="200" y="160" text-anchor="end">n chars</text>
+<circle class="pt" cx="319.9" cy="156.0" r="5" fill="#8b8b8b" stroke="#fff"/>
+<circle class="pt" cx="290.9" cy="156.0" r="5" fill="#b0a08c" stroke="#fff"/>
+<circle class="pt" cx="318.5" cy="156.0" r="5" fill="#4a6fa5" stroke="#fff"/>
+<circle class="pt" cx="424.8" cy="156.0" r="5" fill="#c25e3a" stroke="#fff"/>
+<circle class="pt" cx="389.8" cy="156.0" r="5" fill="#d99a4e" stroke="#fff"/>
+<circle class="pt" cx="251.9" cy="156.0" r="5" fill="#2e7d5b" stroke="#fff"/>
+<text class="lbl" x="200" y="186" text-anchor="end">emoji per 100w</text>
+<circle class="pt" cx="465.4" cy="182.0" r="5" fill="#8b8b8b" stroke="#fff"/>
+<circle class="pt" cx="269.1" cy="182.0" r="5" fill="#b0a08c" stroke="#fff"/>
+<circle class="pt" cx="395.5" cy="182.0" r="5" fill="#4a6fa5" stroke="#fff"/>
+<circle class="pt" cx="395.5" cy="182.0" r="5" fill="#c25e3a" stroke="#fff"/>
+<circle class="pt" cx="395.5" cy="182.0" r="5" fill="#d99a4e" stroke="#fff"/>
+<circle class="pt" cx="283.5" cy="182.0" r="5" fill="#2e7d5b" stroke="#fff"/>
+<text class="lbl" x="200" y="212" text-anchor="end">question rate</text>
+<circle class="pt" cx="283.0" cy="208.0" r="5" fill="#8b8b8b" stroke="#fff"/>
+<circle class="pt" cx="329.8" cy="208.0" r="5" fill="#b0a08c" stroke="#fff"/>
+<circle class="pt" cx="323.3" cy="208.0" r="5" fill="#4a6fa5" stroke="#fff"/>
+<circle class="pt" cx="390.8" cy="208.0" r="5" fill="#c25e3a" stroke="#fff"/>
+<circle class="pt" cx="363.7" cy="208.0" r="5" fill="#d99a4e" stroke="#fff"/>
+<circle class="pt" cx="268.6" cy="208.0" r="5" fill="#2e7d5b" stroke="#fff"/>
+<text class="lbl" x="200" y="238" text-anchor="end">first person sg per 100w</text>
+<circle class="pt" cx="352.4" cy="234.0" r="5" fill="#8b8b8b" stroke="#fff"/>
+<circle class="pt" cx="321.9" cy="234.0" r="5" fill="#b0a08c" stroke="#fff"/>
+<circle class="pt" cx="350.8" cy="234.0" r="5" fill="#4a6fa5" stroke="#fff"/>
+<circle class="pt" cx="372.9" cy="234.0" r="5" fill="#c25e3a" stroke="#fff"/>
+<circle class="pt" cx="374.4" cy="234.0" r="5" fill="#d99a4e" stroke="#fff"/>
+<circle class="pt" cx="390.5" cy="234.0" r="5" fill="#2e7d5b" stroke="#fff"/>
+<text class="lbl" x="200" y="264" text-anchor="end">n paragraphs</text>
+<circle class="pt" cx="317.3" cy="260.0" r="5" fill="#8b8b8b" stroke="#fff"/>
+<circle class="pt" cx="288.8" cy="260.0" r="5" fill="#b0a08c" stroke="#fff"/>
+<circle class="pt" cx="295.7" cy="260.0" r="5" fill="#4a6fa5" stroke="#fff"/>
+<circle class="pt" cx="361.8" cy="260.0" r="5" fill="#c25e3a" stroke="#fff"/>
+<circle class="pt" cx="326.7" cy="260.0" r="5" fill="#d99a4e" stroke="#fff"/>
+<circle class="pt" cx="268.2" cy="260.0" r="5" fill="#2e7d5b" stroke="#fff"/>
+<circle cx="566" cy="78" r="5" fill="#8b8b8b"/>
+<text class="key-lbl" x="578" y="82" text-anchor="start">identity · baseline</text>
+<circle cx="566" cy="96" r="5" fill="#b0a08c"/>
+<text class="key-lbl" x="578" y="100" text-anchor="start">shuffle control · baseline</text>
+<circle cx="566" cy="114" r="5" fill="#4a6fa5"/>
+<text class="key-lbl" x="578" y="118" text-anchor="start">GPT-5.6 zero-shot</text>
+<circle cx="566" cy="132" r="5" fill="#c25e3a"/>
+<text class="key-lbl" x="578" y="136" text-anchor="start">Claude zero-shot</text>
+<circle cx="566" cy="150" r="5" fill="#d99a4e"/>
+<text class="key-lbl" x="578" y="154" text-anchor="start">Claude few-shot</text>
+<circle cx="566" cy="168" r="5" fill="#2e7d5b"/>
+<text class="key-lbl" x="578" y="172" text-anchor="start">target sample · oracle</text>
+</svg>
+<p>The oracle is the reference on this measure rather than zero. It emits real Reddit
+posts, so any distance it shows comes from comparing one sample of real posts against
+another, and that is the level a perfect system would reach. Averaged across these eight
+habits the oracle sits at 1.12, and the shuffle control, GPT-5.6 and the identity
+baseline all sit close to it.</p>
+<p>Claude zero-shot is the exception at 2.29, roughly double the reference level. Two
+habits account for most of that gap: bullet points and paragraph count, where it scores
+3.07 and 3.05 against the oracle's 0.08 and 0.59. The rewriter imposes a tidy, heavily
+formatted layout on communities that do not write that way. These are the same habits
+the automated judge names when it picks out a machine-written post, arrived at
+independently.</p>
+
+<h2>LLM judge</h2>
+<svg class="fig" viewBox="0 0 760 310" width="100%" role="img" aria-labelledby="t919f5493" xmlns="http://www.w3.org/2000/svg"><title id="t919f5493">How often an automated judge spots the machine-written post</title><desc>Lower is better. A judge that could not tell would score 0.25.</desc>
+<text class="fig-title" x="0" y="20" text-anchor="start">How often an automated judge spots the machine-written post</text>
+<text class="fig-sub" x="0" y="38" text-anchor="start">Lower is better. A judge that could not tell would score 0.25.</text>
+<line class="ref" x1="403.9" y1="60" x2="403.9" y2="280"/>
+<text class="ref-lbl" x="408.8553384432689" y="55" text-anchor="start">chance</text>
+<text class="lbl" x="214" y="87" text-anchor="end">identity · baseline</text>
+<rect class="bar" x="224" y="75" width="403.4" height="20" fill="#8b8b8b" rx="2"/>
+<text class="val" x="634.3898305084747" y="90" text-anchor="start">0.561</text>
+<text class="lbl" x="214" y="121" text-anchor="end">shuffle control · baseline</text>
+<rect class="bar" x="224" y="109" width="346.2" height="20" fill="#b0a08c" rx="2"/>
+<text class="val" x="577.2215265032927" y="124" text-anchor="start">0.481</text>
+<text class="lbl" x="214" y="155" text-anchor="end">GPT-5.6 zero-shot</text>
+<rect class="bar" x="224" y="143" width="348.5" height="20" fill="#4a6fa5" rx="2"/>
+<text class="val" x="579.4697182338335" y="158" text-anchor="start">0.484</text>
+<text class="lbl" x="214" y="189" text-anchor="end">Claude zero-shot</text>
+<rect class="bar" x="224" y="177" width="292.3" height="20" fill="#c25e3a" rx="2"/>
+<text class="val" x="523.264924970312" y="192" text-anchor="start">0.406</text>
+<text class="lbl" x="214" y="223" text-anchor="end">Claude few-shot</text>
+<rect class="bar" x="224" y="211" width="326.0" height="20" fill="#d99a4e" rx="2"/>
+<text class="val" x="556.9878009284249" y="226" text-anchor="start">0.453</text>
+<text class="lbl" x="214" y="257" text-anchor="end">target sample · oracle</text>
+<rect class="bar" x="224" y="245" width="268.8" height="20" fill="#2e7d5b" rx="2"/>
+<text class="val" x="499.81949692324304" y="260" text-anchor="start">0.374</text>
+<line class="axis" x1="224" y1="60" x2="224" y2="280"/>
+</svg>
+<p>The oracle falls below chance, which is the required outcome. The shuffle control is
+the most readily detected column, because an unrelated topic constitutes an obvious
+signal. The cues most frequently recorded by the judge for the generated columns
+describe regularity of structure rather than implausibility of content.</p>
+<blockquote>
+  <p>formulaic llm discussion prompt structure with em-dash and open-ended questions</p>
+  <p>promotional structure with featured bullet points and generic concluding questions</p>
+  <p>bulleted structural formula with absurd, invented ai tropes</p>
+</blockquote>
+<p class="note">The judge also detects posts that belong to the wrong platform, which is
+why the identity baseline is detectable and why the shuffle control is the most
+detectable column of all. The measurement is best read as asking whether a post belongs
+in this particular set, which is the quantity of interest here.</p>
+
+<h2>An individual transfer</h2>
+<figure class="exfig"><figcaption>A representative rewrite. Promotional framing becomes a question, the technical content survives, and the personal endorsement is dropped. Judged individually the output is good.</figcaption><div class="example grid2"><div class="ex-col src"><h3>Source · LinkedIn</h3><p>Agentic workflows significantly lowered the barrier of entry to software development. Supabase weekly active databases doubled for the last two weeks, with over 50% new users launching from AI prompts. The conversion rate for this cohort is also the highest over the last 4 years. Hype or not, it is undeniable that agentic workflows widens the top of your user acquisition funnel by making your SaaS product more accessible. Can't wait to scale this up in …</p></div><div class="ex-col "><h3>Generated · Reddit</h3><p>Anyone else seeing a wave of AI-prompt users hitting their signup funnel? Context: we run on Supabase and their weekly active databases have doubled two weeks in a row. Over 50% of new users are launching straight from AI prompts (i.e. agentic coding workflows spinning up projects). What's more interesting is the conversion rate for that cohort is the highest they've seen in 4 years. So the barrier to entry for actually building/shipping software has …</p></div></div></figure>
+<p class="note">Judged on its own this rewrite is good. The promotional framing becomes a
+question, the technical detail survives, and the personal endorsement is dropped. Nothing
+is wrong with it. The problem only becomes visible once many outputs are read together
+and the same shape appears in all of them.</p>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p>Generated from <code>runs/scaled/report.heldout.json</code> by
+     <code>experimental-notes/build.py</code>. Figures are drawn from the report
+     data, not transcribed.</p>
+  <p>Distribution-aware metrics follow Chan, Ni, Ross, Vijayanarasimhan, Myers &amp;
+     Canny, <em>Distribution Aware Metrics for Conditional Natural Language
+     Generation</em>, LREC-COLING 2024, pp. 5064–5095.</p>
+</div></footer>
+</body>
+</html>

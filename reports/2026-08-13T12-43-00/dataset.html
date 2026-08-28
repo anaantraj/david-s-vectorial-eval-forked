@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dataset — Study 3 — Vectorial × BAIR — 2026-08-13</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<header class="masthead study-head">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · Study 3 · audience transfer</p>
+    <h1>Adaptation versus prompting <span class="stamp">2026-08-13</span></h1>
+    <p class="lede">LinkedIn to Reddit across 33 bilateral corpus cells. The report
+    compares 13 method configurations; the primary distributional measure covers
+    11 shared test cells in google/embeddinggemma-300m, dim 512.</p>
+  </div>
+</header>
+<nav class="nav" aria-label="Report sections"><div class="wrap"><a href="index.html" class="">Overview</a><a href="results.html" class="">Results</a><a href="methods.html" class="">Methods</a><a href="dataset.html" class="here">Dataset</a><a href="limitations.html" class="">Limitations</a></div></nav>
+<main class="wrap">
+
+<h1>Dataset</h1>
+<p class="lede">The corpus, the cell structure, the split rule, and the three conditionings of the
+target text used to fit the adaptation methods. This page is self-contained; nothing on it requires
+the methods page.</p>
+
+<figure class="concept-figure data-flow"><figcaption><strong>From corpus to scored comparison</strong><br><span class="sub">Minimum pool sizes reduce the cell base for distributional measures. The coverage line reports the actual base for every metric family.</span></figcaption><div class="flow-grid"><div class="flow-card"><div class="flow-label">Corpus</div><div class="flow-value">1,112</div><div class="flow-unit">posts</div><p>33 bilateral cells · 5 dense</p></div><div class="flow-arrow" aria-hidden="true">→</div><div class="flow-card"><div class="flow-label">Training signal</div><div class="flow-value">311</div><div class="flow-unit">authentic Reddit posts</div><p>28 cells · 72 validation posts</p></div><div class="flow-arrow" aria-hidden="true">→</div><div class="flow-card"><div class="flow-label">Evaluated methods</div><div class="flow-value">13</div><div class="flow-unit">configurations</div><p>plus 3 named references</p></div><div class="flow-arrow" aria-hidden="true">→</div><div class="flow-card"><div class="flow-label">Scored comparison</div><div class="flow-value">11</div><div class="flow-unit">cells on the primary measure</div><p>classifier 25 · degeneracy 25 · distributional 16 · semantic 25 · structural 16 · trm 11</p></div></div></figure>
+
+<h2>Corpus and cell structure</h2>
+<p>The corpus pairs an occupational audience with a topic to form a <em>bilateral cell</em>, a cell
+being retained only where both platforms carry at least
+5 posts. The harness holds 1112 posts
+in 33 such cells, of which 5 are dense, meaning at least
+10 posts on each platform. Coverage, rather than
+corpus size, is the binding constraint: of roughly fifteen hundred topic clusters in the source data,
+only these 33 carry sufficient mass on both platforms.</p>
+<p>Source platform is linkedin and target platform is
+reddit. Of the 1112 posts,
+553 are drawn from the source platform and
+559 from the target.</p>
+
+<h2>Splits</h2>
+<p>Splits are assigned at the level of the post, stratified within a cell and platform, in the
+proportions 70%, 15%
+and 15%. Assignment is
+<code>blake2b(post_id, seed)</code> rather than a shuffle, so the mapping is a pure function of the
+identifier and appending newly scraped posts never reshuffles an existing assignment. A cell-level
+split was rejected because cells hold between five and roughly one hundred and fifty posts, and every
+metric in the harness compares pools; a cell-level split would leave single-digit pools.</p>
+<p>Leakage is controlled by role rather than by partition. A task's exemplars are drawn only from
+train, while the authentic posts it is scored against come from the split being scored. Separately,
+5 whole cells are withheld from train and validation entirely, which
+provides a zero-shot set for topics from which no exemplar has ever been seen.</p>
+<p>This study is scored on the merged validation-and-test heldout split. Model selection uses only a deterministic slice carved from train, so neither part of the scored reference pool informed selection.</p>
+
+<h2>The trainable projection</h2>
+<p>There is no paired data. No source-platform post in this corpus has a corresponding
+target-platform post, which is why the harness compares pools rather than pairs and why no generated
+post has a gold reference. A trained method therefore cannot be fitted to source-and-target examples
+without first inventing them, and inventing them with a language model would fit the study to another
+model's opinion of the answer, which the evaluation would then measure agreement with.</p>
+<p>Each method is instead fitted as a conditional language model over authentic train-split
+target-platform posts, with the source post supplied at inference as content to be carried across.
+Restricting the projection to target-platform posts leaves <strong>311 training
+examples</strong> over 28 cells, with 72 for
+selection and 176 held out. That figure is the entire training signal behind every trained
+column in this study and belongs in any reading of the results. It is also small enough that LoRA
+overfitting was the expected outcome; it did not occur, and every run improved on the base model
+before early stopping engaged.</p>
+
+<h2>The three conditionings</h2>
+<p>The completion is always the authentic post, verbatim. The variants differ only in what conditions
+it, and all three share one prompt template, so a method may be fitted to each without anything
+changing but the file it reads.</p>
+<div class="table-shell" role="region" aria-label="Three conditioning variants" tabindex="0">
+<table class="res simple">
+<thead><tr><th>variant</th><th>conditioned on</th><th>train</th><th>dev</th><th>test</th><th>cells</th></tr></thead>
+<tbody>
+<tr><th scope="row">topic only</th><td>audience, domain and topic</td>
+    <td>311</td><td>72</td><td>176</td>
+    <td>28</td></tr>
+<tr><th scope="row">retrieved source</th><td>the above, plus the nearest same-cell source post under TF-IDF cosine</td>
+    <td>311</td><td>72</td><td>176</td>
+    <td>28</td></tr>
+<tr><th scope="row">aspects</th><td>the topic fields, plus the evaluative dimensions the post foregrounds</td>
+    <td>169</td>
+    <td>31</td>
+    <td>103</td>
+    <td>16</td></tr>
+</tbody></table></div>
+<p><strong>Topic only</strong> presents no source post during fitting, so the content block supplied
+at inference is structurally unseen. <strong>Retrieved source</strong> removes that mismatch by
+pairing each target with the nearest same-cell source post, but the pairing is weak by construction:
+a retrieved pair averages 0.137 cosine against 0.079 for a random same-cell pair, and fewer than one
+per cent reach 0.3. Retrieval recovers topical neighbours because the corpus contains no content
+correspondences to recover, so the variant supplies the shape of the inference context rather than a
+supervision signal for content preservation. <strong>Aspects</strong> abandons content transfer as the
+objective and conditions on the evaluative dimensions the target post emphasises; its context and
+completion are genuinely coupled, unlike the other two, at the cost of coverage, since aspect
+vocabularies join to 16 of the cells present in
+training.</p>
+
+<h2>Text normalisation</h2><p>HTML entities are decoded once during the v2 dataset build, before any split, fit or score is computed.</p>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p class="footer-title">Study 3 · generated 2026-08-13 12:42 PDT</p>
+  <p>Source reports: <code>runs/study3/report.heldout.embeddinggemma-300m-d512.json</code> and
+     <code>runs/study3_sys/report.heldout.embeddinggemma-300m-d512.json</code>. Built by
+     <code>experimental-notes/build_study2.py</code>. Every figure and quoted value is computed
+     from those reports.</p>
+  <p>Distribution-aware metrics follow Chan, Ni, Ross, Vijayanarasimhan, Myers &amp;
+     Canny, <em>Distribution Aware Metrics for Conditional Natural Language Generation</em>,
+     LREC-COLING 2024, pp. 5064–5095.</p>
+</div></footer>
+</body>
+</html>

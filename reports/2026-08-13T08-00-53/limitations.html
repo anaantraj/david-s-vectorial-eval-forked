@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limitations — Study 2 — Vectorial × BAIR — 2026-08-13</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<header class="masthead study-head">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · Study 2 · audience transfer</p>
+    <h1>Adaptation versus prompting <span class="stamp">2026-08-13</span></h1>
+    <p class="lede">LinkedIn to Reddit across 30 bilateral corpus cells. The report
+    compares 13 method configurations; the primary distributional measure covers
+    5 shared test cells in google/embeddinggemma-300m, dim 512.</p>
+  </div>
+</header>
+<nav class="nav" aria-label="Report sections"><div class="wrap"><a href="index.html" class="">Overview</a><a href="results.html" class="">Results</a><a href="methods.html" class="">Methods</a><a href="dataset.html" class="">Dataset</a><a href="limitations.html" class="here">Limitations</a></div></nav>
+<main class="wrap">
+
+<h1>Limitations</h1>
+<p class="lede">The conditions under which the results above hold, and the claims they do not
+support.</p>
+
+<h2>The steering columns are confounded with the prompt wrapping</h2>
+<p>The three steering artifacts are fitted and generate on the raw rendered context produced by
+<code>render_prompt</code>. The LoRA and soft-prompt methods apply the base model's chat template to
+that same context, at fitting and at inference alike. The steering columns therefore differ from the
+other two trained families in two respects at once, the intervention and the wrapping, and any
+difference between them compounds the two. This is recorded in the steering run records and is not
+inferred here.</p>
+<p>The consequence is specific and it is not symmetric. Comparisons of steering against the prompted
+columns remain interpretable, since neither applies the template in the same way the trained families
+do, but <strong>no claim in this report about steering relative to LoRA or to the soft prompt is a
+measurement of the intervention</strong>. Refitting the three artifacts under the same wrapping
+removes the confound and is the first thing that should be done before these columns are cited. A
+second, smaller asymmetry compounds it: the steering function truncates the source post to 3000
+characters before rendering, where the other two pass it whole.</p>
+
+<h2>The primary comparison base is 5 cells</h2>
+<p>Each metric family restricts every method column to one shared cell set, but minimum pool sizes
+make those sets different. The Triangle-Rank Metric covers 5 cells,
+distributional and structural measures cover 8, and the per-post
+semantic, classifier and degeneracy measures cover 17. Resampling is over
+cells rather than posts, since posts within one cell are not exchangeable with posts in another.
+The primary intervals are correspondingly wide. <strong>LoRA against the soft prompt is not resolved
+on the Triangle-Rank Metric</strong>, and the report does not order them.</p>
+
+<h2>The authentic-post oracle covers 1 cell on the primary measure</h2>
+<p>The systems-only report excludes the oracle from the common-cell intersection so that its limited
+coverage does not reduce the method comparison. Identity and the wrong-topic control are therefore
+drawn from the systems-only report on the same 5-cell base as the methods. The oracle is
+overlaid from the full report and covers 1 cell on the
+Triangle-Rank Metric. Its
+rule is a calibration marker rather than a like-for-like aggregate, and every figure label and table
+cell states that base.</p>
+
+<h2>The unbiased MMD estimator is reported but not used here</h2>
+<p>The report carries an unbiased squared MMD (distributional.mmd2) computed as the U-statistic of
+Gretton et al., in which the diagonal terms are removed to eliminate the O(1/n) bias. That statistic
+is unbiased for a non-negative population quantity and is consequently not itself non-negative: on
+pools whose true MMD&sup2; is near zero it takes negative values with probability approaching one
+half, which is what the oracle column (target_sample) exhibits. The V-statistic form retains the
+diagonal, equals the squared norm of the difference of empirical kernel mean embeddings, and is
+non-negative by construction, at the cost of a positive bias that is severe at these pool sizes. On
+this corpus the guard <code>MIN_MMD_POOL = 5</code> leaves the row scored on too few cells to
+support a comparison, so the tables above report centroid distance
+(distributional.centroid_distance) instead and the MMD row should not be read as a result.</p>
+
+<h2>The trained methods select on part of the pool they are scored against, unless scored on test</h2>
+<p>Early stopping and hyperparameter selection use the validation split. The harness's usual scored
+split merges validation and test, so a trained method scored there would have selected against
+roughly half of its own reference pool, while the untrained baselines would have no such advantage.
+This study is therefore scored on <strong>test alone</strong>, which removes the dependence. The
+cost is a smaller cell base, and that cost is the reason the previous section reads as it does.</p>
+
+<h2>Steering is reported at a selected strength, and the selection is consequential</h2>
+<p>At the unselected default strength the offset produced degenerate output: repetitive fragments
+continuing to the generation limit, with vocabulary variety (degeneracy.distinct_2) far below every
+other column. All three steering columns would then have been read as a failure of the method rather
+than of a default. The layer and strength reported here were selected on the validation split by
+maximising the cosine between the generated and authentic pool centroids subject to a degeneracy
+constraint, with the selected strengths between one tenth and one half of that default. Steering
+nonetheless does not reach the level the other two trained families reach on the triangle score
+(trm.trm), and that result should be read as applying to activation steering at its best available
+setting on this corpus, under this generation configuration, rather than to the method in
+general.</p>
+
+<h2>Length accounts for much of the effect, and is partly a generation setting</h2>
+<p>The largest single difference between the families is output length
+(degeneracy.length_ratio_vs_real). For the soft prompt and for LoRA this is learned from the target
+distribution. For steering it is not: the base model does not emit an end-of-sequence token under
+this prompt and continues to <code>max_new_tokens</code>, so steering's length ratio reflects the
+decoding configuration rather than the intervention. An additive offset in the residual stream alters
+the conditional distribution over tokens without altering the model's stopping behaviour, and a
+comparison that isolated the intervention would require equalising that behaviour across
+families.</p>
+
+<h2>Aspect conditioning rests on vocabularies built with the platform visible</h2>
+<p>The aspect vocabularies were extracted with platform labels visible to the extracting model, so
+the vocabulary may have been constructed to separate the platforms, which is the same signal the
+aspect-conditioned columns are then scored on. A blind rerun is pending. Every aspect-conditioned
+result is provisional until it lands. Coverage is a second constraint: vocabularies join to
+17 of the cells present in training, and the
+aspect-aware prompting column ran unconditioned on roughly half its outputs.</p>
+
+<h2>These numbers were computed before the scraped text was cleaned</h2>
+<p>The corpus carried HTML entities left by the scrape, and every post carrying one is a Reddit post,
+so the encoded entity was a token appearing on one platform and never the other. The platform
+classifier is free to key on it. The dataset builder now decodes them, and the fix applies from the
+next rebuild onward, so the classifier rows here carry that artefact. It is bounded by the five per
+cent of posts involved and it inflates apparent separability rather than hiding it.</p>
+
+<h2>One direction, one base model, one embedding space</h2>
+<p>Everything here is LinkedIn to Reddit. The reverse direction is supported and unexamined. All
+three trained families share one base model, so nothing separates the mechanism from that model's
+particular behaviour. And every embedding-derived row is computed in one space; the first study
+found that seven of ten comparisons held across six spaces while two did not, so single-space
+results should be treated as provisional until replicated.</p>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p class="footer-title">Study 2 · generated 2026-08-13 08:00 PDT</p>
+  <p>Source reports: <code>runs/methods/report.test.embeddinggemma-300m-d512.json</code> and
+     <code>runs/methods_sys/report.test.embeddinggemma-300m-d512.json</code>. Built by
+     <code>experimental-notes/build_study2.py</code>. Every figure and quoted value is computed
+     from those reports.</p>
+  <p>Distribution-aware metrics follow Chan, Ni, Ross, Vijayanarasimhan, Myers &amp;
+     Canny, <em>Distribution Aware Metrics for Conditional Natural Language Generation</em>,
+     LREC-COLING 2024, pp. 5064–5095.</p>
+</div></footer>
+</body>
+</html>

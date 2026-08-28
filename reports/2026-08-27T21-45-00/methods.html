@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methods — Study 4 — Vectorial × BAIR — 2026-08-27</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-svg.js"></script>
+</head>
+<body>
+<header class="masthead study-head">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · Study 4 · unsupervised platform adaptation</p>
+    <h1>Unsupervised platform adaptation <span class="stamp">2026-08-27</span></h1>
+    <p class="lede">LinkedIn to Reddit and Reddit to LinkedIn across 33 bilateral corpus cells. The report compares 46 method configurations against three references; the primary distributional measure covers 12 shared held-out cells in google/embeddinggemma-300m, dimension 512.</p>
+  </div>
+</header>
+<nav class="nav" aria-label="Report sections"><div class="wrap"><a href="index.html" class="">Overview</a><a href="results.html" class="">Results</a><a href="reverse.html" class="">Reverse direction</a><a href="methods.html" class="here">Methods</a><a href="dataset.html" class="">Dataset</a><a href="limitations.html" class="">Limitations</a></div></nav>
+<main class="wrap">
+<aside class="warn"><h2>Preliminary build</h2><p>This is not the frozen report. Sections marked as not yet available are still running, and no claim resting on them is supported. See <a href="limitations.html">Limitations</a> for verified defects in columns that this build still renders.</p></aside>
+<div class="page-intro"><p class="section-label">Method</p><h1>Unsupervised adaptation, then transfer</h1><p class="lede">Every transfer method starts from a base adapted on unpaired target-platform text. The design has two stages so that a large method-by-scale-by-platform grid does not obscure the primary question.</p></div>
+<h2 id="stages">Two stages</h2>
+<p><strong>Stage A</strong> continues causal language-model training on authentic, unpaired
+target-platform text. No synthetic rewrite and no source-target pairing enters this stage. The
+raw-text and structured-prior arms use matched target completions and differ only in whether the
+prompt exposes the supplied audience, profile, community, thread, keyword, dimension and
+engagement information. The coarse-to-fine arm trains a platform stage and then an audience stage
+on disjoint halves of the same corpus.</p>
+<p><strong>Stage B</strong> fits the transfer methods from the selected Stage A base on the Study 3
+conditioning files, under the three conditionings that the harness requires of every fitted
+family. Direct prompting and steering from the original checkpoint are run alongside as baselines
+that require no unsupervised fit.</p>
+<figure class="tablefig">
+<figcaption><strong>The confirmatory grid</strong><br><span class="sub">Each transfer method and the base it starts from, with the column name under which it appears in the results. The paired and aspect conditionings of every fitted family are run alongside the topic-only conditioning shown here.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>method</th><th>starting base</th><th>results column</th><th>role</th><th>scored</th><th>audience-shuffle control</th></tr></thead>
+<tbody><tr><th scope='row'>direct Llama prompt</th><td>base_none</td><td><code>llama_rewrite_s4_base_none</code></td><td>model-controlled zero-shot baseline</td><td class="ok">yes</td><td class="na">—</td></tr><tr><th scope='row'>Claude prompt</th><td>none (API model)</td><td><code>llm_rewrite_s4_claude_reference</code></td><td>reference prompting system</td><td class="ok">yes</td><td class="na">—</td></tr><tr><th scope='row'>LoRA, unsupervised only</th><td>raw-text platform prior</td><td><code>lora_s4_raw_10k</code></td><td>tests whether adaptation alone suffices</td><td class="ok">yes</td><td class="ok">yes</td></tr><tr><th scope='row'>LoRA, unsupervised only</th><td>structured platform prior</td><td><code>lora_s4_prior_10k</code></td><td>primary unsupervised base, generated directly</td><td class="ok">yes</td><td class="ok">yes</td></tr><tr><th scope='row'>LoRA, unsupervised only</th><td>platform then audience</td><td><code>lora_s4_platform_then_audience</code></td><td>coarse-to-fine adaptation</td><td class="ok">yes</td><td class="ok">yes</td></tr><tr><th scope='row'>LoRA transfer</th><td>structured platform prior</td><td><code>lora_s4_target_lm</code></td><td>expected strongest fitted method</td><td class="ok">yes</td><td class="ok">yes</td></tr><tr><th scope='row'>LoRA transfer</th><td>base_none</td><td><code>lora_s4_base_lora_target_lm</code></td><td>Study 3 counterpart</td><td class="ok">yes</td><td class="ok">yes</td></tr><tr><th scope='row'>soft prompt</th><td>structured platform prior</td><td><code>soft_prompt_s4_soft_target_lm</code></td><td>Study 3&#x27;s most stable fitted method</td><td class="ok">yes</td><td class="ok">yes</td></tr><tr><th scope='row'>soft prompt</th><td>base_none</td><td><code>soft_prompt_s4_base_soft_target_lm</code></td><td>Study 3 counterpart</td><td class="ok">yes</td><td class="ok">yes</td></tr><tr><th scope='row'>steering</th><td>base_none</td><td><code>steering_s4_steer_base_target_lm</code></td><td>primary mechanistic baseline</td><td class="ok">yes</td><td class="na">—</td></tr><tr><th scope='row'>steering</th><td>structured platform prior</td><td><code>steering_s4_steer_prior_target_lm</code></td><td>recomputed-vector interaction</td><td class="ok">yes</td><td class="ok">yes</td></tr><tr><th scope='row'>LoRA plus steering</th><td>structured platform prior</td><td><code>steering_s4_lora_steer_interaction</code></td><td>secondary interaction experiment</td><td class="ok">yes</td><td class="na">—</td></tr><tr><th scope='row'>extract then transfer</th><td>structured platform prior</td><td><code>local_plan_then_transfer_s4_plan_prior_10k</code></td><td>explicit content-plan baseline</td><td class="ok">yes</td><td class="ok">yes</td></tr></tbody>
+</table></div>
+
+</figure>
+<h2 id="scale">Stage A: the unsupervised scale ladder</h2>
+<p>The plan freezes a ladder of nested deterministic samples so that the scale curve compares data
+size rather than sample composition. Two rungs were available: 1,000 records per audience and the
+full available corpus, capped at 10,000 per audience at collection. The frozen primary base is the
+structured-prior adapter on the full available corpus; the raw-text arm and the 1,000-record arm
+are ablations, and held-out results do not select the base.</p>
+<svg class="fig" viewBox="0 0 760 432" width="100%" role="img" aria-labelledby="t62979a83" xmlns="http://www.w3.org/2000/svg"><title id="t62979a83">Unsupervised development loss by available scale</title><desc>Each point is read from its training artifact. Development negative log-likelihood is a training diagnostic, not a held-out transfer result.</desc>
+<text class="fig-title" x="0" y="24" text-anchor="start">Unsupervised development loss by available scale</text>
+<text class="fig-sub" x="0" y="42" text-anchor="start">Each point is read from its training artifact. Development negative log-likelihood is a training</text>
+<text class="fig-sub" x="0" y="56" text-anchor="start">diagnostic, not a held-out transfer result.</text>
+<rect x="64" y="84" width="486" height="254" fill="none" stroke="#e6e4de"/>
+<line x1="64" y1="84.0" x2="550" y2="84.0" stroke="#f0eee8"/>
+<text class="tick" x="56" y="88.0" text-anchor="end">3.05</text>
+<line x1="64" y1="147.5" x2="550" y2="147.5" stroke="#f0eee8"/>
+<text class="tick" x="56" y="151.5" text-anchor="end">2.96</text>
+<line x1="64" y1="211.0" x2="550" y2="211.0" stroke="#f0eee8"/>
+<text class="tick" x="56" y="215.0" text-anchor="end">2.87</text>
+<line x1="64" y1="274.5" x2="550" y2="274.5" stroke="#f0eee8"/>
+<text class="tick" x="56" y="278.5" text-anchor="end">2.77</text>
+<line x1="64" y1="338.0" x2="550" y2="338.0" stroke="#f0eee8"/>
+<text class="tick" x="56" y="342.0" text-anchor="end">2.68</text>
+<line x1="97.9" y1="84" x2="97.9" y2="338" stroke="#f0eee8"/>
+<text class="tick" x="97.91799529290445" y="354" text-anchor="middle">3,602</text>
+<line x1="99.5" y1="84" x2="99.5" y2="338" stroke="#f0eee8"/>
+<text class="tick" x="99.49589832847144" y="354" text-anchor="middle">3,633</text>
+<line x1="373.7" y1="84" x2="373.7" y2="338" stroke="#f0eee8"/>
+<text class="tick" x="373.65564575495455" y="354" text-anchor="middle">16,103</text>
+<line x1="516.1" y1="84" x2="516.1" y2="338" stroke="#f0eee8"/>
+<text class="tick" x="516.0820047070956" y="354" text-anchor="middle">34,901</text>
+<text class="ax-title" x="307.0" y="372" text-anchor="middle">training records (log scale)</text>
+<text class="ax-title" transform="translate(16,211.0) rotate(-90)" text-anchor="middle">Development NLL</text>
+<polyline points="97.9,108.6 516.1,138.5" fill="none" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="97.9" cy="108.6" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.8"><title>Reddit, raw text: 3,602 records, NLL 3.0140</title></circle>
+<circle cx="516.1" cy="138.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.8"><title>Reddit, raw text: 34,901 records, NLL 2.9708</title></circle>
+<polyline points="97.9,189.9 516.1,203.6" fill="none" stroke="#4a3aa7" stroke-width="2"/>
+<circle cx="97.9" cy="189.9" r="5.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="1.8"><title>Reddit, structured prior: 3,602 records, NLL 2.8966</title></circle>
+<circle cx="516.1" cy="203.6" r="5.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="1.8"><title>Reddit, structured prior: 34,901 records, NLL 2.8769</title></circle>
+<polyline points="99.5,248.1 373.7,287.2" fill="none" stroke="#c2410c" stroke-width="2"/>
+<circle cx="99.5" cy="248.1" r="5.5" fill="#c2410c" stroke="#fcfcfb" stroke-width="1.8"><title>LinkedIn, raw text: 3,633 records, NLL 2.8126</title></circle>
+<circle cx="373.7" cy="287.2" r="5.5" fill="#c2410c" stroke="#fcfcfb" stroke-width="1.8"><title>LinkedIn, raw text: 16,103 records, NLL 2.7561</title></circle>
+<polyline points="99.5,286.7 373.7,313.4" fill="none" stroke="#0e7490" stroke-width="2"/>
+<circle cx="99.5" cy="286.7" r="5.5" fill="#0e7490" stroke="#fcfcfb" stroke-width="1.8"><title>LinkedIn, structured prior: 3,633 records, NLL 2.7568</title></circle>
+<circle cx="373.7" cy="313.4" r="5.5" fill="#0e7490" stroke="#fcfcfb" stroke-width="1.8"><title>LinkedIn, structured prior: 16,103 records, NLL 2.7182</title></circle>
+<text class="key-lbl" x="566" y="90" text-anchor="start">training corpus</text>
+<circle cx="572" cy="102" r="5" fill="#2a78d6"/>
+<text class="lbl" x="584" y="106" text-anchor="start">Reddit, raw text</text>
+<circle cx="572" cy="119" r="5" fill="#4a3aa7"/>
+<text class="lbl" x="584" y="123" text-anchor="start">Reddit, structured prior</text>
+<circle cx="572" cy="136" r="5" fill="#c2410c"/>
+<text class="lbl" x="584" y="140" text-anchor="start">LinkedIn, raw text</text>
+<circle cx="572" cy="153" r="5" fill="#0e7490"/>
+<text class="lbl" x="584" y="157" text-anchor="start">LinkedIn, structured prior</text>
+<text class="fig-note" x="0" y="390" text-anchor="start">Lower is better. The smaller sample at each platform is a nested deterministic subset of the larger one, so each</text>
+<text class="fig-note" x="0" y="404" text-anchor="start">pair differs in scale and in nothing else.</text>
+</svg>
+<figure class="tablefig">
+<figcaption><strong>Stage A: unsupervised bases</strong><br><span class="sub">Every adapter fitted on unpaired target-platform text, with scale, token exposure and the selected development loss read from its artifact.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>run</th><th>variant</th><th>training records</th><th>steps per epoch</th><th>prior prompt tokens</th><th>authentic text tokens</th><th>best development NLL</th><th>prior schema</th><th>quantisation</th></tr></thead>
+<tbody><tr><th scope='row'>s4-reddit-rich-raw-1k</th><td>platform_lm</td><td class="num">3,602</td><td class="num">451</td><td class="num">0</td><td class="num">293,983</td><td class="num">3.0140</td><td>raw text</td><td>nf4-4bit-double</td></tr><tr><th scope='row'>s4-reddit-rich-prior-1k</th><td>platform_prior_lm</td><td class="num">3,602</td><td class="num">451</td><td class="num">366,947</td><td class="num">293,983</td><td class="num">2.8966</td><td>study4-rich-priors-v3</td><td>nf4-4bit-double</td></tr><tr><th scope='row'>s4-reddit-rich-raw-10k</th><td>platform_lm</td><td class="num">34,901</td><td class="num">4,363</td><td class="num">0</td><td class="num">267,450</td><td class="num">2.9708</td><td>raw text</td><td>nf4-4bit-double</td></tr><tr><th scope='row'>s4-reddit-rich-prior-10k</th><td>platform_prior_lm</td><td class="num">34,901</td><td class="num">4,363</td><td class="num">3,554,553</td><td class="num">2,828,308</td><td class="num">2.8769</td><td>study4-rich-priors-v3</td><td>nf4-4bit-double</td></tr><tr><th scope='row'>s4-linkedin-rich-platform lm-1000</th><td>platform_lm</td><td class="num">3,633</td><td class="num">455</td><td class="num">0</td><td class="num">320,987</td><td class="num">2.8126</td><td>raw text</td><td>nf4-4bit-double</td></tr><tr><th scope='row'>s4-linkedin-rich-platform prior lm-1000</th><td>platform_prior_lm</td><td class="num">3,633</td><td class="num">455</td><td class="num">327,484</td><td class="num">320,987</td><td class="num">2.7568</td><td>study4-rich-priors-v3</td><td>nf4-4bit-double</td></tr><tr><th scope='row'>s4-linkedin-rich-platform full available</th><td>platform_lm</td><td class="num">16,103</td><td class="num">2,013</td><td class="num">0</td><td class="num">1,349,334</td><td class="num">2.7561</td><td>raw text</td><td>nf4-4bit-double</td></tr><tr><th scope='row'>s4-linkedin-rich-platform prior full available</th><td>platform_prior_lm</td><td class="num">16,103</td><td class="num">2,013</td><td class="num">1,489,977</td><td class="num">1,349,334</td><td class="num">2.7182</td><td>study4-rich-priors-v3</td><td>nf4-4bit-double</td></tr><tr><th scope='row'>s4-reddit-coarse-platform-half</th><td>platform_lm</td><td class="num">17,451</td><td class="num">2,182</td><td class="num">0</td><td class="num">1,415,808</td><td class="num">2.9902</td><td>raw text</td><td>nf4-4bit-double</td></tr><tr><th scope='row'>s4-reddit-platform-then-audience</th><td>platform_prior_lm</td><td class="num">17,450</td><td class="num">2,182</td><td class="num">1,777,465</td><td class="num">1,412,500</td><td class="num">2.8848</td><td>study4-rich-priors-v3</td><td>nf4-4bit-double</td></tr><tr><th scope='row'>s4-linkedin-coarse-platform-half</th><td>platform_lm</td><td class="num">8,053</td><td class="num">1,007</td><td class="num">0</td><td class="num">673,329</td><td class="num">2.7878</td><td>raw text</td><td>nf4-4bit-double</td></tr><tr><th scope='row'>s4-linkedin-platform-then-audience</th><td>platform_prior_lm</td><td class="num">8,050</td><td class="num">1,007</td><td class="num">745,311</td><td class="num">676,005</td><td class="num">2.7267</td><td>study4-rich-priors-v3</td><td>nf4-4bit-double</td></tr></tbody>
+</table></div>
+
+</figure>
+<h2 id="conditionings">The three conditionings</h2>
+<figure class="tablefig">
+<figcaption><strong>The three conditionings</strong><br><span class="sub">The completion is always the authentic target-platform post, verbatim. The variants differ only in what conditions it, and all three share one prompt template, so a method is fitted to each without anything changing but the file it reads. The aspect variant is exploratory because the aspect gates were not met.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>variant</th><th>conditioning</th><th>train</th><th>development</th><th>test</th></tr></thead>
+<tbody><tr><th scope='row'>target lm</th><td>audience, domain and topic only; no source text during fitting</td><td class="num">311</td><td class="num">72</td><td class="num">176</td></tr><tr><th scope='row'>target lm paired</th><td>as above, plus the nearest training-split source post from the same cell, by TF-IDF cosine</td><td class="num">311</td><td class="num">72</td><td class="num">176</td></tr><tr><th scope='row'>target lm aspect</th><td>as above, plus the positive aspect coordinates of the authentic completion</td><td class="num">169</td><td class="num">31</td><td class="num">103</td></tr></tbody>
+</table></div>
+<p class="tnote">Manifest example counts: {&quot;train&quot;: 311, &quot;dev&quot;: 72, &quot;test&quot;: 176}. Prompt template:<br><pre class="code">Audience: {room}
+Domain: {domain}
+Topic: {topic}
+Platform: {platform}
+{content_block}Write a {platform} post from this audience about this topic.
+</pre>Content block, present only where a source post is supplied:<br><pre class="code">--- content to carry across (from {source_platform}) ---
+{source_text}
+--- end content ---
+</pre></p>
+</figure>
+<h2 id="families">The transfer families</h2>
+
+<h3>Prompting</h3>
+<p>The zero-shot baseline in <code>transfer/llama_rewrite.py</code> renders the audience, domain,
+topic, source post and a target-platform writing instruction and samples from
+<code>meta-llama/Llama-3.1-8B-Instruct</code> without any fitted parameters. The Claude column is the
+same instruction sent to an API model, retained as a reference prompting system so that
+model-specific instruction tuning can be distinguished from platform adaptation.</p>
+<h3>LoRA</h3>
+<p><code>methods/lora/train.py</code> fits low-rank updates to the attention projections,
+\(W' = W + \tfrac{\alpha_{\mathrm L}}{r} B_{\mathrm L} A_{\mathrm L}\), with rank 8, scaling 16, dropout 0.05 and
+learning rate 0.0001 on the modules q_proj, k_proj, v_proj, o_proj. The
+objective is the completion-only negative log-likelihood of the authentic post; prompt tokens are
+masked. Stage A uses the same trainer with the unsupervised objective over unpaired target text;
+Stage B initialises from the frozen Stage A adapter.</p>
+<h3>Soft prompt</h3>
+<p><code>methods/soft_prompt/train.py</code> prepends 32 trained
+embedding vectors to every input, \(E(x) \leftarrow [P_1, \ldots, P_{32};\, E(x)]\), and freezes the base model and the Stage A adapter.
+The prompt is initialised from text, trained with learning rate 0.01 and early stopping
+on development loss, and has 131,072 trainable parameters.</p>
+<h3>Steering</h3>
+<p><code>methods/steering/fit_steering.py</code> performs one forward pass over each authentic
+training post through the frozen checkpoint, mean-pools the completion-token residual states, and
+forms the platform direction at each layer as \(v_\ell = \bar h_\ell^{\mathrm{target}} - \bar h_\ell^{\mathrm{source}}\). Audience directions are formed within
+platform and made orthogonal to the platform direction by per-layer Gram–Schmidt; the pair
+singular values are recorded in the artifact. At generation the residual stream is shifted,
+\(h_\ell \leftarrow h_\ell + \alpha\, \frac{v_\ell}{\lVert v_\ell \rVert_2}\, \bar n_\ell\), with the coefficient calibrated to the layer's activation norm. The primary steering
+column uses the original checkpoint; a second column recomputes every contrast from the selected
+unsupervised base, because vectors read from different parameterisations are not interchangeable.</p>
+<h3>Extract then transfer</h3>
+<p><code>transfer/plan_then_transfer.py</code> is a two-step method. The model first emits a
+structured content plan of claims, entities, numbers, named tools, stance, requested actions and
+aspects, and then renders a target-platform post from that plan and the audience context. The plan
+is stored and scored; recall of its entities and numbers against the source is reported as a
+diagnostic. A plan that is not valid JSON, or that departs from the declared schema, is a recorded
+failure and remains in the denominator.</p>
+<figure class="tablefig">
+<figcaption><strong>Stage B: transfer methods fitted from the selected base</strong><br><span class="sub">Each fitted column starts from the frozen primary Stage A adapter and is trained on the Study 3 conditioning files. The selected epoch is the one with the lowest development loss under early stopping.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>column</th><th>starting base</th><th>train</th><th>development</th><th>selected epoch</th><th>base dev NLL</th><th>best dev NLL</th><th>fitting configuration</th></tr></thead>
+<tbody><tr><th scope='row'>LoRA · target lm</th><td>s4-reddit-rich-prior-10k</td><td class="num">311</td><td class="num">72</td><td class="num">2 of 12</td><td class="num">2.4584</td><td class="num">2.2742</td><td>r=8, α=16, lr=0.0001</td></tr><tr><th scope='row'>LoRA · target lm paired</th><td>s4-reddit-rich-prior-10k</td><td class="num">311</td><td class="num">72</td><td class="num">3 of 12</td><td class="num">2.5070</td><td class="num">2.2845</td><td>r=8, α=16, lr=0.0001</td></tr><tr><th scope='row'>LoRA · target lm aspect</th><td>s4-reddit-rich-prior-10k</td><td class="num">169</td><td class="num">31</td><td class="num">2 of 12</td><td class="num">2.6575</td><td class="num">2.5619</td><td>r=8, α=16, lr=0.0001</td></tr><tr><th scope='row'>soft prompt · target lm</th><td>s4-reddit-rich-prior-10k</td><td class="num">311</td><td class="num">72</td><td class="num">2 of 20</td><td class="na">—</td><td class="num">2.4059</td><td>32 tokens, init=text, lr=0.01</td></tr><tr><th scope='row'>soft prompt · target lm paired</th><td>s4-reddit-rich-prior-10k</td><td class="num">311</td><td class="num">72</td><td class="num">4 of 20</td><td class="na">—</td><td class="num">2.4339</td><td>32 tokens, init=text, lr=0.01</td></tr><tr><th scope='row'>soft prompt · target lm aspect</th><td>s4-reddit-rich-prior-10k</td><td class="num">169</td><td class="num">31</td><td class="num">4 of 20</td><td class="na">—</td><td class="num">2.6179</td><td>32 tokens, init=text, lr=0.01</td></tr></tbody>
+</table></div>
+<p class="tnote">Base dev NLL is the development loss of the starting base before any Stage B fitting, where the trainer records it.</p>
+</figure>
+<h2 id="references">References and controls</h2>
+
+<p>Three reference columns bound the attainable range, and every figure draws all three so that no
+system value is read without them.</p>
+<dl class="defs">
+<dt>Identity</dt><dd>The unchanged source post: the preservation ceiling and the platform-match
+floor.</dd>
+<dt>Authentic target</dt><dd>A genuine target-platform post from the scored cell: the
+distribution-match ceiling. It scores near zero on preservation because it is a different post,
+not a rewrite.</dd>
+<dt>Wrong-topic control</dt><dd>A genuine target-platform post from another cell. It separates
+platform resemblance from topic resemblance.</dd>
+<dt>Audience-shuffle control</dt><dd>The same method conditioned on a different target-platform
+audience under a frozen derangement matched on training volume and topic coverage. It is a
+system control: it participates in the common cell base and tests whether the audience prior
+carries information beyond the platform prior. 19 such columns are scored.</dd>
+</dl>
+<h2 id="rule">The frontier rule and its intervals</h2>
+
+<p>For each candidate column the comparison is against its preregistered baseline on paired
+cells. An improvement is supported only where the interval for one axis separates from zero in the
+favourable direction while the other axis is non-inferior under a frozen margin, or where both
+axes separate favourably. The frozen non-inferiority margins are 0.01 cosine-similarity units for source preservation and 0.01 TRM units for distributional error. Membership of the point-estimate frontier is descriptive
+and is never promoted to a finding on its own.</p>
+<p>Intervals use a two-stage bootstrap: audiences are resampled, then eligible topic cells within
+each sampled audience, because cells nested within one audience share training data and
+conditioning. Every verdict is repeated in 6 embedding spaces
+(all-minilm-l6-v2-d384, embeddinggemma-300m-d128, embeddinggemma-300m-d256, embeddinggemma-300m-d512, embeddinggemma-300m-d768, tfidf-svd-d256); values from different spaces are never pooled.</p>
+<h2 id="steering">Steering decomposition</h2>
+<p>Platform and train-only audience contrasts are recomputed within each frozen checkpoint.
+Per-layer Gram–Schmidt residuals prevent the audience direction from duplicating the platform
+direction; the pair singular values and projections remain in each steering artifact.</p>
+<figure class="tablefig">
+<figcaption><strong>Steering fit and development sweep</strong><br><span class="sub">Vectors are difference-in-means of completion-token residual states over 383 target and 367 source training posts, with per-cell vectors for 24 of 28 cells and per-audience vectors for 4 of 5 audiences (minimum 3 posts per cell, 10 per audience). The sweep scores every grid point on a development slice and selects under Pareto dominance with a degeneracy constraint.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>conditioning</th><th>grid points</th><th>development tasks</th><th>reference posts</th><th>centroid cosine, unsteered</th><th>centroid cosine, selected</th><th>centroid cosine, ceiling</th><th>source cosine, unsteered</th><th>source cosine, selected</th><th>degeneracy, selected</th></tr></thead>
+<tbody><tr><th scope='row'>target lm</th><td class="num">76</td><td class="num">16</td><td class="num">72</td><td class="num">0.8782</td><td class="num">0.8782</td><td class="num">0.9359</td><td class="num">0.7241</td><td class="num">0.7241</td><td class="num">0.000</td></tr><tr><th scope='row'>target lm paired</th><td class="num">76</td><td class="num">16</td><td class="num">72</td><td class="num">0.8782</td><td class="num">0.8782</td><td class="num">0.9359</td><td class="num">0.7241</td><td class="num">0.7241</td><td class="num">0.000</td></tr><tr><th scope='row'>target lm aspect</th><td class="num">76</td><td class="num">16</td><td class="num">72</td><td class="num">0.8782</td><td class="num">0.8782</td><td class="num">0.9359</td><td class="num">0.7241</td><td class="num">0.7241</td><td class="num">0.000</td></tr><tr><th scope='row'>lora interaction</th><td class="num">76</td><td class="num">16</td><td class="num">72</td><td class="num">0.8655</td><td class="num">0.8655</td><td class="num">0.9359</td><td class="num">0.6729</td><td class="num">0.6729</td><td class="num">0.000</td></tr></tbody>
+</table></div>
+<p class="tnote">The selected point equals the unsteered baseline on every conditioning: no steered grid point dominated the null under the constraint.</p>
+</figure>
+<figure class="tablefig">
+<figcaption><strong>Selected steering interventions</strong><br><span class="sub">The layer and coefficients chosen on the development slice under Pareto dominance with a degeneracy constraint. Selection rejects points that improve target resemblance by reducing source similarity.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>direction</th><th>conditioning</th><th>selected scope</th><th>layer</th><th>platform coefficient</th><th>audience coefficient</th></tr></thead>
+<tbody><tr><th scope='row'>LinkedIn to Reddit</th><td>target lm</td><td>global</td><td class="num">0</td><td class="num">0.000</td><td class="num">0.000</td></tr><tr><th scope='row'>LinkedIn to Reddit</th><td>target lm paired</td><td>global</td><td class="num">0</td><td class="num">0.000</td><td class="num">0.000</td></tr><tr><th scope='row'>LinkedIn to Reddit</th><td>target lm aspect</td><td>global</td><td class="num">0</td><td class="num">0.000</td><td class="num">0.000</td></tr><tr><th scope='row'>LinkedIn to Reddit</th><td>lora interaction</td><td>global</td><td class="num">0</td><td class="num">0.000</td><td class="num">0.000</td></tr><tr><th scope='row'>Reddit to LinkedIn</th><td>target lm</td><td class="na">not yet selected</td><td class="na">—</td><td class="na">—</td><td class="na">—</td></tr><tr><th scope='row'>Reddit to LinkedIn</th><td>target lm paired</td><td class="na">not yet selected</td><td class="na">—</td><td class="na">—</td><td class="na">—</td></tr><tr><th scope='row'>Reddit to LinkedIn</th><td>target lm aspect</td><td class="na">not yet selected</td><td class="na">—</td><td class="na">—</td><td class="na">—</td></tr></tbody>
+</table></div>
+<p class="tnote">A zero platform coefficient at layer 0 is the null intervention: the column is then its base model under the steering prompt template.</p>
+</figure>
+<aside class="callout"><h2>Every selected coefficient is zero</h2><p>Selection returned the null intervention for every conditioning in this build, so each steering column is an unsteered baseline. See <a href="limitations.html">Limitations</a>.</p></aside>
+<h2 id="constants">What was held constant</h2>
+
+<dl class="defs">
+<dt>Base model</dt><dd><code>meta-llama/Llama-3.1-8B-Instruct</code> for every locally fitted column.</dd>
+<dt>Quantisation</dt><dd>nf4-4bit-double, the study constant. Every local method
+runs under it, so quantisation is a property of the study rather than a difference between columns.</dd>
+<dt>Sequence limit</dt><dd>768 tokens; batch size
+1 with gradient accumulation 8.</dd>
+<dt>Objective</dt><dd>sum over completion tokens; prompt masked with -100.</dd>
+<dt>Early stopping</dt><dd>LoRA: at most 12 epochs, patience
+3. Soft prompt: at most 20 epochs, patience
+4, warm-up fraction 0.1.</dd>
+<dt>Seed</dt><dd>17.</dd>
+<dt>Prompt</dt><dd>The rendered Study 3 template, ending &ldquo;Write a Reddit post from this audience about this topic.&rdquo;.</dd>
+<dt>Draws</dt><dd>Four candidates per task for every column; failures emit an empty output and
+remain in every denominator.</dd>
+</dl>
+
+<h2 id="ndif">Scale generalisation of steering on NDIF</h2>
+<aside class="callout"><h2>No results from this arm</h2><p>Every steering value elsewhere in this report is an 8B result. Section 4.5 of the plan adds a scale arm that applies the identical difference-in-means construction to NDIF-hosted <code>Llama-3.1-70B-Instruct</code>, whose residual stream is exposed for reading and writing. The arm has produced no scored output, and no claim in this report depends on it.</p></aside>
+<p>One artifact has been fitted: <code>target_lm</code> on <code>meta-llama/Llama-3.1-70B-Instruct</code>, hidden size 8,192, from 337 target and 293 source posts read from <code>/Users/davidchan/Projects/vectorial/data</code>.</p>
+<h3>Why no result is reported</h3>
+<ul>
+<li>The layer-and-coefficient sweep has not been run, and the plan prohibits scoring the artifact
+before it is. A spot check at layer 40 with coefficient 0.5 produced output that was structurally
+Reddit-like but code-switched into Spanish and German.</li>
+<li>The fitted artifact was read from a different corpus from the local steering column it is
+intended to contrast with; as fitted, it varies corpus and scale simultaneously. A valid contrast
+requires a refit on the same corpus.</li>
+<li>Before this build <code>sweep_steering</code> had no remote execution path and selected the
+local generator, which would have loaded a 70B model against 4,096-wide local vectors rather than
+the 8,192-wide remote stream.</li>
+<li>Remote columns are never pooled with local 4-bit columns. NDIF serves its own precision, so
+the study's quantisation constant does not extend to this arm; it is a scale contrast against the
+local steering column and nothing else.</li>
+</ul>
+
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p class="footer-title">Study 4 · generated 2026-08-27 21:45 UTC</p>
+  <p>Source reports: <code>runs/study4_forward/report.heldout.embeddinggemma-300m-d512.json</code>,
+     the corresponding frontier and sensitivity files, the training artifacts under
+     <code>runs/checkpoints</code>, and the frozen corpus manifests. Built by
+     <code>experimental-notes/build_study4.py</code>. Every figure and quoted value is computed
+     from those files.</p>
+</div></footer>
+</body>
+</html>

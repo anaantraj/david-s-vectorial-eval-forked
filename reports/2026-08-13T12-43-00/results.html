@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Results — Study 3 — Vectorial × BAIR — 2026-08-13</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-svg.js"></script>
+</head>
+<body>
+<header class="masthead study-head">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · Study 3 · audience transfer</p>
+    <h1>Adaptation versus prompting <span class="stamp">2026-08-13</span></h1>
+    <p class="lede">LinkedIn to Reddit across 33 bilateral corpus cells. The report
+    compares 13 method configurations; the primary distributional measure covers
+    11 shared test cells in google/embeddinggemma-300m, dim 512.</p>
+  </div>
+</header>
+<nav class="nav" aria-label="Report sections"><div class="wrap"><a href="index.html" class="">Overview</a><a href="results.html" class="here">Results</a><a href="methods.html" class="">Methods</a><a href="dataset.html" class="">Dataset</a><a href="limitations.html" class="">Limitations</a></div></nav>
+<main class="wrap">
+
+<div class="page-intro">
+<p class="section-label">Complete analysis</p>
+<h1>Results</h1>
+<p class="lede">The comparison contains 13 method configurations and three named
+references. The primary Triangle-Rank Metric (TRM) covers 11 shared heldout cells;
+distributional measures cover 16, and per-post semantic,
+classifier and degeneracy measures cover 25. All embedding-derived
+values use google/embeddinggemma-300m, dim 512.</p>
+</div>
+
+<nav class="result-nav" aria-label="Results on this page">
+  <a href="#primary-result">Primary result</a>
+  <a href="#mechanism">Output behaviour</a>
+  <a href="#trade-off">Transfer trade-off</a>
+  <a href="#stability">Cell stability</a>
+  <a href="#full-results">Full tables</a>
+  <a href="#metric-definitions">Metric definitions</a>
+</nav>
+
+<aside class="reading-key"><strong>Rows within each adaptable family</strong>
+<span><b>T</b> topic only</span><span><b>R</b> retrieved source</span><span><b>A</b> aspects</span>
+<a href="methods.html">Definitions and training details</a></aside>
+
+<h2 id="primary-result"><span class="section-no">01</span> Soft prompts and LoRA produce the lowest observed distributional scores</h2>
+
+<svg class="fig" viewBox="0 0 760 535" width="100%" role="img" aria-labelledby="t2c6d549d" xmlns="http://www.w3.org/2000/svg"><title id="t2c6d549d">Distance from the pool of real Reddit posts</title><desc>Zero indicates that a pool of generated posts cannot be distinguished from a pool of authentic ones.</desc>
+<text class="fig-title" x="0" y="24" text-anchor="start">Distance from the pool of real Reddit posts</text>
+<text class="fig-sub" x="0" y="42" text-anchor="start">Zero indicates that a pool of generated posts cannot be distinguished from a pool of authentic ones.</text>
+<line x1="210.0" y1="104.0" x2="210.0" y2="413.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="210.0" y="428" text-anchor="middle">0.03</text>
+<line x1="329.0" y1="104.0" x2="329.0" y2="413.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="329.0" y="428" text-anchor="middle">0.24</text>
+<line x1="448.0" y1="104.0" x2="448.0" y2="413.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="448.0" y="428" text-anchor="middle">0.45</text>
+<line x1="567.0" y1="104.0" x2="567.0" y2="413.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="567.0" y="428" text-anchor="middle">0.66</text>
+<line x1="686.0" y1="104.0" x2="686.0" y2="413.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="686.0" y="428" text-anchor="middle">0.87</text>
+<line x1="253.4" y1="98.0" x2="253.4" y2="413.0" stroke="#2e7d5b" stroke-width="2" opacity="0.9"/>
+<text class="ref-lbl" x="253.41592354837127" y="92" text-anchor="middle">Authentic oracle · n=6</text>
+<line x1="439.2" y1="98.0" x2="439.2" y2="413.0" stroke="#8b8b8b" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+<text class="ref-lbl" x="439.225985743701" y="92" text-anchor="middle">Copy floor · n=11</text>
+<line x1="506.8" y1="98.0" x2="506.8" y2="413.0" stroke="#b0a08c" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+<text class="ref-lbl" x="506.78476907651003" y="79" text-anchor="middle">Wrong-topic control · n=11</text>
+<text class="key-lbl" x="6" y="127.12" text-anchor="start">prompting</text>
+<text class="lbl" x="198" y="128.12" text-anchor="end">GPT-5.6 zero-shot</text>
+<line x1="332.8" y1="124.1" x2="332.8" y2="128.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="553.7" y1="124.1" x2="553.7" y2="128.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="332.8" y1="126.1" x2="553.7" y2="126.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="439.6" cy="126.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="128.12" text-anchor="start">0.436</text>
+<text class="lbl" x="198" y="149.12" text-anchor="end">Claude zero-shot</text>
+<line x1="405.3" y1="145.1" x2="405.3" y2="149.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="608.2" y1="145.1" x2="608.2" y2="149.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="405.3" y1="147.1" x2="608.2" y2="147.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="513.4" cy="147.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="149.12" text-anchor="start">0.567</text>
+<text class="lbl" x="198" y="170.12" text-anchor="end">Claude few-shot</text>
+<line x1="426.5" y1="166.1" x2="426.5" y2="170.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="636.2" y1="166.1" x2="636.2" y2="170.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="426.5" y1="168.1" x2="636.2" y2="168.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="537.1" cy="168.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="170.12" text-anchor="start">0.609</text>
+<text class="lbl" x="198" y="191.12" text-anchor="end">Claude aspect-aware</text>
+<line x1="397.5" y1="187.1" x2="397.5" y2="191.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="603.3" y1="187.1" x2="603.3" y2="191.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="397.5" y1="189.1" x2="603.3" y2="189.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="507.7" cy="189.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="191.12" text-anchor="start">0.557</text>
+<text class="key-lbl" x="6" y="220.12" text-anchor="start">steering</text>
+<text class="lbl" x="198" y="221.12" text-anchor="end">topic only</text>
+<line x1="476.5" y1="217.1" x2="476.5" y2="221.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="653.2" y1="217.1" x2="653.2" y2="221.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="476.5" y1="219.1" x2="653.2" y2="219.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="574.2" cy="219.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="221.12" text-anchor="start">0.675</text>
+<text class="lbl" x="198" y="242.12" text-anchor="end">retrieved source</text>
+<line x1="465.7" y1="238.1" x2="465.7" y2="242.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="640.3" y1="238.1" x2="640.3" y2="242.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="465.7" y1="240.1" x2="640.3" y2="240.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="562.4" cy="240.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="242.12" text-anchor="start">0.654</text>
+<text class="lbl" x="198" y="263.12" text-anchor="end">aspects</text>
+<line x1="476.7" y1="259.1" x2="476.7" y2="263.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="630.2" y1="259.1" x2="630.2" y2="263.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="476.7" y1="261.1" x2="630.2" y2="261.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="560.1" cy="261.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="263.12" text-anchor="start">0.650</text>
+<text class="key-lbl" x="6" y="292.12" text-anchor="start">soft prompt</text>
+<text class="lbl" x="198" y="293.12" text-anchor="end">topic only</text>
+<line x1="264.3" y1="289.1" x2="264.3" y2="293.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="472.5" y1="289.1" x2="472.5" y2="293.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="264.3" y1="291.1" x2="472.5" y2="291.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="358.4" cy="291.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="293.12" text-anchor="start">0.291</text>
+<text class="lbl" x="198" y="314.12" text-anchor="end">retrieved source</text>
+<line x1="261.7" y1="310.1" x2="261.7" y2="314.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="400.3" y1="310.1" x2="400.3" y2="314.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="261.7" y1="312.1" x2="400.3" y2="312.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="324.2" cy="312.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="314.12" text-anchor="start">0.230</text>
+<text class="lbl" x="198" y="335.12" text-anchor="end">aspects</text>
+<line x1="298.9" y1="331.1" x2="298.9" y2="335.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="507.1" y1="331.1" x2="507.1" y2="335.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="298.9" y1="333.1" x2="507.1" y2="333.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="388.0" cy="333.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="335.12" text-anchor="start">0.343</text>
+<text class="key-lbl" x="6" y="364.12" text-anchor="start">LoRA</text>
+<text class="lbl" x="198" y="365.12" text-anchor="end">topic only</text>
+<line x1="265.2" y1="361.1" x2="265.2" y2="365.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="454.2" y1="361.1" x2="454.2" y2="365.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="265.2" y1="363.1" x2="454.2" y2="363.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="345.0" cy="363.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="365.12" text-anchor="start">0.267</text>
+<text class="lbl" x="198" y="386.12" text-anchor="end">retrieved source</text>
+<line x1="247.4" y1="382.1" x2="247.4" y2="386.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="435.2" y1="382.1" x2="435.2" y2="386.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="247.4" y1="384.1" x2="435.2" y2="384.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="327.4" cy="384.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="386.12" text-anchor="start">0.235</text>
+<text class="lbl" x="198" y="407.12" text-anchor="end">aspects</text>
+<line x1="242.8" y1="403.1" x2="242.8" y2="407.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="462.1" y1="403.1" x2="462.1" y2="407.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="242.8" y1="405.1" x2="462.1" y2="405.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="333.4" cy="405.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="407.12" text-anchor="start">0.246</text>
+<text class="ax-title" x="448.0" y="445" text-anchor="middle">TRM score</text>
+<text class="fig-note" x="0" y="465" text-anchor="start">Lower is better. Aggregation: each point is the unweighted mean of the per-cell score over 11 cells. The mean is</text>
+<text class="fig-note" x="0" y="479" text-anchor="start">unweighted because the largest cell holds roughly fifteen times the posts of the median, so a size-weighted mean</text>
+<text class="fig-note" x="0" y="493" text-anchor="start">would principally report one topic. The interval is the 2.5 and 97.5 percentiles of 500 bootstrap resamples</text>
+<text class="fig-note" x="0" y="507" text-anchor="start">drawn over cells, cells being the independent unit rather than posts.</text>
+</svg>
+
+<p>Every soft-prompt and LoRA configuration has a lower observed score than the best prompting
+configuration. The best points are soft prompt retrieved source at
+0.230 and LoRA
+retrieved source at 0.235, against
+GPT-5.6 zero-shot at 0.436. Steering lies on the prompting side of the
+comparison.</p>
+
+<figure class="tablefig">
+<figcaption><strong>Which comparisons the intervals actually separate</strong><br>
+<span class="sub">A difference is a finding only when the two intervals do not overlap. This table is
+generated by running that test, not written by hand.</span></figcaption>
+<div class="tscroll"><table class="res claims">
+<thead><tr><th>claim</th><th>first column</th><th>second column</th><th>verdict</th></tr></thead>
+<tbody><tr><td>soft prompt matches the target pool better than Claude zero-shot</td><td class='num'>0.230 [0.12, 0.37]</td><td class='num'>0.567 [0.37, 0.74]</td><td class='ok'>supported</td></tr><tr><td>LoRA matches the target pool better than Claude zero-shot</td><td class='num'>0.235 [0.09, 0.43]</td><td class='num'>0.567 [0.37, 0.74]</td><td class='no'>not resolved</td></tr><tr><td>soft prompt matches the target pool better than aspect-aware prompting</td><td class='num'>0.230 [0.12, 0.37]</td><td class='num'>0.557 [0.36, 0.73]</td><td class='no'>not resolved</td></tr><tr><td>LoRA matches the target pool better than the soft prompt</td><td class='num'>0.235 [0.09, 0.43]</td><td class='num'>0.230 [0.12, 0.37]</td><td class='no'>not resolved</td></tr><tr><td>steering matches the target pool better than Claude zero-shot</td><td class='num'>0.654 [0.48, 0.79]</td><td class='num'>0.567 [0.37, 0.74]</td><td class='no'>not resolved</td></tr><tr><td>aspect-aware prompting matches the target pool better than zero-shot</td><td class='num'>0.557 [0.36, 0.73]</td><td class='num'>0.567 [0.37, 0.74]</td><td class='no'>not resolved</td></tr><tr><td>aspect conditioning improves the soft prompt over topic-only</td><td class='num'>0.343 [0.18, 0.56]</td><td class='num'>0.291 [0.12, 0.49]</td><td class='no'>not resolved</td></tr></tbody></table></div>
+<p class="tnote">1 of 7 stated comparisons are supported.</p>
+</figure>
+
+<h2 id="mechanism"><span class="section-no">02</span> Adaptation moves the triangle-rank profile toward the null</h2>
+
+<svg class="fig" viewBox="0 0 760 579" width="100%" role="img" aria-labelledby="tcda7d125" xmlns="http://www.w3.org/2000/svg"><title id="tcda7d125">How often the authentic-authentic edge is longest</title><desc>The rank indicator I₂ is one third for a matched pool. Values above it indicate generated points concentrated inside the authentic cloud; values below require the in-edge-shortest rate to distinguish displacement from excess spread.</desc>
+<text class="fig-title" x="0" y="24" text-anchor="start">How often the authentic-authentic edge is longest</text>
+<text class="fig-sub" x="0" y="42" text-anchor="start">The rank indicator I₂ is one third for a matched pool. Values above it indicate generated points</text>
+<text class="fig-sub" x="0" y="56" text-anchor="start">concentrated inside the authentic cloud; values below require the in-edge-shortest rate to distinguish</text>
+<text class="fig-sub" x="0" y="70" text-anchor="start">displacement from excess spread.</text>
+<line x1="210.0" y1="132.0" x2="210.0" y2="441.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="210.0" y="456" text-anchor="middle">-0.00</text>
+<line x1="329.0" y1="132.0" x2="329.0" y2="441.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="329.0" y="456" text-anchor="middle">0.10</text>
+<line x1="448.0" y1="132.0" x2="448.0" y2="441.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="448.0" y="456" text-anchor="middle">0.19</text>
+<line x1="567.0" y1="132.0" x2="567.0" y2="441.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="567.0" y="456" text-anchor="middle">0.29</text>
+<line x1="686.0" y1="132.0" x2="686.0" y2="441.0" stroke="#e6e4de" stroke-width="1"/>
+<text class="tick" x="686.0" y="456" text-anchor="middle">0.39</text>
+<line x1="242.8" y1="126.0" x2="242.8" y2="441.0" stroke="#b0a08c" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+<text class="ref-lbl" x="242.82758620689657" y="120" text-anchor="middle">Wrong-topic control · n=11</text>
+<line x1="459.2" y1="126.0" x2="459.2" y2="441.0" stroke="#8b8b8b" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+<text class="ref-lbl" x="459.2072354002914" y="120" text-anchor="middle">Copy floor · n=11</text>
+<line x1="514.4" y1="126.0" x2="514.4" y2="441.0" stroke="#2e7d5b" stroke-width="2" opacity="0.9"/>
+<text class="ref-lbl" x="514.3724330610253" y="107" text-anchor="middle">Authentic oracle · n=6</text>
+<line x1="620.2" y1="124.0" x2="620.2" y2="441.0" stroke="#0b0b0b" stroke-width="1.5" stroke-dasharray="1 3"/>
+<text class="ref-lbl" x="620.160349947864" y="470" text-anchor="middle">one third · matched rank profile</text>
+<text class="key-lbl" x="6" y="155.12" text-anchor="start">prompting</text>
+<text class="lbl" x="198" y="156.12" text-anchor="end">GPT-5.6 zero-shot</text>
+<line x1="312.1" y1="152.1" x2="312.1" y2="156.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="547.4" y1="152.1" x2="547.4" y2="156.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="312.1" y1="154.1" x2="547.4" y2="154.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="425.3" cy="154.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="156.12" text-anchor="start">0.174</text>
+<text class="lbl" x="198" y="177.12" text-anchor="end">Claude zero-shot</text>
+<line x1="260.7" y1="173.1" x2="260.7" y2="177.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="513.3" y1="173.1" x2="513.3" y2="177.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="260.7" y1="175.1" x2="513.3" y2="175.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="362.3" cy="175.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="177.12" text-anchor="start">0.122</text>
+<text class="lbl" x="198" y="198.12" text-anchor="end">Claude few-shot</text>
+<line x1="272.6" y1="194.1" x2="272.6" y2="198.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="553.6" y1="194.1" x2="553.6" y2="198.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="272.6" y1="196.1" x2="553.6" y2="196.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="398.4" cy="196.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="198.12" text-anchor="start">0.152</text>
+<text class="lbl" x="198" y="219.12" text-anchor="end">Claude aspect-aware</text>
+<line x1="269.6" y1="215.1" x2="269.6" y2="219.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="557.4" y1="215.1" x2="557.4" y2="219.1" stroke="#2a78d6" stroke-width="1.5" opacity="0.75"/>
+<line x1="269.6" y1="217.1" x2="557.4" y2="217.1" stroke="#2a78d6" stroke-width="2" opacity="0.55"/>
+<circle cx="385.3" cy="217.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="219.12" text-anchor="start">0.141</text>
+<text class="key-lbl" x="6" y="248.12" text-anchor="start">steering</text>
+<text class="lbl" x="198" y="249.12" text-anchor="end">topic only</text>
+<line x1="258.6" y1="245.1" x2="258.6" y2="249.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="509.7" y1="245.1" x2="509.7" y2="249.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="258.6" y1="247.1" x2="509.7" y2="247.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="371.9" cy="247.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="249.12" text-anchor="start">0.130</text>
+<text class="lbl" x="198" y="270.12" text-anchor="end">retrieved source</text>
+<line x1="274.4" y1="266.1" x2="274.4" y2="270.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="514.1" y1="266.1" x2="514.1" y2="270.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="274.4" y1="268.1" x2="514.1" y2="268.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="385.9" cy="268.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="270.12" text-anchor="start">0.142</text>
+<text class="lbl" x="198" y="291.12" text-anchor="end">aspects</text>
+<line x1="307.8" y1="287.1" x2="307.8" y2="291.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="526.6" y1="287.1" x2="526.6" y2="291.1" stroke="#eb6834" stroke-width="1.5" opacity="0.75"/>
+<line x1="307.8" y1="289.1" x2="526.6" y2="289.1" stroke="#eb6834" stroke-width="2" opacity="0.55"/>
+<circle cx="411.5" cy="289.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="291.12" text-anchor="start">0.163</text>
+<text class="key-lbl" x="6" y="320.12" text-anchor="start">soft prompt</text>
+<text class="lbl" x="198" y="321.12" text-anchor="end">topic only</text>
+<line x1="384.0" y1="317.1" x2="384.0" y2="321.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="573.9" y1="317.1" x2="573.9" y2="321.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="384.0" y1="319.1" x2="573.9" y2="319.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="481.4" cy="319.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="321.12" text-anchor="start">0.220</text>
+<text class="lbl" x="198" y="342.12" text-anchor="end">retrieved source</text>
+<line x1="393.6" y1="338.1" x2="393.6" y2="342.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="639.1" y1="338.1" x2="639.1" y2="342.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="393.6" y1="340.1" x2="639.1" y2="340.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="512.7" cy="340.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="342.12" text-anchor="start">0.245</text>
+<text class="lbl" x="198" y="363.12" text-anchor="end">aspects</text>
+<line x1="456.4" y1="359.1" x2="456.4" y2="363.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="653.2" y1="359.1" x2="653.2" y2="363.1" stroke="#1baf7a" stroke-width="1.5" opacity="0.75"/>
+<line x1="456.4" y1="361.1" x2="653.2" y2="361.1" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="559.0" cy="361.1" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="363.12" text-anchor="start">0.283</text>
+<text class="key-lbl" x="6" y="392.12" text-anchor="start">LoRA</text>
+<text class="lbl" x="198" y="393.12" text-anchor="end">topic only</text>
+<line x1="440.3" y1="389.1" x2="440.3" y2="393.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="643.4" y1="389.1" x2="643.4" y2="393.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="440.3" y1="391.1" x2="643.4" y2="391.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="540.5" cy="391.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="393.12" text-anchor="start">0.268</text>
+<text class="lbl" x="198" y="414.12" text-anchor="end">retrieved source</text>
+<line x1="428.5" y1="410.1" x2="428.5" y2="414.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="643.6" y1="410.1" x2="643.6" y2="414.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="428.5" y1="412.1" x2="643.6" y2="412.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="543.5" cy="412.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="414.12" text-anchor="start">0.271</text>
+<text class="lbl" x="198" y="435.12" text-anchor="end">aspects</text>
+<line x1="425.8" y1="431.1" x2="425.8" y2="435.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="598.8" y1="431.1" x2="598.8" y2="435.1" stroke="#4a3aa7" stroke-width="1.5" opacity="0.75"/>
+<line x1="425.8" y1="433.1" x2="598.8" y2="433.1" stroke="#4a3aa7" stroke-width="2" opacity="0.55"/>
+<circle cx="516.2" cy="433.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/>
+<text class="val" x="696" y="435.12" text-anchor="start">0.248</text>
+<text class="ax-title" x="448.0" y="489" text-anchor="middle">In-edge-longest rate (I₂)</text>
+<text class="fig-note" x="0" y="509" text-anchor="start">Closer to 0.333 is better. Aggregation: each point is the unweighted mean of the per-cell score over 11 cells.</text>
+<text class="fig-note" x="0" y="523" text-anchor="start">The mean is unweighted because the largest cell holds roughly fifteen times the posts of the median, so a</text>
+<text class="fig-note" x="0" y="537" text-anchor="start">size-weighted mean would principally report one topic. The interval is the 2.5 and 97.5 percentiles of 500</text>
+<text class="fig-note" x="0" y="551" text-anchor="start">bootstrap resamples drawn over cells, cells being the independent unit rather than posts.</text>
+</svg>
+
+<p>Prompted outputs have an in-edge-longest rate well below one third and, in the full table, an
+in-edge-shortest rate well above one third. Together those two indicators mean that the generated
+points more often lie outside the authentic reference cloud; the pattern is not evidence of simple
+mode collapse. Soft prompts and LoRA move both ranks toward one third. The wrong-topic control is
+the extreme case—very low on the longest rate and very high on the shortest rate—which confirms
+that the profile responds to semantic displacement even when platform register is authentic.</p>
+
+<svg class="fig" viewBox="0 0 760 533" width="100%" role="img" aria-labelledby="t8e8c9086" xmlns="http://www.w3.org/2000/svg"><title id="t8e8c9086">Low triangle scores arise at very different output lengths</title><desc>The soft prompt approaches authentic length. LoRA remains several times longer while reaching a similar distributional score.</desc>
+<text class="fig-title" x="0" y="24" text-anchor="start">Low triangle scores arise at very different output lengths</text>
+<text class="fig-sub" x="0" y="42" text-anchor="start">The soft prompt approaches authentic length. LoRA remains several times longer while reaching a</text>
+<text class="fig-sub" x="0" y="56" text-anchor="start">similar distributional score.</text>
+<rect x="72" y="90" width="480" height="302" fill="#fff" stroke="#dedbd2"/>
+<line x1="72.0" y1="90" x2="72.0" y2="392" stroke="#efede7"/>
+<line x1="72" y1="90.0" x2="552" y2="90.0" stroke="#efede7"/>
+<text class="tick" x="72.0" y="409" text-anchor="middle">0.4×</text>
+<text class="tick" x="64" y="94.0" text-anchor="end">0.74</text>
+<line x1="192.0" y1="90" x2="192.0" y2="392" stroke="#efede7"/>
+<line x1="72" y1="165.5" x2="552" y2="165.5" stroke="#efede7"/>
+<text class="tick" x="192.0" y="409" text-anchor="middle">0.9×</text>
+<text class="tick" x="64" y="169.5" text-anchor="end">0.55</text>
+<line x1="312.0" y1="90" x2="312.0" y2="392" stroke="#efede7"/>
+<line x1="72" y1="241.0" x2="552" y2="241.0" stroke="#efede7"/>
+<text class="tick" x="312.0" y="409" text-anchor="middle">2.0×</text>
+<text class="tick" x="64" y="245.0" text-anchor="end">0.37</text>
+<line x1="432.0" y1="90" x2="432.0" y2="392" stroke="#efede7"/>
+<line x1="72" y1="316.5" x2="552" y2="316.5" stroke="#efede7"/>
+<text class="tick" x="432.0" y="409" text-anchor="middle">4.7×</text>
+<text class="tick" x="64" y="320.5" text-anchor="end">0.18</text>
+<line x1="552.0" y1="90" x2="552.0" y2="392" stroke="#efede7"/>
+<line x1="72" y1="392.0" x2="552" y2="392.0" stroke="#efede7"/>
+<text class="tick" x="552.0" y="409" text-anchor="middle">11×</text>
+<text class="tick" x="64" y="396.0" text-anchor="end">0.00</text>
+<line x1="211.9" y1="90" x2="211.9" y2="392" stroke="#2e7d5b" stroke-width="2" stroke-dasharray="4 3"/>
+<text class="zone-lbl" x="211.90985726633974" y="82" text-anchor="middle">authentic length · 1×</text>
+<circle cx="343.8" cy="213.3" r="5.2" fill="#2a78d6" stroke="#fff" stroke-width="1.8"/>
+<circle cx="448.8" cy="159.4" r="5.2" fill="#2a78d6" stroke="#fff" stroke-width="1.8"/>
+<circle cx="427.2" cy="142.1" r="5.2" fill="#2a78d6" stroke="#fff" stroke-width="1.8"/>
+<circle cx="432.0" cy="163.5" r="5.2" fill="#2a78d6" stroke="#fff" stroke-width="1.8"/>
+<path d="M517.1,114.9 L518.9,123.6 L512.1,125.3" fill="none" stroke="#eb6834" stroke-width="1.5" opacity="0.38"/>
+<circle cx="517.1" cy="114.9" r="5.2" fill="#eb6834" stroke="#fff" stroke-width="1.8"/>
+<circle cx="518.9" cy="123.6" r="5.2" fill="#eb6834" stroke="#fff" stroke-width="1.8"/>
+<circle cx="512.1" cy="125.3" r="5.2" fill="#eb6834" stroke="#fff" stroke-width="1.8"/>
+<path d="M350.3,272.8 L327.7,297.8 L105.1,251.1" fill="none" stroke="#1baf7a" stroke-width="1.5" opacity="0.38"/>
+<circle cx="350.3" cy="272.8" r="5.2" fill="#1baf7a" stroke="#fff" stroke-width="1.8"/>
+<circle cx="327.7" cy="297.8" r="5.2" fill="#1baf7a" stroke="#fff" stroke-width="1.8"/>
+<circle cx="105.1" cy="251.1" r="5.2" fill="#1baf7a" stroke="#fff" stroke-width="1.8"/>
+<path d="M277.1,282.5 L226.0,295.4 L321.6,291.0" fill="none" stroke="#4a3aa7" stroke-width="1.5" opacity="0.38"/>
+<circle cx="277.1" cy="282.5" r="5.2" fill="#4a3aa7" stroke="#fff" stroke-width="1.8"/>
+<circle cx="226.0" cy="295.4" r="5.2" fill="#4a3aa7" stroke="#fff" stroke-width="1.8"/>
+<circle cx="321.6" cy="291.0" r="5.2" fill="#4a3aa7" stroke="#fff" stroke-width="1.8"/>
+<circle cx="377.3" cy="213.6" r="6.4" fill="#fff" stroke="#8b8b8b" stroke-width="2.4"/>
+<circle cx="352.0" cy="164.2" r="6.4" fill="#fff" stroke="#b0a08c" stroke-width="2.4"/>
+<circle cx="263.8" cy="349.5" r="6.4" fill="#fff" stroke="#2e7d5b" stroke-width="2.4"/>
+<text class="ax-title" x="312.0" y="430" text-anchor="middle">Length ratio (log scale)</text>
+<text class="ax-title" transform="translate(15,241.0) rotate(-90)" text-anchor="middle">TRM score</text>
+<text class="key-lbl" x="570" y="98" text-anchor="start">method family</text>
+<circle cx="576" cy="112" r="5" fill="#2a78d6"/>
+<text class="lbl" x="589" y="116" text-anchor="start">prompting</text>
+<circle cx="576" cy="130" r="5" fill="#eb6834"/>
+<text class="lbl" x="589" y="134" text-anchor="start">steering</text>
+<circle cx="576" cy="148" r="5" fill="#1baf7a"/>
+<text class="lbl" x="589" y="152" text-anchor="start">soft prompt</text>
+<circle cx="576" cy="166" r="5" fill="#4a3aa7"/>
+<text class="lbl" x="589" y="170" text-anchor="start">LoRA</text>
+<text class="key-lbl" x="570" y="196" text-anchor="start">reference rings</text>
+<circle cx="576" cy="210" r="5" fill="#fff" stroke="#8b8b8b" stroke-width="2"/>
+<text class="lbl" x="589" y="214" text-anchor="start">Copy floor · n=11</text>
+<circle cx="576" cy="228" r="5" fill="#fff" stroke="#b0a08c" stroke-width="2"/>
+<text class="lbl" x="589" y="232" text-anchor="start">Wrong-topic control</text>
+<text class="lbl" x="589" y="245" text-anchor="start">· n=11</text>
+<circle cx="576" cy="259" r="5" fill="#fff" stroke="#2e7d5b" stroke-width="2"/>
+<text class="lbl" x="589" y="263" text-anchor="start">Authentic oracle ·</text>
+<text class="lbl" x="589" y="276" text-anchor="start">n=6</text>
+<text class="fig-note" x="0" y="449" text-anchor="start">Aggregation: each point is the unweighted mean of the per-cell score over 11 cells. The mean is unweighted</text>
+<text class="fig-note" x="0" y="463" text-anchor="start">because the largest cell holds roughly fifteen times the posts of the median, so a size-weighted mean would</text>
+<text class="fig-note" x="0" y="477" text-anchor="start">principally report one topic. The interval is the 2.5 and 97.5 percentiles of 500 bootstrap resamples drawn over</text>
+<text class="fig-note" x="0" y="491" text-anchor="start">cells, cells being the independent unit rather than posts. Lines join the three training variants within a</text>
+<text class="fig-note" x="0" y="505" text-anchor="start">family and are not fitted trends.</text>
+</svg>
+
+<p>Length is part of the mechanism, but it is not a complete explanation. The best soft-prompt
+configuration produces posts at 2.26
+times authentic length. The best LoRA configuration reaches a similar Triangle-Rank score while
+remaining 1.10 times longer. Steering
+is the longest family, with its most extreme configuration reaching 8.7
+times authentic length.</p>
+
+<h2 id="trade-off"><span class="section-no">03</span> Distribution match is purchased with source loss</h2>
+
+<svg class="fig" viewBox="0 0 760 514" width="100%" role="img" aria-labelledby="t799aca07" xmlns="http://www.w3.org/2000/svg"><title id="t799aca07">Keeping the content while matching the target</title><desc>Right is better content preservation. Down is better distribution match. The useful corner is the lower right.</desc>
+<text class="fig-title" x="0" y="24" text-anchor="start">Keeping the content while matching the target</text>
+<text class="fig-sub" x="0" y="42" text-anchor="start">Right is better content preservation. Down is better distribution match. The useful corner is the</text>
+<text class="fig-sub" x="0" y="56" text-anchor="start">lower right.</text>
+<rect x="64" y="84" width="486" height="294" fill="none" stroke="#e6e4de"/>
+<line x1="64.0" y1="84" x2="64.0" y2="378" stroke="#f0eee8"/>
+<line x1="64" y1="84.0" x2="550" y2="84.0" stroke="#f0eee8"/>
+<text class="tick" x="64.0" y="394" text-anchor="middle">0.55</text>
+<text class="tick" x="56" y="88.0" text-anchor="end">0.74</text>
+<line x1="185.5" y1="84" x2="185.5" y2="378" stroke="#f0eee8"/>
+<line x1="64" y1="157.5" x2="550" y2="157.5" stroke="#f0eee8"/>
+<text class="tick" x="185.5" y="394" text-anchor="middle">0.68</text>
+<text class="tick" x="56" y="161.5" text-anchor="end">0.57</text>
+<line x1="307.0" y1="84" x2="307.0" y2="378" stroke="#f0eee8"/>
+<line x1="64" y1="231.0" x2="550" y2="231.0" stroke="#f0eee8"/>
+<text class="tick" x="307.0" y="394" text-anchor="middle">0.80</text>
+<text class="tick" x="56" y="235.0" text-anchor="end">0.39</text>
+<line x1="428.5" y1="84" x2="428.5" y2="378" stroke="#f0eee8"/>
+<line x1="64" y1="304.5" x2="550" y2="304.5" stroke="#f0eee8"/>
+<text class="tick" x="428.5" y="394" text-anchor="middle">0.92</text>
+<text class="tick" x="56" y="308.5" text-anchor="end">0.21</text>
+<line x1="550.0" y1="84" x2="550.0" y2="378" stroke="#f0eee8"/>
+<line x1="64" y1="378.0" x2="550" y2="378.0" stroke="#f0eee8"/>
+<text class="tick" x="550.0" y="394" text-anchor="middle">1.05</text>
+<text class="tick" x="56" y="382.0" text-anchor="end">0.03</text>
+<text class="ax-title" x="307.0" y="412" text-anchor="middle">Source cosine similarity</text>
+<text class="ax-title" transform="translate(16,231.0) rotate(-90)" text-anchor="middle">TRM score</text>
+<circle cx="503.0" cy="212.2" r="6.5" fill="#fcfcfb" stroke="#8b8b8b" stroke-width="2.5"/>
+<circle cx="111.0" cy="162.3" r="6.5" fill="#fcfcfb" stroke="#b0a08c" stroke-width="2.5"/>
+<circle cx="234.0" cy="349.5" r="6.5" fill="#fcfcfb" stroke="#2e7d5b" stroke-width="2.5"/>
+<circle cx="441.0" cy="211.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="368.5" cy="157.4" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="389.0" cy="139.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="375.5" cy="161.6" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="370.4" cy="112.5" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="382.6" cy="121.2" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="402.4" cy="122.9" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="381.8" cy="272.0" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="267.4" cy="297.3" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="358.1" cy="250.1" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="332.4" cy="281.8" r="5.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="271.0" cy="294.9" r="5.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="327.8" cy="290.4" r="5.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="1.8"/>
+<text class="key-lbl" x="566" y="90" text-anchor="start">method family</text>
+<circle cx="572" cy="102" r="5" fill="#2a78d6"/>
+<text class="lbl" x="584" y="106" text-anchor="start">prompting</text>
+<circle cx="572" cy="119" r="5" fill="#eb6834"/>
+<text class="lbl" x="584" y="123" text-anchor="start">steering</text>
+<circle cx="572" cy="136" r="5" fill="#1baf7a"/>
+<text class="lbl" x="584" y="140" text-anchor="start">soft prompt</text>
+<circle cx="572" cy="153" r="5" fill="#4a3aa7"/>
+<text class="lbl" x="584" y="157" text-anchor="start">LoRA</text>
+<text class="key-lbl" x="566" y="178" text-anchor="start">reference</text>
+<circle cx="572" cy="190" r="5" fill="#fcfcfb" stroke="#8b8b8b" stroke-width="2"/>
+<text class="lbl" x="584" y="194" text-anchor="start">Copy floor · n=11</text>
+<circle cx="572" cy="207" r="5" fill="#fcfcfb" stroke="#b0a08c" stroke-width="2"/>
+<text class="lbl" x="584" y="211" text-anchor="start">Wrong-topic control ·</text>
+<text class="lbl" x="584" y="224" text-anchor="start">n=11</text>
+<circle cx="572" cy="237" r="5" fill="#fcfcfb" stroke="#2e7d5b" stroke-width="2"/>
+<text class="lbl" x="584" y="241" text-anchor="start">Authentic oracle ·</text>
+<text class="lbl" x="584" y="254" text-anchor="start">n=6</text>
+<text class="fig-note" x="0" y="430" text-anchor="start">Aggregation: each point is the unweighted mean of the per-cell score over 11 cells. The mean is unweighted</text>
+<text class="fig-note" x="0" y="444" text-anchor="start">because the largest cell holds roughly fifteen times the posts of the median, so a size-weighted mean would</text>
+<text class="fig-note" x="0" y="458" text-anchor="start">principally report one topic. The interval is the 2.5 and 97.5 percentiles of 500 bootstrap resamples drawn over</text>
+<text class="fig-note" x="0" y="472" text-anchor="start">cells, cells being the independent unit rather than posts. Both axes are aggregated the same way. Intervals are</text>
+<text class="fig-note" x="0" y="486" text-anchor="start">omitted here so that fifteen columns remain legible; they are given in the tables and the resolution test below.</text>
+</svg>
+
+<p>Prompting retains more of the source post because it is trained only through the instruction to
+rewrite that post. The adaptable methods learn from unpaired target-platform posts. They improve the
+generated pool while losing source similarity. The lower-right region remains empty: none of the
+evaluated configurations combines prompting-level content preservation with adaptation-level
+distribution match.</p>
+
+<h2 id="stability"><span class="section-no">04</span> The primary result rests on a small, variable cell base</h2>
+
+<svg class="fig" viewBox="0 0 760 489" width="100%" role="img" aria-labelledby="tcf1ca7f4" xmlns="http://www.w3.org/2000/svg"><title id="tcf1ca7f4">The per-cell values behind the aggregate</title><desc>Each dot is one cell. The aggregate is a mean over these, and with a base this small it is worth seeing whether it rests on agreement between cells or on one of them.</desc>
+<text class="fig-title" x="0" y="24" text-anchor="start">The per-cell values behind the aggregate</text>
+<text class="fig-sub" x="0" y="42" text-anchor="start">Each dot is one cell. The aggregate is a mean over these, and with a base this small it is worth</text>
+<text class="fig-sub" x="0" y="56" text-anchor="start">seeing whether it rests on agreement between cells or on one of them.</text>
+<line x1="210.0" y1="118" x2="210.0" y2="397" stroke="#f0eee8"/>
+<text class="tick" x="210.0" y="412" text-anchor="middle">-0.08</text>
+<line x1="332.5" y1="118" x2="332.5" y2="397" stroke="#f0eee8"/>
+<text class="tick" x="332.5" y="412" text-anchor="middle">0.24</text>
+<line x1="455.0" y1="118" x2="455.0" y2="397" stroke="#f0eee8"/>
+<text class="tick" x="454.99999999999994" y="412" text-anchor="middle">0.56</text>
+<line x1="577.5" y1="118" x2="577.5" y2="397" stroke="#f0eee8"/>
+<text class="tick" x="577.5" y="412" text-anchor="middle">0.88</text>
+<line x1="700.0" y1="118" x2="700.0" y2="397" stroke="#f0eee8"/>
+<text class="tick" x="700.0" y="412" text-anchor="middle">1.20</text>
+<line x1="279.6" y1="112.0" x2="279.6" y2="397.0" stroke="#2e7d5b" stroke-width="2" opacity="0.9"/>
+<text class="ref-lbl" x="279.5829055514868" y="106" text-anchor="middle">Authentic oracle · n=6</text>
+<line x1="406.7" y1="112.0" x2="406.7" y2="397.0" stroke="#8b8b8b" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+<text class="ref-lbl" x="406.7399373362912" y="93" text-anchor="middle">Copy floor · n=11</text>
+<line x1="453.0" y1="112.0" x2="453.0" y2="397.0" stroke="#b0a08c" stroke-width="2" stroke-dasharray="3 3" opacity="0.9"/>
+<text class="ref-lbl" x="452.97303288610067" y="106" text-anchor="middle">Wrong-topic control · n=11</text>
+<text class="key-lbl" x="6" y="138.3" text-anchor="start">prompting</text>
+<text class="lbl" x="198" y="139.3" text-anchor="end">GPT-5.6 zero-shot</text>
+<circle cx="307.1" cy="136.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="488.5" cy="136.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="249.2" cy="136.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="284.3" cy="136.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="388.1" cy="136.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="278.4" cy="136.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="519.9" cy="136.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="352.5" cy="136.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="666.2" cy="136.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="567.4" cy="136.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="375.6" cy="136.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<line x1="407.0" y1="129.3" x2="407.0" y2="143.3" stroke="#2a78d6" stroke-width="2.2"/>
+<text class="tiny" x="708" y="139.3" text-anchor="start">n=11</text>
+<text class="lbl" x="198" y="158.3" text-anchor="end">Claude zero-shot</text>
+<circle cx="430.2" cy="155.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="508.6" cy="155.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="280.8" cy="155.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="363.2" cy="155.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="381.4" cy="155.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="397.4" cy="155.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="517.7" cy="155.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="635.9" cy="155.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="648.8" cy="155.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="370.9" cy="155.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="497.4" cy="155.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<line x1="457.5" y1="148.3" x2="457.5" y2="162.3" stroke="#2a78d6" stroke-width="2.2"/>
+<text class="tiny" x="708" y="158.3" text-anchor="start">n=11</text>
+<text class="lbl" x="198" y="177.3" text-anchor="end">Claude few-shot</text>
+<circle cx="430.2" cy="174.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="513.0" cy="174.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="262.6" cy="174.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="339.9" cy="174.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="381.6" cy="174.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="397.4" cy="174.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="536.6" cy="174.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="635.9" cy="174.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="648.8" cy="174.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="567.4" cy="174.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="497.4" cy="174.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<line x1="473.7" y1="167.3" x2="473.7" y2="181.3" stroke="#2a78d6" stroke-width="2.2"/>
+<text class="tiny" x="708" y="177.3" text-anchor="start">n=11</text>
+<text class="lbl" x="198" y="196.3" text-anchor="end">Claude aspect-aware</text>
+<circle cx="402.2" cy="193.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="508.6" cy="193.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="279.6" cy="193.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="349.3" cy="193.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="366.3" cy="193.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="390.7" cy="193.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="544.1" cy="193.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="537.5" cy="193.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="640.4" cy="193.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="377.8" cy="193.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<circle cx="593.5" cy="193.3" r="3" fill="#2a78d6" opacity="0.5"/>
+<line x1="453.6" y1="186.3" x2="453.6" y2="200.3" stroke="#2a78d6" stroke-width="2.2"/>
+<text class="tiny" x="708" y="196.3" text-anchor="start">n=11</text>
+<text class="key-lbl" x="6" y="222.3" text-anchor="start">steering</text>
+<text class="lbl" x="198" y="223.3" text-anchor="end">topic only</text>
+<circle cx="436.9" cy="220.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="559.2" cy="220.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="318.3" cy="220.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="386.2" cy="220.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="448.1" cy="220.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="439.0" cy="220.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="556.9" cy="220.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="607.7" cy="220.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="644.3" cy="220.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="558.9" cy="220.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="534.9" cy="220.3" r="3" fill="#eb6834" opacity="0.5"/>
+<line x1="499.1" y1="213.3" x2="499.1" y2="227.3" stroke="#eb6834" stroke-width="2.2"/>
+<text class="tiny" x="708" y="223.3" text-anchor="start">n=11</text>
+<text class="lbl" x="198" y="242.3" text-anchor="end">retrieved source</text>
+<circle cx="437.1" cy="239.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="551.8" cy="239.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="290.5" cy="239.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="378.7" cy="239.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="444.7" cy="239.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="458.7" cy="239.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="549.1" cy="239.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="577.3" cy="239.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="645.8" cy="239.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="549.5" cy="239.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="518.1" cy="239.3" r="3" fill="#eb6834" opacity="0.5"/>
+<line x1="491.0" y1="232.3" x2="491.0" y2="246.3" stroke="#eb6834" stroke-width="2.2"/>
+<text class="tiny" x="708" y="242.3" text-anchor="start">n=11</text>
+<text class="lbl" x="198" y="261.3" text-anchor="end">aspects</text>
+<circle cx="401.9" cy="258.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="582.9" cy="258.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="353.5" cy="258.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="377.7" cy="258.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="479.8" cy="258.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="451.9" cy="258.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="545.0" cy="258.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="555.2" cy="258.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="649.6" cy="258.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="501.5" cy="258.3" r="3" fill="#eb6834" opacity="0.5"/>
+<circle cx="484.9" cy="258.3" r="3" fill="#eb6834" opacity="0.5"/>
+<line x1="489.4" y1="251.3" x2="489.4" y2="265.3" stroke="#eb6834" stroke-width="2.2"/>
+<text class="tiny" x="708" y="261.3" text-anchor="start">n=11</text>
+<text class="key-lbl" x="6" y="287.3" text-anchor="start">soft prompt</text>
+<text class="lbl" x="198" y="288.3" text-anchor="end">topic only</text>
+<circle cx="259.9" cy="285.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="456.8" cy="285.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="257.7" cy="285.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="249.5" cy="285.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="250.7" cy="285.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="250.1" cy="285.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="498.9" cy="285.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="277.4" cy="285.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="611.6" cy="285.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="434.0" cy="285.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="318.9" cy="285.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<line x1="351.4" y1="278.3" x2="351.4" y2="292.3" stroke="#1baf7a" stroke-width="2.2"/>
+<text class="tiny" x="708" y="288.3" text-anchor="start">n=11</text>
+<text class="lbl" x="198" y="307.3" text-anchor="end">retrieved source</text>
+<circle cx="283.4" cy="304.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="278.7" cy="304.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="258.6" cy="304.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="302.7" cy="304.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="322.9" cy="304.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="243.8" cy="304.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="504.4" cy="304.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="243.8" cy="304.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="445.5" cy="304.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="380.8" cy="304.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="343.6" cy="304.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<line x1="328.0" y1="297.3" x2="328.0" y2="311.3" stroke="#1baf7a" stroke-width="2.2"/>
+<text class="tiny" x="708" y="307.3" text-anchor="start">n=11</text>
+<text class="lbl" x="198" y="326.3" text-anchor="end">aspects</text>
+<circle cx="250.0" cy="323.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="299.9" cy="323.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="330.7" cy="323.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="290.9" cy="323.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="277.3" cy="323.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="303.4" cy="323.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="537.4" cy="323.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="271.2" cy="323.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="639.7" cy="323.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="473.5" cy="323.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<circle cx="414.4" cy="323.3" r="3" fill="#1baf7a" opacity="0.5"/>
+<line x1="371.7" y1="316.3" x2="371.7" y2="330.3" stroke="#1baf7a" stroke-width="2.2"/>
+<text class="tiny" x="708" y="326.3" text-anchor="start">n=11</text>
+<text class="key-lbl" x="6" y="352.3" text-anchor="start">LoRA</text>
+<text class="lbl" x="198" y="353.3" text-anchor="end">topic only</text>
+<circle cx="246.3" cy="350.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="328.4" cy="350.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="347.6" cy="350.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="252.8" cy="350.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="270.2" cy="350.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="245.6" cy="350.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="505.0" cy="350.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="283.4" cy="350.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="606.7" cy="350.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="376.4" cy="350.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="302.8" cy="350.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<line x1="342.3" y1="343.3" x2="342.3" y2="357.3" stroke="#4a3aa7" stroke-width="2.2"/>
+<text class="tiny" x="708" y="353.3" text-anchor="start">n=11</text>
+<text class="lbl" x="198" y="372.3" text-anchor="end">retrieved source</text>
+<circle cx="247.8" cy="369.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="299.3" cy="369.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="255.2" cy="369.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="255.0" cy="369.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="278.4" cy="369.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="248.4" cy="369.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="594.1" cy="369.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="257.8" cy="369.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="461.7" cy="369.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="444.0" cy="369.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="290.4" cy="369.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<line x1="330.2" y1="362.3" x2="330.2" y2="376.3" stroke="#4a3aa7" stroke-width="2.2"/>
+<text class="tiny" x="708" y="372.3" text-anchor="start">n=11</text>
+<text class="lbl" x="198" y="391.3" text-anchor="end">aspects</text>
+<circle cx="254.2" cy="388.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="283.7" cy="388.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="256.6" cy="388.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="254.5" cy="388.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="253.2" cy="388.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="245.2" cy="388.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="513.5" cy="388.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="261.5" cy="388.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="646.1" cy="388.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="405.2" cy="388.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<circle cx="304.1" cy="388.3" r="3" fill="#4a3aa7" opacity="0.5"/>
+<line x1="334.3" y1="381.3" x2="334.3" y2="395.3" stroke="#4a3aa7" stroke-width="2.2"/>
+<text class="tiny" x="708" y="391.3" text-anchor="start">n=11</text>
+<text class="ax-title" x="455.0" y="429" text-anchor="middle">TRM score · Gemma-512</text>
+<text class="fig-note" x="0" y="447" text-anchor="start">Lower is better. Each dot is one cell; the rule is the unweighted mean over the same 11 shared cells used by</text>
+<text class="fig-note" x="0" y="461" text-anchor="start">every method column in this figure. This is the value plotted in the dot-and-interval figure.</text>
+</svg>
+
+<p>Cell-level values vary substantially. The report therefore supports selected differences between
+adaptation and prompting, but it does not establish an ordering between LoRA and the soft prompt.</p>
+
+<h2><span class="section-no">05</span> The best training variant depends on the family</h2>
+
+<svg class="fig" viewBox="0 0 760 436" width="100%" role="img" aria-labelledby="t64a1ac07" xmlns="http://www.w3.org/2000/svg"><title id="t64a1ac07">Does the training variant matter, and does it matter the same way for each family?</title><desc>Three variants of each trained family on the primary measure.</desc>
+<text class="fig-title" x="0" y="24" text-anchor="start">Does the training variant matter, and does it matter the same way for each family?</text>
+<text class="fig-sub" x="0" y="42" text-anchor="start">Three variants of each trained family on the primary measure.</text>
+<line x1="62.0" y1="78" x2="62.0" y2="328" stroke="#eeece6"/>
+<text class="tick" x="62.0" y="346" text-anchor="middle">topic only</text>
+<line x1="306.0" y1="78" x2="306.0" y2="328" stroke="#eeece6"/>
+<text class="tick" x="306.0" y="346" text-anchor="middle">retrieved source</text>
+<line x1="550.0" y1="78" x2="550.0" y2="328" stroke="#eeece6"/>
+<text class="tick" x="550.0" y="346" text-anchor="middle">aspects</text>
+<text class="tick" x="54" y="332.0" text-anchor="end">0.00</text>
+<text class="tick" x="54" y="248.66666666666669" text-anchor="end">0.26</text>
+<text class="tick" x="54" y="165.33333333333334" text-anchor="end">0.52</text>
+<text class="tick" x="54" y="81.99999999999994" text-anchor="end">0.78</text>
+<line x1="62" y1="149.7" x2="550.0" y2="149.7" stroke="#b0a08c" stroke-width="1.8" stroke-dasharray="3 3" opacity="0.9"/>
+<line x1="62" y1="188.4" x2="550.0" y2="188.4" stroke="#8b8b8b" stroke-width="1.8" stroke-dasharray="3 3" opacity="0.9"/>
+<line x1="62" y1="294.9" x2="550.0" y2="294.9" stroke="#2e7d5b" stroke-width="1.8" opacity="0.9"/>
+<path d="M62.0,111.1 L306.0,117.9 L550.0,119.2" fill="none" stroke="#eb6834" stroke-width="2.2"/>
+<circle cx="62.0" cy="111.1" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="306.0" cy="117.9" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="550.0" cy="119.2" r="4.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="1.8"/>
+<path d="M62.0,234.8 L306.0,254.4 L550.0,217.8" fill="none" stroke="#1baf7a" stroke-width="2.2"/>
+<circle cx="62.0" cy="234.8" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="306.0" cy="254.4" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="550.0" cy="217.8" r="4.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="1.8"/>
+<path d="M62.0,242.4 L306.0,252.5 L550.0,249.1" fill="none" stroke="#4a3aa7" stroke-width="2.2"/>
+<circle cx="62.0" cy="242.4" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="306.0" cy="252.5" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="1.8"/>
+<circle cx="550.0" cy="249.1" r="4.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="1.8"/>
+<path d="M550.0,119.2 L557.0,119.2" stroke="#eb6834" stroke-width="1" opacity="0.55"/>
+<text class="lbl" x="560" y="123.18833475509828" text-anchor="start">steering</text>
+<path d="M550.0,149.7 L557.0,149.7" stroke="#b0a08c" stroke-width="1" opacity="0.55"/>
+<text class="ref-lbl" x="560" y="153.73035316806002" text-anchor="start">Wrong-topic control · n=11</text>
+<path d="M550.0,188.4 L557.0,188.4" stroke="#8b8b8b" stroke-width="1" opacity="0.55"/>
+<text class="ref-lbl" x="560" y="192.44181947162272" text-anchor="start">Copy floor · n=11</text>
+<path d="M550.0,217.8 L557.0,217.8" stroke="#1baf7a" stroke-width="1" opacity="0.55"/>
+<text class="lbl" x="560" y="221.79986294874539" text-anchor="start">soft prompt</text>
+<path d="M550.0,249.1 L557.0,249.1" stroke="#4a3aa7" stroke-width="1" opacity="0.55"/>
+<text class="lbl" x="560" y="253.06891393961297" text-anchor="start">LoRA</text>
+<path d="M550.0,294.9 L557.0,294.9" stroke="#2e7d5b" stroke-width="1" opacity="0.55"/>
+<text class="ref-lbl" x="560" y="298.9117647058824" text-anchor="start">Authentic oracle · n=6</text>
+<text class="ax-title" x="306.0" y="366" text-anchor="middle">training variant</text>
+<text class="ax-title" transform="translate(14,203.0) rotate(-90)" text-anchor="middle">TRM score</text>
+<text class="fig-note" x="0" y="380" text-anchor="start">Lower is better. Parallel lines indicate a variant effect that is consistent across families; crossing lines</text>
+<text class="fig-note" x="0" y="394" text-anchor="start">indicate that the best variant depends on the family, in which case the variant cannot be chosen once for all of</text>
+<text class="fig-note" x="0" y="408" text-anchor="start">them. Intervals are omitted so that three families remain legible and are given in the tables.</text>
+</svg>
+
+<p>The lines are not parallel. The retrieved-source variant is the best choice for LoRA and for the
+soft prompt but not for steering, so the variant cannot be selected once and applied to every family.
+The figure motivates a larger ablation; the current comparison does not settle the within-family
+ordering.</p>
+
+<h2 id="full-results"><span class="section-no">06</span> Full results</h2>
+
+<figure class="tablefig">
+<figcaption><strong>Distribution match</strong><br><span class="sub">Whether the pool of generated posts is distributed like the pool of authentic ones. This is the study's primary question, and the Triangle-Rank Metric is its primary measure.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead>
+<tr><td></td><th colspan="4" class="fam" style="color:#2a78d6">prompting</th><th colspan="3" class="fam" style="color:#eb6834">steering</th><th colspan="3" class="fam" style="color:#1baf7a">soft prompt</th><th colspan="3" class="fam" style="color:#4a3aa7">LoRA</th><th colspan="3" class="fam">reference</th></tr>
+<tr><td></td><th>GPT-5.6 zero-shot</th><th>Claude zero-shot</th><th>Claude few-shot</th><th>Claude aspect-aware</th><th>topic only</th><th>retrieved source</th><th>aspects</th><th>topic only</th><th>retrieved source</th><th>aspects</th><th>topic only</th><th>retrieved source</th><th>aspects</th><th>Identity (copy floor)</th><th>Shuffle-Control (wrong topic)</th><th>Oracle (authentic posts)</th></tr>
+</thead>
+<tbody><tr><th scope='row'>Triangle-Rank Metric ↓</th><td>0.436</td><td>0.567</td><td>0.609</td><td>0.557</td><td>0.675</td><td>0.654</td><td>0.650</td><td>0.291</td><td class="best">0.230</td><td>0.343</td><td>0.267</td><td>0.235</td><td>0.246</td><td class='ref'>0.435</td><td class='ref'>0.555</td><td class='ref'>0.104<sup>6</sup></td></tr><tr><th scope='row'>In-edge-longest rate ·</th><td>0.174</td><td>0.122</td><td>0.152</td><td>0.141</td><td>0.130</td><td>0.142</td><td>0.163</td><td>0.220</td><td>0.245</td><td class="best">0.283</td><td>0.268</td><td>0.271</td><td>0.248</td><td class='ref'>0.202</td><td class='ref'>0.025</td><td class='ref'>0.247<sup>6</sup></td></tr><tr><th scope='row'>In-edge-shortest rate ·</th><td>0.615</td><td>0.667</td><td>0.655</td><td>0.640</td><td>0.654</td><td>0.636</td><td>0.652</td><td>0.556</td><td>0.467</td><td class="best">0.437</td><td>0.467</td><td>0.471</td><td>0.509</td><td class='ref'>0.574</td><td class='ref'>0.861</td><td class='ref'>0.450<sup>6</sup></td></tr><tr><th scope='row'>Fréchet distance ↓</th><td>0.526</td><td>0.564</td><td>0.563</td><td>0.551</td><td>0.560</td><td>0.551</td><td>0.544</td><td>0.476</td><td>0.454</td><td>0.448</td><td>0.450</td><td class="best">0.441</td><td>0.468</td><td class='ref'>0.554</td><td class='ref'>0.729</td><td class='ref'>0.390<sup>6</sup></td></tr><tr><th scope='row'>Centroid distance ↓</th><td>0.129</td><td>0.157</td><td>0.150</td><td>0.153</td><td>0.158</td><td>0.154</td><td>0.146</td><td>0.103</td><td>0.088</td><td>0.099</td><td>0.095</td><td class="best">0.077</td><td>0.094</td><td class='ref'>0.131</td><td class='ref'>0.163</td><td class='ref'>0.063<sup>11</sup></td></tr><tr><th scope='row'>Topic JSD ↓</th><td>0.508</td><td>0.497</td><td>0.485</td><td>0.499</td><td>0.472</td><td>0.493</td><td>0.494</td><td>0.405</td><td>0.342</td><td>0.414</td><td>0.383</td><td class="best">0.336</td><td>0.377</td><td class='ref'>0.525</td><td class='ref'>0.725</td><td class='ref'>0.219<sup>11</sup></td></tr></tbody>
+</table></div>
+<p class="tnote">↑ higher is better · ↓ lower is better · · diagnostic, best value marked against its target.
+Bold is the best system column in the row; reference columns are excluded from that comparison.
+A superscript on a reference value is the number of cells it was averaged over, printed whenever
+that differs from the system columns' base.<br>
+Aggregation: each point is the unweighted mean of the per-cell score over 11 cells. The mean is unweighted because the largest cell holds roughly fifteen times the posts of the median, so a size-weighted mean would principally report one topic. The interval is the 2.5 and 97.5 percentiles of 500 bootstrap resamples drawn over cells, cells being the independent unit rather than posts. Intervals for these values are given in the
+resolution test below, and a difference should not be read from the point estimates alone.</p>
+</figure>
+<figure class="tablefig">
+<figcaption><strong>Platform match</strong><br><span class="sub">Whether the output reads as the target platform. The calibration gaps compare the rate at which a classifier labels generated posts as target-platform against the rate at which it so labels authentic ones, so zero is the objective and saturating the classifier is not.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead>
+<tr><td></td><th colspan="4" class="fam" style="color:#2a78d6">prompting</th><th colspan="3" class="fam" style="color:#eb6834">steering</th><th colspan="3" class="fam" style="color:#1baf7a">soft prompt</th><th colspan="3" class="fam" style="color:#4a3aa7">LoRA</th><th colspan="3" class="fam">reference</th></tr>
+<tr><td></td><th>GPT-5.6 zero-shot</th><th>Claude zero-shot</th><th>Claude few-shot</th><th>Claude aspect-aware</th><th>topic only</th><th>retrieved source</th><th>aspects</th><th>topic only</th><th>retrieved source</th><th>aspects</th><th>topic only</th><th>retrieved source</th><th>aspects</th><th>Identity (copy floor)</th><th>Shuffle-Control (wrong topic)</th><th>Oracle (authentic posts)</th></tr>
+</thead>
+<tbody><tr><th scope='row'>Calibration gap (lexical) ↓</th><td>0.159</td><td>0.087</td><td>0.063</td><td>0.095</td><td>0.138</td><td>0.135</td><td>0.133</td><td>0.158</td><td>0.103</td><td>0.124</td><td>0.098</td><td class="best">0.038</td><td>0.138</td><td class='ref'>0.290</td><td class='ref'>0.170</td><td class='ref'>0.085<sup>20</sup></td></tr><tr><th scope='row'>Calibration gap (stylometric) ↓</th><td>0.115</td><td>0.076</td><td class="best">0.072</td><td>0.077</td><td>0.217</td><td>0.173</td><td>0.182</td><td>0.285</td><td>0.118</td><td>0.141</td><td>0.151</td><td>0.090</td><td>0.181</td><td class='ref'>0.559</td><td class='ref'>0.169</td><td class='ref'>0.119<sup>20</sup></td></tr><tr><th scope='row'>Target rate (lexical) ·</th><td>0.712</td><td>0.946</td><td>0.875</td><td>0.949</td><td>0.900</td><td>0.895</td><td>0.769</td><td>0.755</td><td>0.872</td><td>0.797</td><td>0.832</td><td>0.890</td><td>0.806</td><td class='ref'>0.598</td><td class='ref'>0.946</td><td class='ref'>0.933<sup>20</sup></td></tr><tr><th scope='row'>Habit coverage ↑</th><td>0.301</td><td>0.229</td><td>0.259</td><td>0.220</td><td>0.235</td><td>0.259</td><td>0.238</td><td>0.292</td><td>0.304</td><td>0.250</td><td>0.307</td><td class="best">0.312</td><td>0.283</td><td class='ref'>0.220</td><td class='ref'>0.315</td><td class='ref'>0.424<sup>11</sup></td></tr><tr><th scope='row'>Mean feature JSD ↓</th><td>0.296</td><td>0.403</td><td>0.380</td><td>0.395</td><td>0.407</td><td>0.406</td><td>0.430</td><td>0.218</td><td>0.190</td><td>0.187</td><td class="best">0.177</td><td>0.177</td><td>0.192</td><td class='ref'>0.354</td><td class='ref'>0.190</td><td class='ref'>0.191<sup>11</sup></td></tr><tr><th scope='row'>Mean effect gap ↓</th><td>0.831</td><td>1.105</td><td>1.047</td><td>1.116</td><td>1.299</td><td>1.383</td><td>1.401</td><td class="best">0.766</td><td>0.806</td><td>1.344</td><td>0.822</td><td>0.816</td><td>0.951</td><td class='ref'>0.834</td><td class='ref'>0.743</td><td class='ref'>0.765<sup>11</sup></td></tr></tbody>
+</table></div>
+<p class="tnote">↑ higher is better · ↓ lower is better · · diagnostic, best value marked against its target.
+Bold is the best system column in the row; reference columns are excluded from that comparison.
+A superscript on a reference value is the number of cells it was averaged over, printed whenever
+that differs from the system columns' base.<br>
+Aggregation: each point is the unweighted mean of the per-cell score over 25 cells. The mean is unweighted because the largest cell holds roughly fifteen times the posts of the median, so a size-weighted mean would principally report one topic. The interval is the 2.5 and 97.5 percentiles of 500 bootstrap resamples drawn over cells, cells being the independent unit rather than posts. Intervals for these values are given in the
+resolution test below, and a difference should not be read from the point estimates alone.</p>
+</figure>
+<figure class="tablefig">
+<figcaption><strong>Content preservation and well-formedness</strong><br><span class="sub">Whether the post the method was given survives into the output, and whether the output is well formed. A column can match the target distribution by discarding its input; these rows make that visible.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead>
+<tr><td></td><th colspan="4" class="fam" style="color:#2a78d6">prompting</th><th colspan="3" class="fam" style="color:#eb6834">steering</th><th colspan="3" class="fam" style="color:#1baf7a">soft prompt</th><th colspan="3" class="fam" style="color:#4a3aa7">LoRA</th><th colspan="3" class="fam">reference</th></tr>
+<tr><td></td><th>GPT-5.6 zero-shot</th><th>Claude zero-shot</th><th>Claude few-shot</th><th>Claude aspect-aware</th><th>topic only</th><th>retrieved source</th><th>aspects</th><th>topic only</th><th>retrieved source</th><th>aspects</th><th>topic only</th><th>retrieved source</th><th>aspects</th><th>Identity (copy floor)</th><th>Shuffle-Control (wrong topic)</th><th>Oracle (authentic posts)</th></tr>
+</thead>
+<tbody><tr><th scope='row'>Similarity to source ↑</th><td class="best">0.937</td><td>0.863</td><td>0.883</td><td>0.870</td><td>0.865</td><td>0.877</td><td>0.897</td><td>0.876</td><td>0.759</td><td>0.852</td><td>0.826</td><td>0.763</td><td>0.821</td><td class='ref'>1.000</td><td class='ref'>0.599</td><td class='ref'>0.725<sup>20</sup></td></tr><tr><th scope='row'>Content-word retention ↑</th><td class="best">0.527</td><td>0.398</td><td>0.458</td><td>0.413</td><td>0.407</td><td>0.419</td><td>0.510</td><td>0.326</td><td>0.062</td><td>0.141</td><td>0.142</td><td>0.051</td><td>0.176</td><td class='ref'>1.000</td><td class='ref'>0.016</td><td class='ref'>0.043<sup>20</sup></td></tr><tr><th scope='row'>Similarity to target pool ↑</th><td>0.720</td><td>0.696</td><td>0.706</td><td>0.701</td><td>0.710</td><td>0.712</td><td>0.716</td><td>0.723</td><td>0.727</td><td>0.743</td><td>0.726</td><td class="best">0.745</td><td>0.724</td><td class='ref'>0.723</td><td class='ref'>0.602</td><td class='ref'>0.748<sup>20</sup></td></tr><tr><th scope='row'>Length ratio ·</th><td>2.528</td><td>5.291</td><td>4.545</td><td>4.701</td><td>8.552</td><td>8.662</td><td>8.259</td><td>2.647</td><td>2.257</td><td>0.472</td><td>1.582</td><td class="best">1.104</td><td>2.163</td><td class='ref'>3.200</td><td class='ref'>2.679</td><td class='ref'>1.440<sup>20</sup></td></tr><tr><th scope='row'>Distinct-2 ↑</th><td>0.526</td><td>0.696</td><td>0.679</td><td>0.679</td><td>0.723</td><td>0.716</td><td>0.695</td><td>0.824</td><td>0.897</td><td>0.871</td><td class="best">0.901</td><td>0.893</td><td>0.860</td><td class='ref'>0.936</td><td class='ref'>0.891</td><td class='ref'>0.578<sup>20</sup></td></tr><tr><th scope='row'>Pool self-similarity ·</th><td>0.834</td><td>0.830</td><td>0.840</td><td>0.834</td><td>0.852</td><td>0.856</td><td>0.855</td><td>0.785</td><td>0.775</td><td>0.835</td><td>0.781</td><td>0.780</td><td>0.778</td><td class='ref'>0.768<sup>20</sup></td><td class='ref'>0.617</td><td class='ref'>0.779<sup>20</sup></td></tr><tr><th scope='row'>Copy rate ↓</th><td>0.050</td><td class="best">0.000</td><td class="best">0.000</td><td class="best">0.000</td><td class="best">0.000</td><td class="best">0.000</td><td class="best">0.000</td><td>0.103</td><td>0.002</td><td>0.027</td><td>0.019</td><td class="best">0.000</td><td>0.048</td><td class='ref'>1.000</td><td class='ref'>0.000</td><td class='ref'>0.000<sup>20</sup></td></tr><tr><th scope='row'>Failure rate ↓</th><td class="best">0.000</td><td class="best">0.000</td><td class="best">0.000</td><td class="best">0.000</td><td class="best">0.000</td><td class="best">0.000</td><td class="best">0.000</td><td class="best">0.000</td><td class="best">0.000</td><td class="best">0.000</td><td class="best">0.000</td><td class="best">0.000</td><td class="best">0.000</td><td class='ref'>0.000</td><td class='ref'>0.000</td><td class='ref'>0.000</td></tr></tbody>
+</table></div>
+<p class="tnote">↑ higher is better · ↓ lower is better · · diagnostic, best value marked against its target.
+Bold is the best system column in the row; reference columns are excluded from that comparison.
+A superscript on a reference value is the number of cells it was averaged over, printed whenever
+that differs from the system columns' base.<br>
+Aggregation: each point is the unweighted mean of the per-cell score over 25 cells. The mean is unweighted because the largest cell holds roughly fifteen times the posts of the median, so a size-weighted mean would principally report one topic. The interval is the 2.5 and 97.5 percentiles of 500 bootstrap resamples drawn over cells, cells being the independent unit rather than posts. Intervals for these values are given in the
+resolution test below, and a difference should not be read from the point estimates alone.</p>
+</figure>
+
+<h2><span class="section-no">07</span> Qualitative comparison</h2>
+<p>The examples make the numerical trade-off concrete. Prompting produces coherent expository
+rewrites that keep the source topic. Soft-prompt outputs often resemble the short title-like form of
+the target pool while dropping source specifics. LoRA is also shorter than prompting, but it retains
+more source content than the soft prompt in some tasks. Steering frequently runs to a long templated
+answer.</p>
+
+<figure class="qual"><figcaption><strong>Qualitative comparison: 3 tasks, every family</strong><br><span class="sub">The first eligible task from each of 3 distinct cells after sorting by cell and task identifier. The selection is fixed before reading the text. Passages are truncated for length; nothing else is altered.</span></figcaption><div class="qgroup"><div class="qhead">Cell <code>backend_engineer::agentic_coding</code></div><div class="qsrc"><div class="qlab">source · the LinkedIn post supplied to every method</div><blockquote>📣 AI Agents on Snowflake! ❄ Building warehouse-native applications means you’re constantly monitoring costs, debugging anomalies in credits consumed, identifying optimizations. Again and again, for each customer. Frustrating. Enter #agents. The Houseware team just in the last week itself, built out an AI agent that understands the internals of Snowflake's credit consumption models and answers any questions about the same. Moreover, this agent could identify spikes in credit…</blockquote></div><div class="qreal"><div class="qlab">authentic test reference · Reddit post from the same cell</div><blockquote>Introduction To Development With AI Coding Agents</blockquote></div><div class="qcell" style="border-left-color:#2a78d6"><div class="qlab">prompting · Claude zero-shot</div><blockquote>Built a multi-agent setup for Snowflake cost monitoring — a few things surprised me, curious how others are handling the hallucination problem Context: we build warehouse-native apps and got tired of manually monitoring credit consumption, debugging spend anomalies, and hunting for optimizations for every customer. So we spent the last week building an agent that understands Snowflake's credit consumption model and…</blockquote></div><div class="qcell" style="border-left-color:#eb6834"><div class="qlab">steering · retrieved source</div><blockquote>Title: Agent-Coded Snowflake: Interactive Analytics with AI and UI Customization Hello fellow developers, I recently came across an interesting project where Snowflake is being used as a platform to create and integrate with AI Agents, generating dynamic UIs and automating tasks. I wanted to share and get feedback from the community on this implementation. The Houseware team has developed an AI Agent capable of unde…</blockquote></div><div class="qcell" style="border-left-color:#1baf7a"><div class="qlab">soft prompt · retrieved source</div><blockquote>Understanding and improving your Software Architecture 🌎 | Architecture vs Design | Agentic vs Monolithic Design</blockquote></div><div class="qcell" style="border-left-color:#4a3aa7"><div class="qlab">LoRA · retrieved source</div><blockquote>Building a data stack: SaaS &amp; the human side of scaling</blockquote></div></div><div class="qgroup"><div class="qhead">Cell <code>backend_engineer::ai_agents</code></div><div class="qsrc"><div class="qlab">source · the LinkedIn post supplied to every method</div><blockquote>Most people think of AI "agents" as an autonomous assistant that can take a vague spec, run off, work for a while, and then come back with a completed solution to your problem. Whereas the reality today is that even the best, most powerful agent will take your clear and well-written spec, run off and "work" for a while, and come back three hours later with a dead weasel in its mouth, or something equally useful and on-point. Hell, I signed up for $200/month Operator just to…</blockquote></div><div class="qreal"><div class="qlab">authentic test reference · Reddit post from the same cell</div><blockquote>I kept seeing RAG, AI Agents, and Agentic AI used interchangeably and realized they imply very different architectural commitments. Reframing them around responsibility and time horizon helped. Some systems stay request-response with better knowledge grounding. Some introduce active components that execute actions. Some become long-running systems that plan, observe outcomes, and adapt. This framing made trade-offs…</blockquote></div><div class="qcell" style="border-left-color:#2a78d6"><div class="qlab">prompting · Claude zero-shot</div><blockquote>The "autonomous agent that takes a vague spec and comes back with a finished solution" thing is still mostly fantasy. Even the best agents today take a clear, well-written spec, run for a while, and come back with garbage. Case in point: I paid $200/mo for Operator. Last night it spent 20 minutes "reading" my 100-page Google doc (per its own status) and then dumped nonsense all over it. Had a backup, thankfully. It'…</blockquote></div><div class="qcell" style="border-left-color:#eb6834"><div class="qlab">steering · retrieved source</div><blockquote>**Title: Befriending AI Agents - A Reality Check and a Brighter Future with LLMs and Their Home-Built Minis** Hey fellow Redditors, I'm coming in with a bit of disappointment and some advice on the state of AI agents, specifically those powered by Large Language Models (LLMs). I recently tried using a popular AI assistant with the expectation that it would handle tasks with ease, but my experience left much to be de…</blockquote></div><div class="qcell" style="border-left-color:#1baf7a"><div class="qlab">soft prompt · retrieved source</div><blockquote>Automated content creation tool that requires no training - A/B Testing</blockquote></div><div class="qcell" style="border-left-color:#4a3aa7"><div class="qlab">LoRA · retrieved source</div><blockquote>My AI agents are better than yours</blockquote></div></div><div class="qgroup"><div class="qhead">Cell <code>backend_engineer::code_editors</code></div><div class="qsrc"><div class="qlab">source · the LinkedIn post supplied to every method</div><blockquote>Everyone should use Vim. It might be a bit controversial to say, but I say this with utter confidence, that when you master Vim, it'll speed up your development. Specifically, Neovim, with the right configuration, you can move around your project with ease. Personally, way faster than I did with VSCode Just a month ago, I decided lets give Neovim a try, since its being hyped up as of late. Initially, I found it quite hard, and I often wondered why people won't just use their…</blockquote></div><div class="qreal"><div class="qlab">authentic test reference · Reddit post from the same cell</div><blockquote>Using Cursor for vibe coding, very happy with it except when it comes to managing external processes. **I see many good things written about Claude Code. Can it do the operations I describe in step 3?** 1. I use Cursor agents to edit / debug the files of my coding project, which is made of a frontend and several microservices for the backend. Then with PowerShell I build and launch these microservices. All fine. 2.…</blockquote></div><div class="qcell" style="border-left-color:#2a78d6"><div class="qlab">prompting · Claude zero-shot</div><blockquote>Switched from VSCode to Neovim a month ago, here's where I've landed Was skeptical at first. Spent the first couple weeks fighting it and genuinely wondering why anyone would give up their mouse. It's a rough start. But once the motions stopped being conscious effort, moving around a project got noticeably faster. Concrete example: dealing with a big JSON object in VSCode meant scrolling down 50 lines to find the en…</blockquote></div><div class="qcell" style="border-left-color:#eb6834"><div class="qlab">steering · retrieved source</div><blockquote>Title: A Confident Case for Using Neovim and its Macros in Development Hello fellow developers, I recently made the switch to Neovim for my development workflow, and I'm still surprised by how much of a productivity boost it has given me, even after only a couple weeks of use. I know some might view it as a polarizing choice, especially when compared to more popular code editors like Visual Studio Code. However, I b…</blockquote></div><div class="qcell" style="border-left-color:#1baf7a"><div class="qlab">soft prompt · retrieved source</div><blockquote>I am looking for my next code editor. I am a fan of Atom and vs code. I have tried Sublime as well. I think I am done with Atom. Looking to migrate to a native windows application. I have also tried Notepad++ (it's good, but it's too minimalistic for me). I have briefly checked out Brackets (its UI is too cluttered for my taste) and Eclipse (it feels too bloated). Am I the only one who prefers native Windows App ove…</blockquote></div><div class="qcell" style="border-left-color:#4a3aa7"><div class="qlab">LoRA · retrieved source</div><blockquote>I've spent hours messing around with different Vim editors recently, and one thing that still holds me back from switching completely is configuration. I mean, I can customize most things I want, but not all of them. So far, I've tried Spacemacs, Vim, and Neovim. They all feel really powerful, but they also feel intimidating. So I'm curious. What is a good introduction to Vim editors? Is it Spacemacs, or would you r…</blockquote></div></div></figure>
+
+<section class="metric-definitions" id="metric-definitions">
+<h2><span class="section-no">08</span> Metric definitions and equations</h2>
+<p>Each equation below states the finite-sample quantity implemented by the evaluation code. This
+distinguishes, for example, the tie-aware Triangle-Rank indicators from a generic rank statistic and
+the classifier calibration gap from a target-rate maximisation objective.</p>
+
+<aside class="metric-notation">
+<h3>Shared notation and aggregation</h3>
+<p>Within bilateral cell \(c\), \(G_c=\{g_i\}\), \(R_c=\{r_j\}\), and
+\(S_c=\{s_i\}\) denote the generated, authentic Reddit, and authentic LinkedIn
+pools. A cell-level equation suppresses subscript \(c\) and writes \(G,R,S\).
+\(|A|\) is the cardinality of set or multiset \(A\); \(e(x)\) is the report's
+Gemma-512 embedding of text \(x\).</p>
+<p>\(\mathbf 1\{B\}\) equals one when proposition \(B\) is true and zero
+otherwise; \(\mathbb E\) is an explicitly identified finite average, not a
+model expectation. \(\sum\) is a finite sum; \(\min\) and \(\max\) select the
+smaller and larger real argument. For a scalar \(z\), \(|z|\) is absolute
+value, whereas \(|A|\) is set or multiset cardinality. \(\lVert z\rVert_2\),
+\(z^{\mathsf T}\), \(\cap\), and \(\cup\) denote Euclidean norm, transpose,
+intersection, and union. Metric-local
+functions—including histograms, classifiers, content-word extraction, and
+character counting—are defined immediately below their equations.</p>
+<div class="metric-equation">\[
+\widehat\phi=\frac{1}{|\mathcal C_\phi|}\sum_{c\in\mathcal C_\phi}\phi_c
+\]</div>
+<p>Here \(\phi_c\) is metric \(\phi\)'s value in cell \(c\), and
+\(\mathcal C_\phi\) is the set of finite-scored cells shared by every compared
+system for that metric family. Thus \(\widehat\phi\) is the displayed unweighted
+cell mean. The 95% interval resamples cells, not posts, so a large cell does not
+receive more weight than a small one.</p>
+</aside>
+<div class="metric-groups"><section class="metric-group"><h3>Distribution match</h3><dl class="gloss"><dt>Triangle-Rank Metric (symmetrised) <span class='dirn'>(lower is better) Target 0.</span></dt><dd><div class="metric-equation" aria-label="Equation for Triangle-Rank Metric (symmetrised)">\[\operatorname{TRM}(G,R)=Q(G,R)+Q(R,G),\qquad Q(G,R)=\sum_{k=0}^{2}\left(p_k(G,R)-\frac13\right)^2\]</div><p class="equation-key"><strong>Symbols and functions.</strong> For pools \(A,B\), \(p_k(A,B)\) is the frequency with which the within-\(B\) edge has rank \(k\in\{0,1,2\}\), from shortest to longest, in triangles containing one point from \(A\) and two distinct points from \(B\). Thus \(p_k(G,R)\) uses the authentic–authentic edge and \(p_k(R,G)\) uses the generated–generated edge. \(p_1=1-p_0-p_2\). \(Q\) is the directed squared deviation of this rank profile from \((1/3,1/3,1/3)\); TRM adds both directions.</p><p>Chan et al. (LREC-COLING 2024). Over every triangle with one vertex in the generated pool and two in the authentic pool, the rank taken by the authentic-authentic edge is recorded; under the null that both pools are drawn from one distribution each rank is equiprobable. The statistic is the summed squared deviation from that uniform profile, symmetrised over both directions. Zero denotes indistinguishability.</p></dd><dt>Triangle in-edge-longest rate <span class='dirn'>(diagnostic) Target 0.3333.</span></dt><dd><div class="metric-equation" aria-label="Equation for Triangle in-edge-longest rate">\[p_2(G,R)=\mathbb E\!\left[\mathbf 1\{\max(a,b)\le u\}\,\mathbf 1\{u>\min(a,b)\}\right]\]</div><p class="equation-key"><strong>Symbols and functions.</strong> \(g\) is sampled uniformly from \(G\), and \((r_j,r_\ell)\) uniformly from unordered distinct pairs in \(R\). The edge lengths are \(a=\rho(g,r_j)\), \(b=\rho(g,r_\ell)\), and \(u=\rho(r_j,r_\ell)\). \(\rho(x,z)=1-\cos(e(x),e(z))\), where \(\cos(v,w)=v^{\mathsf T}w/(\lVert v\rVert_2\lVert w\rVert_2)\). \(\min,\max\) select the smaller and larger argument. \(\mathbb E\) averages over those triangles and \(\mathbf 1\{\cdot\}\) is the indicator function. The second indicator implements the code's tie rule: an all-edge tie belongs to \(p_0\), not \(p_2\).</p><p>Proportion of triangles in which the authentic-authentic edge is the longest of the three. One third is the value under a perfect match. Values above it are consistent with generated points concentrated inside the authentic cloud and are the under-dispersion signature. Values below it are not interpretable alone: the in-edge-shortest rate distinguishes outward displacement from over-dispersion.</p></dd><dt>Triangle in-edge-shortest rate <span class='dirn'>(diagnostic) Target 0.3333.</span></dt><dd><div class="metric-equation" aria-label="Equation for Triangle in-edge-shortest rate">\[p_0(G,R)=\mathbb E\!\left[\mathbf 1\{u\le\min(a,b)\}\right]\]</div><p class="equation-key"><strong>Symbols and functions.</strong> \(g,(r_j,r_\ell),a,b,u,\rho,\mathbb E\) and \(\mathbf 1\) are defined as for \(p_2\). The event \(u\le\min(a,b)\) assigns every shortest-edge tie to \(p_0\).</p><p>Proportion of triangles in which the authentic-authentic edge is shortest. Elevated values indicate the generated pool lies outside the authentic cloud, which is an error of location rather than of spread.</p></dd><dt>Gemma-512 embedding Fréchet distance <span class='dirn'>(lower is better) Target 0.</span></dt><dd><div class="metric-equation" aria-label="Equation for Gemma-512 embedding Fréchet distance">\[D_F(G,R)=\lVert\mu_G-\mu_R\rVert_2^2+\operatorname{tr}\!\left(\Sigma_G+\Sigma_R-2(\Sigma_G\Sigma_R)^{1/2}\right)\]</div><p class="equation-key"><strong>Symbols and functions.</strong> For pool \(A\), \(\mu_A\) is the mean of \(\{e(x):x\in A\}\) and \(\Sigma_A\) is its sample covariance plus \(10^{-6}I\), with \(I\) the embedding-space identity matrix. \(\lVert\cdot\rVert_2\) is the Euclidean norm, \(\operatorname{tr}\) the matrix trace, and \((\Sigma_G\Sigma_R)^{1/2}\) denotes the matrix square-root term whose trace is computed from the product's eigenvalues.</p><p>Fréchet distance between Gaussians fitted to the generated and authentic pools in the embedding space. The kernel-free companion to the Triangle-Rank Metric; sensitive to both mean and covariance, and to neither robustly at these pool sizes.</p></dd><dt>Gemma-512 centroid cosine distance <span class='dirn'>(lower is better) Target 0.</span></dt><dd><div class="metric-equation" aria-label="Equation for Gemma-512 centroid cosine distance">\[D_{\mathrm{cent}}(G,R)=1-\frac{\bar e_G^{\mathsf T}\bar e_R}{\lVert\bar e_G\rVert_2\lVert\bar e_R\rVert_2},\qquad \bar e_G=\frac1{|G|}\sum_{g\in G}e(g)\]</div><p class="equation-key"><strong>Symbols and functions.</strong> \(\bar e_A=|A|^{-1}\sum_{x\in A}e(x)\) is pool \(A\)'s mean embedding. Superscript \(\mathsf T\) is transpose and \(\lVert\cdot\rVert_2\) is the Euclidean norm; their quotient is cosine similarity between the two centroids.</p><p>Cosine distance between the mean embedding of the generated pool and that of the authentic pool. Sensitive to location only; a pool with the right centre and no spread scores perfectly here, which is why it is reported beside the Triangle-Rank Metric rather than instead of it.</p></dd><dt>Gemma-512 topic Jensen–Shannon divergence <span class='dirn'>(lower is better) Target 0.</span></dt><dd><div class="metric-equation" aria-label="Equation for Gemma-512 topic Jensen–Shannon divergence">\[\operatorname{JSD}(P_G,P_R)=\frac12D_{\mathrm{KL},2}(P_G\Vert M)+\frac12D_{\mathrm{KL},2}(P_R\Vert M),\qquad M=\frac12(P_G+P_R)\]</div><p class="equation-key"><strong>Symbols and functions.</strong> \(P_A\) is the smoothed, normalised histogram obtained by assigning every \(e(x)\), \(x\in A\), to its nearest one of 24 shared k-means centres, adding \(10^{-9}\) to each count. \(M=(P_G+P_R)/2\). For categorical distributions \(P,Q\), \(D_{\mathrm{KL},2}(P\Vert Q)=\sum_k P_k\log_2(P_k/Q_k)\), where \(k\) indexes a cluster and \(\log_2\) is the base-2 logarithm.</p><p>Jensen–Shannon divergence between the two pools' distributions over a shared k-means partition of the embedding space. The vocabulary contains twenty-four clusters, is fitted once on authentic posts, and is shared by every method.</p></dd></dl></section><section class="metric-group"><h3>Platform match</h3><dl class="gloss"><dt>Lexical platform-classifier calibration gap <span class='dirn'>(lower is better) Target 0.</span></dt><dd><div class="metric-equation" aria-label="Equation for Lexical platform-classifier calibration gap">\[\Delta_{\mathrm{cal}}=\left|\frac1{|G|}\sum_{g\in G}\mathbf 1\{p_{\mathrm{lex}}(g)>0.5\}-\frac1{|R|}\sum_{r\in R}\mathbf 1\{p_{\mathrm{lex}}(r)>0.5\}\right|\]</div><p class="equation-key"><strong>Symbols and functions.</strong> \(p_{\mathrm{lex}}(x)\) is the target-platform probability from the train-only TF–IDF logistic classifier. \(G\) and \(R\) are the generated and authentic target pools; \(\mathbf 1\{p>0.5\}\) converts a probability to its hard target-platform decision.</p><p>Absolute difference between the rate at which a TF-IDF logistic classifier, trained on authentic train-split posts, labels the generated pool as target-platform and the rate at which it so labels the authentic target pool. The objective is to match the authentic rate, not to saturate the classifier, which is why the gap rather than the rate is the score.</p></dd><dt>Stylometric platform-classifier calibration gap <span class='dirn'>(lower is better) Target 0.</span></dt><dd><div class="metric-equation" aria-label="Equation for Stylometric platform-classifier calibration gap">\[\Delta_{\mathrm{sty}}=\left|\frac1{|G|}\sum_{g\in G}\mathbf 1\{p_{\mathrm{sty}}(g)>0.5\}-\frac1{|R|}\sum_{r\in R}\mathbf 1\{p_{\mathrm{sty}}(r)>0.5\}\right|\]</div><p class="equation-key"><strong>Symbols and functions.</strong> \(p_{\mathrm{sty}}(x)\) is the target-platform probability from the train-only logistic classifier over 21 stylometric features. \(G,R\) and \(\mathbf 1\) have the meanings given for the lexical calibration gap.</p><p>The same quantity for a classifier restricted to twenty-one interpretable surface features, which cannot exploit topic vocabulary. Agreement between the two classifiers is evidence that a transfer is stylistic rather than lexical.</p></dd><dt>Target-platform classification rate (lexical) <span class='dirn'>(diagnostic)</span></dt><dd><div class="metric-equation" aria-label="Equation for Target-platform classification rate (lexical)">\[\operatorname{TargetRate}(G)=\frac1{|G|}\sum_{g\in G}\mathbf 1\{p_{\mathrm{lex}}(g)>0.5\}\]</div><p class="equation-key"><strong>Symbols and functions.</strong> \(p_{\mathrm{lex}}(g)\) is the lexical classifier's target-platform probability for generated post \(g\); \(\mathbf 1\{p_{\mathrm{lex}}(g)>0.5\}\) is one exactly when the post is classified as target-platform.</p><p>Proportion of generated posts labelled target-platform. Diagnostic; its target is the rate authentic posts achieve, reported alongside.</p></dd><dt>Writing-habit shift coverage <span class='dirn'>(higher is better) Target 1.</span></dt><dd><div class="metric-equation" aria-label="Equation for Writing-habit shift coverage">\[\begin{aligned}\operatorname{Coverage}&=\frac1{21}\sum_{f=1}^{21}\mathbf 1\!\left\{\Delta_f\le\tau_f\right\},\\\tau_f&=\max\!\left(0.5|d_f(R,S)|,0.1\right),\qquad \Delta_f=|d_f(G,S)-d_f(R,S)|\end{aligned}\]</div><p class="equation-key"><strong>Symbols and functions.</strong> \(f\) indexes the 21 stylometric features. \(d_f(A,S)\) is Cohen's \(d\) between feature \(f\)'s values in pool \(A\) and the authentic source pool \(S\): \(d_f(A,S)=(\bar f_A-\bar f_S)/s_{p,f}(A,S)\), where \(\bar f_A\) is the sample mean and \(s_{p,f}\) the pooled sample standard deviation. \(\Delta_f\) is the generated-versus-authentic effect-size gap, \(\tau_f\) is its implemented tolerance, and \(\mathbf 1\) records whether it meets the implemented tolerance.</p><p>Proportion of twenty-one surface features whose authentic source-to-target shift the generated pool reproduced to within half its magnitude. A stricter criterion than moving a feature in the correct direction.</p></dd><dt>Mean per-feature Jensen–Shannon divergence <span class='dirn'>(lower is better) Target 0.</span></dt><dd><div class="metric-equation" aria-label="Equation for Mean per-feature Jensen–Shannon divergence">\[\overline{\operatorname{JSD}}_{\mathrm{feature}}=\frac1{21}\sum_{f=1}^{21}\operatorname{JSD}\!\left(H_f(G),H_f(R)\right)\]</div><p class="equation-key"><strong>Symbols and functions.</strong> \(H_f(A)\) is the normalised ten-bin histogram of feature \(f\) in pool \(A\), with \(10^{-9}\) added to every count; the bin edges span \(G,R,S\) jointly. \(\operatorname{JSD}\) is the base-2 Jensen–Shannon divergence defined in the topic-JSD entry.</p><p>Mean divergence between binned generated and authentic distributions across the twenty-one surface features. Each feature uses ten bins whose edges span the generated, authentic and source pools jointly.</p></dd><dt>Mean per-feature effect-size gap <span class='dirn'>(lower is better) Target 0.</span></dt><dd><div class="metric-equation" aria-label="Equation for Mean per-feature effect-size gap">\[\overline\Delta_{\mathrm{effect}}=\frac1{|F^*|}\sum_{f\in F^*}\left|d_f(G,S)-d_f(R,S)\right|\]</div><p class="equation-key"><strong>Symbols and functions.</strong> \(F^*\) is the subset of the 21 features for which both Cohen's-\(d\) values are finite. \(d_f\) and \(S\) are defined in the coverage entry, and the overbar denotes the arithmetic mean over \(F^*\).</p><p>Mean absolute difference between the generated and authentic Cohen's d relative to the source pool, per feature.</p></dd></dl></section><section class="metric-group"><h3>Content preservation and well-formedness</h3><dl class="gloss"><dt>Gemma-512 cosine similarity to the source post <span class='dirn'>(higher is better)</span></dt><dd><div class="metric-equation" aria-label="Equation for Gemma-512 cosine similarity to the source post">\[\operatorname{SourceSim}=\frac1N\sum_{i=1}^{N}\frac{e(g_i)^{\mathsf T}e(s_i)}{\lVert e(g_i)\rVert_2\lVert e(s_i)\rVert_2}\]</div><p class="equation-key"><strong>Symbols and functions.</strong> \(N\) is the number of non-empty generated outputs with a recorded supplied source; \(g_i\) and \(s_i\) are output \(i\) and its paired source. \(e,\mathsf T\), and \(\lVert\cdot\rVert_2\) denote the embedding, transpose, and Euclidean norm.</p><p>Cosine between a generated post and the source post it was given. The copy floor attains one by construction and the wrong-topic control sits near the corpus floor, so this row is bounded on both sides by reference columns.</p></dd><dt>Content-word retention <span class='dirn'>(higher is better)</span></dt><dd><div class="metric-equation" aria-label="Equation for Content-word retention">\[\operatorname{Retention}=\frac1{|I^*|}\sum_{i\in I^*}\frac{|W(s_i)\cap W(g_i)|}{|W(s_i)|}\]</div><p class="equation-key"><strong>Symbols and functions.</strong> \(W(x)\) is the set of unique lower-cased tokens matching \(\texttt{[A-Za-z][A-Za-z'-]+}\), longer than three characters, and absent from the implementation's stopword set. \(I^*=\{i:|W(s_i)|>0\}\) contains the paired tasks whose source has at least one such term; \(g_i,s_i\) are the generated post and supplied source.</p><p>Mean proportion of the source post's unique lower-cased, non-stopword terms longer than three characters that also occur in the output. Reported beside embedding similarity because the latter can stay high while specific terms are discarded.</p></dd><dt>Gemma-512 mean cosine to the authentic target pool <span class='dirn'>(higher is better)</span></dt><dd><div class="metric-equation" aria-label="Equation for Gemma-512 mean cosine to the authentic target pool">\[\operatorname{TargetPoolSim}=\frac1{|G||R|}\sum_{g\in G}\sum_{r\in R}\frac{e(g)^{\mathsf T}e(r)}{\lVert e(g)\rVert_2\lVert e(r)\rVert_2}\]</div><p class="equation-key"><strong>Symbols and functions.</strong> The two sums range over every generated–authentic pair in the cell. \(e,\mathsf T\), and \(\lVert\cdot\rVert_2\) denote the embedding, transpose, and Euclidean norm; \(|G||R|\) is the number of cross-pool pairs.</p><p>Mean cosine between a generated post and the authentic posts of its cell.</p></dd><dt>Output length ratio against authentic posts <span class='dirn'>(diagnostic) Target 1.</span></dt><dd><div class="metric-equation" aria-label="Equation for Output length ratio against authentic posts">\[\operatorname{LengthRatio}=\frac{|G|^{-1}\sum_{g\in G}\operatorname{chars}(g)}{|R|^{-1}\sum_{r\in R}\operatorname{chars}(r)}\]</div><p class="equation-key"><strong>Symbols and functions.</strong> \(\operatorname{chars}(x)\) is Python's character count \(\operatorname{len}(x)\). The numerator and denominator are the mean character counts in \(G\) and \(R\).</p><p>Mean character length of the generated pool divided by that of the authentic pool in the same cell. One is the target; both directions are failures.</p></dd><dt>Distinct-2 (distinct bigram ratio) <span class='dirn'>(higher is better)</span></dt><dd><div class="metric-equation" aria-label="Equation for Distinct-2 (distinct bigram ratio)">\[\operatorname{Distinct}_2(G)=\frac{|\bigcup_{g\in G}B_2(g)|}{\sum_{g\in G}|B_2(g)|}\]</div><p class="equation-key"><strong>Symbols and functions.</strong> \(B_2(x)\) is the multiset of adjacent lower-cased tokens matching \(\texttt{[A-Za-z][A-Za-z'-]+}\) in \(x\). The union in the numerator discards duplicates; the denominator sums all bigram occurrences.</p><p>Number of distinct token bigrams divided by the total number of bigrams across the pool. Falls when a pool repeats phrasing within or across outputs. It is a ratio, so it is depressed by long outputs as well as by repetitive ones, and should be read beside the length ratio rather than alone.</p></dd><dt>Gemma-512 mean pairwise similarity within the generated pool <span class='dirn'>(diagnostic)</span></dt><dd><div class="metric-equation" aria-label="Equation for Gemma-512 mean pairwise similarity within the generated pool">\[\operatorname{SelfSim}(G)=\frac1{|G|(|G|-1)}\sum_{i\ne j}\frac{e(g_i)^{\mathsf T}e(g_j)}{\lVert e(g_i)\rVert_2\lVert e(g_j)\rVert_2}\]</div><p class="equation-key"><strong>Symbols and functions.</strong> Indices \(i,j\in\{1,\ldots,|G|\}\) identify generated posts, and the sum is over ordered pairs \(i\ne j\), matching the off-diagonal mean of the cosine-similarity matrix. \(e,\mathsf T\), and \(\lVert\cdot\rVert_2\) have their usual definitions above.</p><p>Mean cosine between distinct generated posts in a cell. Its reference is the value the authentic pool attains, reported in the oracle column; materially above it indicates outputs more alike one another than real posts are.</p></dd><dt>Near-verbatim source copy rate <span class='dirn'>(lower is better) Target 0.</span></dt><dd><div class="metric-equation" aria-label="Equation for Near-verbatim source copy rate">\[\operatorname{CopyRate}=\frac1N\sum_{i=1}^{N}\mathbf 1\{J_i>0.85\}\]</div><p class="equation-key"><strong>Symbols and functions.</strong> \(N\) counts all attempted outputs in the cell. \(W\) is the content-word set defined for retention. \(J_i=|W(s_i)\cap W(g_i)|/|W(s_i)\cup W(g_i)|\) when the source, output, and both word sets are non-empty; \(J_i=0\) otherwise. Thus \(J_i\) is the implemented content-word Jaccard similarity with skipped cases contributing zero.</p><p>Proportion of outputs reproducing the source post near-verbatim, which is the absence of transfer. The copy floor attains one by construction.</p></dd><dt>Generation failure rate <span class='dirn'>(lower is better) Target 0.</span></dt><dd><div class="metric-equation" aria-label="Equation for Generation failure rate">\[\operatorname{FailureRate}=\frac1N\sum_{i=1}^{N}\mathbf 1\{\operatorname{ok}_i=\mathrm{false}\}\]</div><p class="equation-key"><strong>Symbols and functions.</strong> \(N\) is the number of attempted outputs in the cell. \(\operatorname{ok}_i\) is the Boolean success flag stored in output \(i\)'s metadata; failed attempts remain in the denominator.</p><p>Proportion of tasks on which generation failed and was recorded rather than dropped.</p></dd></dl></section></div>
+</section>
+
+<details class="appendix"><summary>Master table: every scored row</summary>
+<figure class="tablefig">
+<figcaption><strong>Master table: every scored quantity</strong><br>
+<span class="sub">All 49 rows produced by the evaluation, unfiltered, with the number of
+cells each was averaged over in the final column. Rows discussed above appear here unchanged; rows
+not discussed are included so that a reader can check a quantity this page did not select.
+<code>*.overall.*</code> rows are pooled counts rather than per-cell means and carry no interval.
+<code>distributional.mmd2</code> is the unbiased U-statistic and is not constrained to be
+non-negative; see the limitations.</span></figcaption>
+<div class="tscroll"><table class="res master">
+<thead>
+<tr><td></td><th colspan="4" class="fam" style="color:#2a78d6">prompting</th><th colspan="3" class="fam" style="color:#eb6834">steering</th><th colspan="3" class="fam" style="color:#1baf7a">soft prompt</th><th colspan="3" class="fam" style="color:#4a3aa7">LoRA</th><th colspan="3" class="fam">reference</th><th class="fam">cells</th><th class="fam">identifier</th></tr>
+<tr><td></td><th>GPT-5.6 zero-shot</th><th>Claude zero-shot</th><th>Claude few-shot</th><th>Claude aspect-aware</th><th>topic only</th><th>retrieved source</th><th>aspects</th><th>topic only</th><th>retrieved source</th><th>aspects</th><th>topic only</th><th>retrieved source</th><th>aspects</th><th>Identity (copy floor)</th><th>Shuffle-Control (wrong topic)</th><th>Oracle (authentic posts)</th><th></th><th></th></tr>
+</thead>
+<tbody><tr><th scope='row'>Lexical platform-classifier calibration gap</th><td>0.1585</td><td>0.08657</td><td>0.06326</td><td>0.09476</td><td>0.1377</td><td>0.1347</td><td>0.1332</td><td>0.1581</td><td>0.1034</td><td>0.1237</td><td>0.09765</td><td>0.03806</td><td>0.1385</td><td class='ref'>0.2896</td><td class='ref'>0.1704</td><td class='ref'>0.0851</td><td class='ref'>25</td><td class='key'><code>classifier.calibration_gap</code></td></tr><tr><th scope='row'>Mean target-platform probability</th><td>0.5191</td><td>0.5942</td><td>0.5666</td><td>0.5956</td><td>0.601</td><td>0.5876</td><td>0.5353</td><td>0.5435</td><td>0.5859</td><td>0.5598</td><td>0.5844</td><td>0.6205</td><td>0.5642</td><td class='ref'>0.4806</td><td class='ref'>0.6668</td><td class='ref'>0.6671</td><td class='ref'>25</td><td class='key'><code>classifier.mean_target_prob</code></td></tr><tr><th scope='row'>classifier.overall.calibration_gap</th><td>0.4166</td><td>0.09807</td><td>0.2368</td><td>0.0895</td><td>0.09464</td><td>0.1015</td><td>0.3412</td><td>0.3446</td><td>0.194</td><td>0.3292</td><td>0.2898</td><td>0.2231</td><td>0.2693</td><td class='ref'>0.5056</td><td class='ref'>0.008099</td><td class='ref'>0.1725</td><td class='ref'>pooled</td><td class='key'><code>classifier.overall.calibration_gap</code></td></tr><tr><th scope='row'>classifier.overall.mean_target_prob</th><td>0.4586</td><td>0.5548</td><td>0.5033</td><td>0.5591</td><td>0.5869</td><td>0.5736</td><td>0.4813</td><td>0.4935</td><td>0.5472</td><td>0.512</td><td>0.5301</td><td>0.5581</td><td>0.5269</td><td class='ref'>0.4175</td><td class='ref'>0.6686</td><td class='ref'>0.6134</td><td class='ref'>pooled</td><td class='key'><code>classifier.overall.mean_target_prob</code></td></tr><tr><th scope='row'>classifier.overall.n_classified_source</th><td>280</td><td>94</td><td>175</td><td>89</td><td>92</td><td>96</td><td>236</td><td>238</td><td>150</td><td>229</td><td>206</td><td>167</td><td>194</td><td class='ref'>83</td><td class='ref'>32</td><td class='ref'>94</td><td class='ref'>pooled</td><td class='key'><code>classifier.overall.n_classified_source</code></td></tr><tr><th scope='row'>classifier.overall.n_classified_target</th><td>304</td><td>490</td><td>409</td><td>495</td><td>492</td><td>488</td><td>348</td><td>346</td><td>434</td><td>355</td><td>378</td><td>417</td><td>390</td><td class='ref'>63</td><td class='ref'>552</td><td class='ref'>306</td><td class='ref'>pooled</td><td class='key'><code>classifier.overall.n_classified_target</code></td></tr><tr><th scope='row'>classifier.overall.n_total</th><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td class='ref'>146</td><td class='ref'>584</td><td class='ref'>400</td><td class='ref'>pooled</td><td class='key'><code>classifier.overall.n_total</code></td></tr><tr><th scope='row'>classifier.overall.real_target_rate</th><td>0.9371</td><td>0.9371</td><td>0.9371</td><td>0.9371</td><td>0.9371</td><td>0.9371</td><td>0.9371</td><td>0.9371</td><td>0.9371</td><td>0.9371</td><td>0.9371</td><td>0.9371</td><td>0.9371</td><td class='ref'>0.9371</td><td class='ref'>0.9371</td><td class='ref'>0.9375</td><td class='ref'>pooled</td><td class='key'><code>classifier.overall.real_target_rate</code></td></tr><tr><th scope='row'>classifier.overall.target_rate</th><td>0.5205</td><td>0.839</td><td>0.7003</td><td>0.8476</td><td>0.8425</td><td>0.8356</td><td>0.5959</td><td>0.5925</td><td>0.7432</td><td>0.6079</td><td>0.6473</td><td>0.714</td><td>0.6678</td><td class='ref'>0.4315</td><td class='ref'>0.9452</td><td class='ref'>0.765</td><td class='ref'>pooled</td><td class='key'><code>classifier.overall.target_rate</code></td></tr><tr><th scope='row'>Mean-probability gap against authentic posts</th><td>0.09262</td><td>0.06868</td><td>0.07572</td><td>0.06738</td><td>0.08081</td><td>0.08087</td><td>0.08089</td><td>0.07576</td><td>0.05963</td><td>0.07177</td><td>0.06473</td><td>0.05106</td><td>0.0694</td><td class='ref'>0.1236</td><td class='ref'>0.09909</td><td class='ref'>0.07954</td><td class='ref'>25</td><td class='key'><code>classifier.prob_gap_vs_real</code></td></tr><tr><th scope='row'>Authentic target-platform classification rate</th><td>0.8647</td><td>0.8647</td><td>0.8647</td><td>0.8647</td><td>0.8647</td><td>0.8647</td><td>0.8647</td><td>0.8647</td><td>0.8647</td><td>0.8647</td><td>0.8647</td><td>0.8647</td><td>0.8647</td><td class='ref'>0.8647</td><td class='ref'>0.8647</td><td class='ref'>0.8475</td><td class='ref'>25</td><td class='key'><code>classifier.real_target_rate</code></td></tr><tr><th scope='row'>Stylometric platform-classifier calibration gap</th><td>0.1148</td><td>0.07571</td><td>0.07249</td><td>0.07708</td><td>0.2171</td><td>0.1734</td><td>0.1825</td><td>0.2847</td><td>0.1175</td><td>0.1407</td><td>0.1508</td><td>0.08975</td><td>0.1814</td><td class='ref'>0.5592</td><td class='ref'>0.1692</td><td class='ref'>0.1186</td><td class='ref'>25</td><td class='key'><code>classifier.stylometric_calibration_gap</code></td></tr><tr><th scope='row'>Target-platform classification rate (stylometric)</th><td>0.8987</td><td>0.9778</td><td>0.9792</td><td>0.9822</td><td>0.7578</td><td>0.8173</td><td>0.7907</td><td>0.6519</td><td>0.8438</td><td>0.8649</td><td>0.8312</td><td>0.9141</td><td>0.7971</td><td class='ref'>0.3775</td><td class='ref'>0.8556</td><td class='ref'>0.8742</td><td class='ref'>25</td><td class='key'><code>classifier.stylometric_target_rate</code></td></tr><tr><th scope='row'>Target-platform classification rate (lexical)</th><td>0.7119</td><td>0.9458</td><td>0.8748</td><td>0.9485</td><td>0.8996</td><td>0.8953</td><td>0.7691</td><td>0.755</td><td>0.8724</td><td>0.797</td><td>0.8323</td><td>0.8902</td><td>0.8063</td><td class='ref'>0.5981</td><td class='ref'>0.9464</td><td class='ref'>0.9326</td><td class='ref'>25</td><td class='key'><code>classifier.target_rate</code></td></tr><tr><th scope='row'>Near-verbatim source copy rate</th><td>0.05022</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.1033</td><td>0.002333</td><td>0.02689</td><td>0.01901</td><td>0</td><td>0.0475</td><td class='ref'>1</td><td class='ref'>0</td><td class='ref'>0</td><td class='ref'>25</td><td class='key'><code>degeneracy.copy_rate</code></td></tr><tr><th scope='row'>Distinct-2 (distinct bigram ratio)</th><td>0.5258</td><td>0.6958</td><td>0.6787</td><td>0.6788</td><td>0.7225</td><td>0.7156</td><td>0.6953</td><td>0.8244</td><td>0.8968</td><td>0.8706</td><td>0.9014</td><td>0.8929</td><td>0.8599</td><td class='ref'>0.9365</td><td class='ref'>0.8911</td><td class='ref'>0.5784</td><td class='ref'>25</td><td class='key'><code>degeneracy.distinct_2</code></td></tr><tr><th scope='row'>Empty-output rate</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class='ref'>0</td><td class='ref'>0</td><td class='ref'>0.2</td><td class='ref'>25</td><td class='key'><code>degeneracy.empty_rate</code></td></tr><tr><th scope='row'>Generation failure rate</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class='ref'>0</td><td class='ref'>0</td><td class='ref'>0</td><td class='ref'>25</td><td class='key'><code>degeneracy.failure_rate</code></td></tr><tr><th scope='row'>Output length ratio against authentic posts</th><td>2.528</td><td>5.291</td><td>4.545</td><td>4.701</td><td>8.552</td><td>8.662</td><td>8.259</td><td>2.647</td><td>2.257</td><td>0.4718</td><td>1.582</td><td>1.104</td><td>2.163</td><td class='ref'>3.2</td><td class='ref'>2.679</td><td class='ref'>1.44</td><td class='ref'>25</td><td class='key'><code>degeneracy.length_ratio_vs_real</code></td></tr><tr><th scope='row'>degeneracy.overall.n_empty</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class='ref'>0</td><td class='ref'>0</td><td class='ref'>46</td><td class='ref'>pooled</td><td class='key'><code>degeneracy.overall.n_empty</code></td></tr><tr><th scope='row'>degeneracy.overall.n_failed</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class='ref'>0</td><td class='ref'>0</td><td class='ref'>0</td><td class='ref'>pooled</td><td class='key'><code>degeneracy.overall.n_failed</code></td></tr><tr><th scope='row'>degeneracy.overall.n_outputs</th><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td>584</td><td class='ref'>146</td><td class='ref'>584</td><td class='ref'>446</td><td class='ref'>pooled</td><td class='key'><code>degeneracy.overall.n_outputs</code></td></tr><tr><th scope='row'>Gemma-512 mean pairwise similarity within the generated pool</th><td>0.8343</td><td>0.8298</td><td>0.8403</td><td>0.8337</td><td>0.8518</td><td>0.8555</td><td>0.8553</td><td>0.7846</td><td>0.7747</td><td>0.8345</td><td>0.7809</td><td>0.7795</td><td>0.7781</td><td class='ref'>0.7681</td><td class='ref'>0.6169</td><td class='ref'>0.779</td><td class='ref'>25</td><td class='key'><code>degeneracy.pool_self_similarity</code></td></tr><tr><th scope='row'>Gemma-512 centroid cosine distance</th><td>0.1288</td><td>0.1569</td><td>0.1504</td><td>0.153</td><td>0.1578</td><td>0.1541</td><td>0.1459</td><td>0.1031</td><td>0.08782</td><td>0.09947</td><td>0.09502</td><td>0.07685</td><td>0.09418</td><td class='ref'>0.1309</td><td class='ref'>0.1626</td><td class='ref'>0.06327</td><td class='ref'>16</td><td class='key'><code>distributional.centroid_distance</code></td></tr><tr><th scope='row'>Gemma-512 centroid distance, style removed</th><td>0.1277</td><td>0.1553</td><td>0.1486</td><td>0.1513</td><td>0.1521</td><td>0.1476</td><td>0.1426</td><td>0.1013</td><td>0.08589</td><td>0.09972</td><td>0.09471</td><td>0.07883</td><td>0.09269</td><td class='ref'>0.1259</td><td class='ref'>0.1481</td><td class='ref'>0.0651</td><td class='ref'>16</td><td class='key'><code>distributional.centroid_distance_style_residual</code></td></tr><tr><th scope='row'>Unbiased squared MMD (RBF, median heuristic)</th><td>0.2568</td><td>0.3138</td><td>0.3261</td><td>0.3058</td><td>0.3202</td><td>0.3182</td><td>0.3118</td><td>0.1752</td><td>0.09937</td><td>0.182</td><td>0.1428</td><td>0.09309</td><td>0.1352</td><td class='ref'>0.1876</td><td class='ref'>0.1953</td><td class='ref'>0.03424</td><td class='ref'>9</td><td class='key'><code>distributional.mmd2</code></td></tr><tr><th scope='row'>Biased squared MMD (RBF, median heuristic)</th><td>0.3669</td><td>0.4263</td><td>0.4417</td><td>0.4184</td><td>0.4396</td><td>0.4365</td><td>0.4301</td><td>0.2855</td><td>0.2116</td><td>0.3018</td><td>0.2568</td><td>0.2063</td><td>0.2479</td><td class='ref'>0.3504</td><td class='ref'>0.2883</td><td class='ref'>0.1352</td><td class='ref'>9</td><td class='key'><code>distributional.mmd2_biased</code></td></tr><tr><th scope='row'>Biased squared MMD, style removed</th><td>0.3546</td><td>0.4206</td><td>0.4262</td><td>0.4112</td><td>0.4321</td><td>0.4272</td><td>0.4136</td><td>0.2767</td><td>0.2125</td><td>0.2975</td><td>0.2551</td><td>0.2071</td><td>0.2464</td><td class='ref'>0.3328</td><td class='ref'>0.2817</td><td class='ref'>0.1332</td><td class='ref'>9</td><td class='key'><code>distributional.mmd2_biased_style_residual</code></td></tr><tr><th scope='row'>Unbiased squared MMD, style removed</th><td>0.2447</td><td>0.3066</td><td>0.3109</td><td>0.2974</td><td>0.3121</td><td>0.3082</td><td>0.2952</td><td>0.1653</td><td>0.09952</td><td>0.1775</td><td>0.1408</td><td>0.09389</td><td>0.1334</td><td class='ref'>0.1664</td><td class='ref'>0.1873</td><td class='ref'>0.03227</td><td class='ref'>9</td><td class='key'><code>distributional.mmd2_style_residual</code></td></tr><tr><th scope='row'>Gemma-512 topic Jensen–Shannon divergence</th><td>0.5078</td><td>0.497</td><td>0.4852</td><td>0.4991</td><td>0.4722</td><td>0.4926</td><td>0.4944</td><td>0.4052</td><td>0.3422</td><td>0.4144</td><td>0.3832</td><td>0.3363</td><td>0.3774</td><td class='ref'>0.5248</td><td class='ref'>0.7246</td><td class='ref'>0.2188</td><td class='ref'>16</td><td class='key'><code>distributional.topic_jsd</code></td></tr><tr><th scope='row'>Content-word retention</th><td>0.5265</td><td>0.3977</td><td>0.4579</td><td>0.4125</td><td>0.4071</td><td>0.4189</td><td>0.5099</td><td>0.3261</td><td>0.06227</td><td>0.1408</td><td>0.1415</td><td>0.05063</td><td>0.1759</td><td class='ref'>1</td><td class='ref'>0.0163</td><td class='ref'>0.04313</td><td class='ref'>25</td><td class='key'><code>semantic.content_word_retention</code></td></tr><tr><th scope='row'>Gemma-512 cosine similarity to the source post</th><td>0.9367</td><td>0.8625</td><td>0.8835</td><td>0.8697</td><td>0.8645</td><td>0.877</td><td>0.8972</td><td>0.8762</td><td>0.7593</td><td>0.8519</td><td>0.8257</td><td>0.7629</td><td>0.821</td><td class='ref'>1</td><td class='ref'>0.5995</td><td class='ref'>0.7251</td><td class='ref'>25</td><td class='key'><code>semantic.source_similarity</code></td></tr><tr><th scope='row'>Gemma-512 mean cosine to the authentic target pool</th><td>0.7199</td><td>0.6957</td><td>0.706</td><td>0.7014</td><td>0.7099</td><td>0.7118</td><td>0.7158</td><td>0.7228</td><td>0.7271</td><td>0.7432</td><td>0.7262</td><td>0.7454</td><td>0.7243</td><td class='ref'>0.7232</td><td class='ref'>0.6024</td><td class='ref'>0.7479</td><td class='ref'>25</td><td class='key'><code>semantic.target_pool_similarity</code></td></tr><tr><th scope='row'>Writing-habit shift coverage</th><td>0.3006</td><td>0.2292</td><td>0.2589</td><td>0.2202</td><td>0.2351</td><td>0.2589</td><td>0.2381</td><td>0.2917</td><td>0.3036</td><td>0.25</td><td>0.3065</td><td>0.3125</td><td>0.2827</td><td class='ref'>0.2202</td><td class='ref'>0.3155</td><td class='ref'>0.4242</td><td class='ref'>16</td><td class='key'><code>structural.feature_coverage</code></td></tr><tr><th scope='row'>Mean per-feature effect-size gap</th><td>0.831</td><td>1.105</td><td>1.047</td><td>1.116</td><td>1.299</td><td>1.383</td><td>1.401</td><td>0.7656</td><td>0.8062</td><td>1.344</td><td>0.8217</td><td>0.816</td><td>0.9514</td><td class='ref'>0.834</td><td class='ref'>0.7434</td><td class='ref'>0.7648</td><td class='ref'>16</td><td class='key'><code>structural.mean_effect_gap</code></td></tr><tr><th scope='row'>Mean per-feature Jensen–Shannon divergence</th><td>0.2959</td><td>0.4027</td><td>0.3804</td><td>0.395</td><td>0.4067</td><td>0.406</td><td>0.4298</td><td>0.2178</td><td>0.1896</td><td>0.1868</td><td>0.1769</td><td>0.177</td><td>0.1921</td><td class='ref'>0.3543</td><td class='ref'>0.1897</td><td class='ref'>0.1913</td><td class='ref'>16</td><td class='key'><code>structural.mean_feature_jsd</code></td></tr><tr><th scope='row'>Gemma-512 embedding Fréchet distance</th><td>0.5262</td><td>0.5644</td><td>0.5627</td><td>0.5513</td><td>0.5601</td><td>0.5509</td><td>0.5443</td><td>0.4757</td><td>0.4539</td><td>0.4482</td><td>0.4502</td><td>0.4408</td><td>0.4682</td><td class='ref'>0.5542</td><td class='ref'>0.7294</td><td class='ref'>0.3904</td><td class='ref'>11</td><td class='key'><code>trm.frechet</code></td></tr><tr><th scope='row'>trm.overall.harmonic_mean_pvalue</th><td>0.007623</td><td>0.005841</td><td>0.005897</td><td>0.005889</td><td>0.005494</td><td>0.005516</td><td>0.005654</td><td>0.01161</td><td>0.02093</td><td>0.009609</td><td>0.0141</td><td>0.02128</td><td>0.01652</td><td class='ref'>0.02243</td><td class='ref'>0.007171</td><td class='ref'>0.1404</td><td class='ref'>pooled</td><td class='key'><code>trm.overall.harmonic_mean_pvalue</code></td></tr><tr><th scope='row'>trm.overall.n_cells_indistinguishable_p05</th><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>8</td><td>9</td><td>4</td><td>6</td><td>11</td><td>7</td><td class='ref'>4</td><td class='ref'>2</td><td class='ref'>9</td><td class='ref'>pooled</td><td class='key'><code>trm.overall.n_cells_indistinguishable_p05</code></td></tr><tr><th scope='row'>trm.overall.n_cells_tested</th><td>15</td><td>15</td><td>15</td><td>15</td><td>15</td><td>15</td><td>15</td><td>15</td><td>15</td><td>15</td><td>15</td><td>15</td><td>15</td><td class='ref'>11</td><td class='ref'>15</td><td class='ref'>10</td><td class='ref'>pooled</td><td class='key'><code>trm.overall.n_cells_tested</code></td></tr><tr><th scope='row'>Directed Q, generated against authentic</th><td>0.2306</td><td>0.2892</td><td>0.2916</td><td>0.2817</td><td>0.267</td><td>0.2457</td><td>0.2468</td><td>0.164</td><td>0.1208</td><td>0.1231</td><td>0.1257</td><td>0.1151</td><td>0.1231</td><td class='ref'>0.2144</td><td class='ref'>0.4504</td><td class='ref'>0.06702</td><td class='ref'>11</td><td class='key'><code>trm.q_candidate_ref</code></td></tr><tr><th scope='row'>Directed Q, authentic against generated</th><td>0.2049</td><td>0.2778</td><td>0.3177</td><td>0.2752</td><td>0.4084</td><td>0.4087</td><td>0.4034</td><td>0.1266</td><td>0.1089</td><td>0.2204</td><td>0.1412</td><td>0.1203</td><td>0.1231</td><td class='ref'>0.2204</td><td class='ref'>0.1049</td><td class='ref'>0.03656</td><td class='ref'>11</td><td class='key'><code>trm.q_ref_candidate</code></td></tr><tr><th scope='row'>Triangle in-edge-shortest rate</th><td>0.6153</td><td>0.6667</td><td>0.6551</td><td>0.6398</td><td>0.6539</td><td>0.6362</td><td>0.6521</td><td>0.5557</td><td>0.4666</td><td>0.4367</td><td>0.4667</td><td>0.471</td><td>0.5095</td><td class='ref'>0.5739</td><td class='ref'>0.8605</td><td class='ref'>0.4505</td><td class='ref'>11</td><td class='key'><code>trm.rank_i0</code></td></tr><tr><th scope='row'>Triangle in-edge-intermediate rate</th><td>0.2108</td><td>0.211</td><td>0.193</td><td>0.219</td><td>0.2159</td><td>0.2222</td><td>0.1853</td><td>0.2245</td><td>0.288</td><td>0.2801</td><td>0.2652</td><td>0.2584</td><td>0.2423</td><td class='ref'>0.2244</td><td class='ref'>0.1149</td><td class='ref'>0.3027</td><td class='ref'>11</td><td class='key'><code>trm.rank_i1</code></td></tr><tr><th scope='row'>Triangle in-edge-longest rate</th><td>0.1739</td><td>0.1223</td><td>0.1519</td><td>0.1412</td><td>0.1302</td><td>0.1416</td><td>0.1626</td><td>0.2198</td><td>0.2454</td><td>0.2833</td><td>0.2682</td><td>0.2706</td><td>0.2482</td><td class='ref'>0.2016</td><td class='ref'>0.02458</td><td class='ref'>0.2468</td><td class='ref'>11</td><td class='key'><code>trm.rank_i2</code></td></tr><tr><th scope='row'>Triangle-Rank Metric (symmetrised)</th><td>0.4356</td><td>0.567</td><td>0.6093</td><td>0.5569</td><td>0.6754</td><td>0.6544</td><td>0.6502</td><td>0.2906</td><td>0.2297</td><td>0.3435</td><td>0.2669</td><td>0.2354</td><td>0.2462</td><td class='ref'>0.4348</td><td class='ref'>0.5552</td><td class='ref'>0.1036</td><td class='ref'>11</td><td class='key'><code>trm.trm</code></td></tr><tr><th scope='row'>Triangle-Rank permutation p-value</th><td>0.07825</td><td>0.02352</td><td>0.04659</td><td>0.02307</td><td>0.00995</td><td>0.0199</td><td>0.006784</td><td>0.194</td><td>0.2411</td><td>0.1113</td><td>0.1827</td><td>0.2343</td><td>0.2614</td><td class='ref'>0.1307</td><td class='ref'>0.01357</td><td class='ref'>0.4328</td><td class='ref'>11</td><td class='key'><code>trm.trm_pvalue</code></td></tr><tr><th scope='row'>trm.trm_pvalue_style_residual</th><td>0.07372</td><td>0.02216</td><td>0.04568</td><td>0.02307</td><td>0.0104</td><td>0.02216</td><td>0.006332</td><td>0.2062</td><td>0.2397</td><td>0.1027</td><td>0.171</td><td>0.2239</td><td>0.2745</td><td class='ref'>0.1208</td><td class='ref'>0.01809</td><td class='ref'>0.4469</td><td class='ref'>11</td><td class='key'><code>trm.trm_pvalue_style_residual</code></td></tr><tr><th scope='row'>Triangle-Rank Metric, style directions removed</th><td>0.4289</td><td>0.571</td><td>0.5964</td><td>0.5632</td><td>0.6524</td><td>0.6278</td><td>0.6229</td><td>0.2955</td><td>0.2452</td><td>0.3471</td><td>0.274</td><td>0.2357</td><td>0.251</td><td class='ref'>0.4013</td><td class='ref'>0.5243</td><td class='ref'>0.1021</td><td class='ref'>11</td><td class='key'><code>trm.trm_style_residual</code></td></tr></tbody>
+</table></div>
+</figure>
+</details>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p class="footer-title">Study 3 · generated 2026-08-13 12:42 PDT</p>
+  <p>Source reports: <code>runs/study3/report.heldout.embeddinggemma-300m-d512.json</code> and
+     <code>runs/study3_sys/report.heldout.embeddinggemma-300m-d512.json</code>. Built by
+     <code>experimental-notes/build_study2.py</code>. Every figure and quoted value is computed
+     from those reports.</p>
+  <p>Distribution-aware metrics follow Chan, Ni, Ross, Vijayanarasimhan, Myers &amp;
+     Canny, <em>Distribution Aware Metrics for Conditional Natural Language Generation</em>,
+     LREC-COLING 2024, pp. 5064–5095.</p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview — Study 4 — Vectorial × BAIR — 2026-08-27</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<header class="masthead study-head">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · Study 4 · unsupervised platform adaptation</p>
+    <h1>Priors against the frontier <span class="stamp">2026-08-27</span></h1>
+    <p class="lede">LinkedIn to Reddit and back, across 33 bilateral corpus cells. The report compares 46 method configurations against three references; the primary distributional measure covers 12 shared held-out cells in google/embeddinggemma-300m, dim 512.</p>
+  </div>
+</header>
+<nav class="nav" aria-label="Report sections"><div class="wrap"><a href="index.html" class="here">Overview</a><a href="results.html" class="">Results</a><a href="reverse.html" class="">Reverse direction</a><a href="methods.html" class="">Methods</a><a href="dataset.html" class="">Dataset</a><a href="limitations.html" class="">Limitations</a></div></nav>
+<main class="wrap">
+<aside class="warn"><h2>Preliminary build</h2><p>This is not the frozen report. Pages marked not yet available are still running, and no claim resting on them is supported. See <a href="limitations.html">Limitations</a> for verified defects in columns this build still renders.</p></aside>
+<div class="page-intro"><p class="section-label">Research question</p><h1>Unsupervised priors move columns along the content-versus-match frontier, but no column moves the frontier itself.</h1><p class="lede">This study asks whether adapting a language model on unpaired target-platform and target-audience text improves cross-platform transfer without discarding source content. The comparison is a frontier, not a single lowest TRM: a column improves it only by lowering TRM without reducing source preservation, or by raising preservation without raising TRM. Moving down and left is a different trade-off, not an improvement.</p></div>
+<div class="summary-grid" aria-label="Study summary">
+  <div class="summary-card primary"><span class="summary-kicker">Supported comparisons</span>
+    <strong>0 / 36</strong>
+    <p>preregistered comparisons improve the content-versus-match frontier with separated
+    intervals in the primary embedding space.</p></div>
+  <div class="summary-card"><span class="summary-kicker">Lowest system TRM</span>
+    <strong>0.210</strong>
+    <p>lora target lm paired, against 0.127 for an authentic target post.
+    Every reduction in TRM was accompanied by a loss of source content.</p></div>
+  <div class="summary-card"><span class="summary-kicker">Comparison base</span>
+    <strong>12 cells</strong>
+    <p>across 5 audiences, 46 system columns, scored in
+    google/embeddinggemma-300m, dim 512 and five further spaces.</p></div>
+</div>
+<h2>Scope</h2>
+<p>This is explicitly a four-audience case study. It does not satisfy the planned six- or
+eight-audience acceptance gates and makes no audience-generalisation claim.</p>
+<h2>Where the results are</h2>
+<ul>
+<li><a href="results.html">Results</a> — LinkedIn to Reddit: the frontier, every column with
+intervals, the resolution test, generation failures, and support in each of six embedding
+spaces.</li>
+<li><a href="reverse.html">Reverse direction</a> — Reddit to LinkedIn on the same grid.</li>
+<li><a href="methods.html">Methods</a> — the unsupervised scale ladder, every Stage A base,
+the steering decomposition, and the NDIF scale arm.</li>
+<li><a href="dataset.html">Dataset</a> — prior corpora, their audit, structured-prior
+coverage and scored-context sanitization.</li>
+<li><a href="limitations.html">Limitations</a> — verified defects and scope limits.</li>
+</ul>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p class="footer-title">Study 4 · generated 2026-08-27 21:30 UTC</p>
+  <p>Source reports: <code>runs/study4_forward/report.heldout.embeddinggemma-300m-d512.json</code>,
+     the matching frontier and sensitivity files, and the frozen corpus manifests. Built by
+     <code>experimental-notes/build_study4.py</code>. Every figure and quoted value is computed
+     from those files.</p>
+</div></footer>
+</body>
+</html>

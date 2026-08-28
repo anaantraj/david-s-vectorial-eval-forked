@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dataset — Study 4 — Vectorial × BAIR — 2026-08-27</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<header class="masthead study-head">
+  <div class="wrap">
+    <p class="eyebrow">Vectorial × BAIR · Study 4 · unsupervised platform adaptation</p>
+    <h1>Unsupervised platform adaptation <span class="stamp">2026-08-27</span></h1>
+    <p class="lede">LinkedIn to Reddit and Reddit to LinkedIn across 33 bilateral corpus cells. The report compares 46 method configurations against three references; the primary distributional measure covers 12 shared held-out cells in google/embeddinggemma-300m, dimension 512.</p>
+  </div>
+</header>
+<nav class="nav" aria-label="Report sections"><div class="wrap"><a href="index.html" class="">Overview</a><a href="results.html" class="">Results</a><a href="reverse.html" class="">Reverse direction</a><a href="methods.html" class="">Methods</a><a href="dataset.html" class="here">Dataset</a><a href="limitations.html" class="">Limitations</a></div></nav>
+<main class="wrap">
+<aside class="warn"><h2>Preliminary build</h2><p>This is not the frozen report. Sections marked as not yet available are still running, and no claim resting on them is supported. See <a href="limitations.html">Limitations</a> for verified defects in columns that this build still renders.</p></aside>
+<div class="page-intro"><p class="section-label">Corpus</p><h1>Four audiences, two platforms</h1><p class="lede">The evaluation corpus is the Study 3 bilateral corpus. The prior corpora are reconstructed from the supplied profile exports: records were deduplicated, grouped by author, time-filtered and split before any derived audience artifact was computed.</p></div>
+<h2 id="evaluation">Evaluation corpus</h2>
+<figure class="tablefig">
+<figcaption><strong>Evaluation corpus</strong><br><span class="sub">The scored corpus is the Study 3 bilateral corpus, unchanged. A cell pairs an audience with a topic and is retained only where both platforms carry at least 5 posts; a dense cell carries at least 10. Posts are assigned to train, validation and test in the proportions 70%, 15%, 15% by a keyed hash of the post identifier (seed 20260722); the held-out split is validation and test merged.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>direction</th><th>posts</th><th>cells</th><th>dense cells</th><th>held-out topic cells</th><th>tasks</th><th>held-out tasks</th></tr></thead>
+<tbody><tr><th scope='row'>LinkedIn to Reddit</th><td class="num">1,112</td><td class="num">33</td><td class="num">5</td><td class="num">5</td><td class="num">513</td><td class="num">146</td></tr><tr><th scope='row'>Reddit to LinkedIn</th><td class="num">1,112</td><td class="num">33</td><td class="num">5</td><td class="num">5</td><td class="num">526</td><td class="num">143</td></tr></tbody>
+</table></div>
+<p class="tnote">Posts between 30 and 8,000 characters are retained. HTML entities were decoded once during the dataset build, before any split, fit or score was computed.</p>
+</figure>
+<h2 id="corpora">Prior corpora</h2>
+<figure class="tablefig">
+<figcaption><strong>Prior corpora</strong><br><span class="sub">Records available after reconstruction, and their division into training and development sets by author. Shortfalls are audiences with fewer eligible records than the requested rung.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>corpus</th><th>total records</th><th>train</th><th>development</th><th>shortfall from requested rung</th></tr></thead>
+<tbody><tr><th scope='row'>Reddit target prior</th><td class="num">38,365</td><td class="num">34,901</td><td class="num">3,464</td><td>instructional_designer: 9,035</td></tr><tr><th scope='row'>LinkedIn target prior</th><td class="num">18,026</td><td class="num">16,103</td><td class="num">1,923</td><td>edtech_engineering: 2,756, fullstack_engineer: 3,907, instructional_designer: 1,364</td></tr></tbody>
+</table></div>
+
+</figure>
+<figure class="tablefig">
+<figcaption><strong>Eligible records per audience and platform</strong><br><span class="sub">The collection rung requested 10,000 records per audience and platform. An audience meets the rung only where both platforms do.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>audience</th><th>Reddit</th><th>LinkedIn</th><th>meets the 10,000 rung</th></tr></thead>
+<tbody><tr><th scope='row'>backend engineer</th><td class="num">13,381</td><td class="num">13,848</td><td class="ok">yes</td></tr><tr><th scope='row'>edtech engineering</th><td class="num">13,705</td><td class="num">2,756</td><td class="no">no</td></tr><tr><th scope='row'>fullstack engineer</th><td class="num">13,320</td><td class="num">3,907</td><td class="no">no</td></tr><tr><th scope='row'>instructional designer</th><td class="num">9,035</td><td class="num">1,364</td><td class="no">no</td></tr><tr><th scope='row'>record types</th><td>comment: 35,385, post: 2,980</td><td>comment: 5,078, post: 12,948</td><td class="na"></td></tr></tbody>
+</table></div>
+<p class="tnote">Posts and comments both enter the language prior; the record type is an explicit conditioning field so that a comment-heavy audience does not teach the post generator to emit replies.</p>
+</figure>
+<h2 id="reconstruction">Reconstruction from the exports</h2>
+<p>The exports mix production, test, cloned, merged and repeated rooms, and their profile histories
+overlap the scored splits. The corpus builder therefore resolves canonical exports, removes
+duplicates, groups every record by its platform author, excludes any profile that overlaps the
+scored splits, and only then assigns authors to splits. The policies it applied are recorded in the
+manifests and reproduced here.</p>
+
+<dl class="defs">
+<dt>Split unit</dt><dd>author_id. Authors, not posts, are assigned to splits,
+so no author contributes to both a training and a development set.</dd>
+<dt>Rung selection</dt><dd>nested deterministic blake2b over record_id. Each smaller rung is a subset of the
+larger one, so the scale ladder compares data size and not sample composition.</dd>
+<dt>Cross-room policy</dt><dd>one deterministic primary audience plus all audience_memberships.</dd>
+<dt>Held-out exclusion rule</dt><dd>drop the complete S3 profile when any post ID or normalized URL matches Study 3 val/test
+(Reddit manifest); 69 Reddit and
+38 LinkedIn profiles were excluded under this rule.</dd>
+<dt>Weak-label policy</dt><dd>retained only on train records; dev receives only frozen train-author aggregates.</dd>
+<dt>Derived fields</dt><dd>retained as structured fields and never used as language-model targets.</dd>
+<dt>Collection cutoff</dt><dd>2026-08-20 (Reddit manifest); the LinkedIn manifest records no
+cutoff. A common observation window across the two platforms is therefore not established.</dd>
+</dl>
+<figure class="tablefig">
+<figcaption><strong>Reconstruction audit</strong><br><span class="sub">Counts recorded by the corpus builder while resolving exports, removing duplicates and excluding profiles that overlap the scored splits.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>platform</th><th>cross-room duplicates removed</th><th>held-out profiles excluded</th><th>split unit</th><th>rung selection</th></tr></thead>
+<tbody><tr><th scope='row'>Reddit</th><td class="num">670</td><td class="num">69</td><td>author_id</td><td>nested deterministic blake2b over record_id</td></tr><tr><th scope='row'>LinkedIn</th><td class="num">1</td><td class="num">38</td><td>author_id</td><td>nested deterministic blake2b over record_id</td></tr></tbody>
+</table></div>
+
+</figure>
+<h2 id="priors">Structured priors</h2>
+<p>Shipped profile summaries, keywords, dimensions and room traits are weak labels rather than
+validated annotations. Only labels tied to profiles assigned wholly to the training split may
+condition training; whole-room summaries and traits in the supplied export include held-out
+authors and are audit-only.</p>
+<figure class="tablefig">
+<figcaption><strong>Train-derived audience priors</strong><br><span class="sub">Aggregates estimated from training authors only, supplied to every record of that audience in the structured-prior prompt. A development record receives the frozen training aggregate, never its own author's profile. The Reddit structured prompt exposes: subreddit, thread_context, context_summary, engagement, dimensions, profile_weak_labels.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>platform · audience</th><th>keywords</th><th>dimensions</th><th>communities</th><th>estimated from</th></tr></thead>
+<tbody><tr><th scope='row'>Reddit · backend engineer</th><td class="num">32</td><td class="num">9</td><td class="num">16</td><td>train authors only</td></tr><tr><th scope='row'>Reddit · edtech engineering</th><td class="num">32</td><td class="num">9</td><td class="num">16</td><td>train authors only</td></tr><tr><th scope='row'>Reddit · fullstack engineer</th><td class="num">32</td><td class="num">10</td><td class="num">16</td><td>train authors only</td></tr><tr><th scope='row'>Reddit · instructional designer</th><td class="num">32</td><td class="num">9</td><td class="num">16</td><td>train authors only</td></tr><tr><th scope='row'>LinkedIn · backend engineer</th><td class="num">32</td><td class="num">11</td><td class="num">0</td><td>train authors only</td></tr><tr><th scope='row'>LinkedIn · edtech engineering</th><td class="num">32</td><td class="num">0</td><td class="num">0</td><td>train authors only</td></tr><tr><th scope='row'>LinkedIn · fullstack engineer</th><td class="num">32</td><td class="num">11</td><td class="num">0</td><td>train authors only</td></tr><tr><th scope='row'>LinkedIn · instructional designer</th><td class="num">32</td><td class="num">12</td><td class="num">0</td><td>train authors only</td></tr></tbody>
+</table></div>
+
+</figure>
+<figure class="tablefig">
+<figcaption><strong>Training-record coverage of structured priors</strong><br><span class="sub">The number of primary training records carrying each metadata family that the structured prompt can expose, out of all training records.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>platform</th><th>community</th><th>thread context</th><th>engagement</th><th>post dimensions</th><th>train-author weak labels</th><th>train-derived audience prior</th></tr></thead>
+<tbody><tr><th scope='row'>Reddit</th><td class="num">34,901 / 34,901</td><td class="num">34,892 / 34,901</td><td class="num">34,901 / 34,901</td><td class="num">11,766 / 34,901</td><td class="num">34,901 / 34,901</td><td class="num">34,901 / 34,901</td></tr><tr><th scope='row'>LinkedIn</th><td class="num">9,900 / 16,103</td><td class="num">16,103 / 16,103</td><td class="num">16,103 / 16,103</td><td class="num">9,903 / 16,103</td><td class="num">16,103 / 16,103</td><td class="num">16,103 / 16,103</td></tr></tbody>
+</table></div>
+
+</figure>
+<h2 id="partition">Coarse-to-fine partition</h2>
+<figure class="tablefig">
+<figcaption><strong>Coarse-to-fine partition</strong><br><span class="sub">The primary training corpus is divided within each audience into a platform half and an audience half. The two stages together expose exactly the primary arm's completion tokens. Partition rule: stable blake2b-128 rank within audience; first ceil(n/2) records to platform stage, remainder to audience stage.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>platform</th><th>parent train</th><th>platform half</th><th>audience half</th><th>shared development</th><th>disjoint and complete</th></tr></thead>
+<tbody><tr><th scope='row'>Reddit</th><td class="num">34,901</td><td class="num">17,451</td><td class="num">17,450</td><td class="num">3,464</td><td class="ok">yes</td></tr><tr><th scope='row'>LinkedIn</th><td class="num">16,103</td><td class="num">8,053</td><td class="num">8,050</td><td class="num">1,923</td><td class="ok">yes</td></tr></tbody>
+</table></div>
+
+</figure>
+<h2 id="ladder">Scale-ladder samples</h2>
+<figure class="tablefig">
+<figcaption><strong>Scale-ladder samples</strong><br><span class="sub">The rungs actually built. The 1,000-record rung is a nested subset of the full-available rung; the 50,000 and 100,000 rungs of the plan were unavailable and are not reported.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>rung</th><th>train</th><th>development</th><th>total</th><th>selection rule</th></tr></thead>
+<tbody><tr><th scope='row'>Reddit · 1,000 per audience</th><td class="num">3,602</td><td class="num">398</td><td class="num">4,000</td><td>nested deterministic blake2b over record_id</td></tr><tr><th scope='row'>Reddit · 10,000 per audience</th><td class="num">34,901</td><td class="num">3,464</td><td class="num">38,365</td><td>nested deterministic blake2b over record_id</td></tr><tr><th scope='row'>LinkedIn · 1,000 per audience</th><td class="num">3,633</td><td class="num">367</td><td class="num">4,000</td><td>nested deterministic blake2b over record_id</td></tr><tr><th scope='row'>LinkedIn · 10,000 per audience</th><td class="num">16,103</td><td class="num">1,923</td><td class="num">18,026</td><td>nested deterministic blake2b over record_id</td></tr></tbody>
+</table></div>
+
+</figure>
+<h2 id="sanitization">Scored-context sanitization</h2>
+<figure class="tablefig">
+<figcaption><strong>Scored-context sanitization</strong><br><span class="sub">Normalized validation or test post text, including a scored post contained inside a longer metadata string, is blanked from model-visible metadata before structured-prior training. Authentic completion text and record cardinality are unchanged.</span></figcaption>
+<div class="tscroll"><table class="res">
+<thead><tr><th>platform</th><th>split</th><th>records</th><th>scored strings removed</th><th>fields</th></tr></thead>
+<tbody><tr><th scope='row'>Reddit</th><td>train</td><td class="num">34,901</td><td class="num">20</td><td>thread_context: 9, title: 11</td></tr><tr><th scope='row'>Reddit</th><td>dev</td><td class="num">3,464</td><td class="num">0</td><td>none</td></tr><tr><th scope='row'>LinkedIn</th><td>train</td><td class="num">16,103</td><td class="num">0</td><td>none</td></tr><tr><th scope='row'>LinkedIn</th><td>dev</td><td class="num">1,923</td><td class="num">0</td><td>none</td></tr></tbody>
+</table></div>
+
+</figure>
+
+</main>
+<footer class="foot"><div class="wrap">
+  <p class="footer-title">Study 4 · generated 2026-08-27 21:45 UTC</p>
+  <p>Source reports: <code>runs/study4_forward/report.heldout.embeddinggemma-300m-d512.json</code>,
+     the corresponding frontier and sensitivity files, the training artifacts under
+     <code>runs/checkpoints</code>, and the frozen corpus manifests. Built by
+     <code>experimental-notes/build_study4.py</code>. Every figure and quoted value is computed
+     from those files.</p>
+</div></footer>
+</body>
+</html>
